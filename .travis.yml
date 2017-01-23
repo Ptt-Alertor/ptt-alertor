@@ -1,4 +1,4 @@
 language: go
 go:
 - 1.7.x
-#script: go test ./
+script: go test -v ./hello/hello_test1.go
