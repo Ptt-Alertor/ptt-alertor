@@ -5,6 +5,6 @@ go:
 
 ### For codecov
 script:
-  - sh ./.test.sh
+  - sh ./.codecov.sh
 after_success:
   - bash <(curl -s https://codecov.io/bash)
