@@ -6,8 +6,8 @@ services:
    - docker
 
 before_install:
-   - docker build -t hello_world docker_golang_1.7
-   - docker run -d hello_world /bin/sh -c "ls"
+   - docker build -t hello_world .
+   - docker run -d -p 9090:9090 hello_world
    - docker ps -a
 
 
