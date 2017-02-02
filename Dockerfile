@@ -24,5 +24,5 @@ ENV PATH $GOPATH/bin:/usr/local/go/bin:$PATH
 RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH"
 WORKDIR $GOPATH
 
-COPY go-wrapper /usr/local/bin/
-COPY ../hello/hello.go /go/src
+COPY docker_golang_1.7/go-wrapper /usr/local/bin/
+COPY hello /go/src
