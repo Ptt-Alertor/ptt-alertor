@@ -1,6 +1,10 @@
 language: go
 go:
 - 1.7.x
+
+services:
+   - docker
+
 #script: go test
 
 ### For codecov
