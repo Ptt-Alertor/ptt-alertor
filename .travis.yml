@@ -1,12 +1,12 @@
 language: go
 go:
-- 1.7.x
+   - 1.7.x
 
 services:
    - docker
 
 before_install:
-   - docker build -t hello_world .
+   - docker build -t ic09272002/hello_world .
    - docker ps -a
 
 #- docker run -d -p 9090:9090 hello_world
@@ -14,4 +14,8 @@ before_install:
 
 ### For codecov
 script:
-  - docker run -d -p 9090:9090 hello_world
+   - docker run -d -p 9090:9090 hello_world
+after_success:
+   - docker login -u=ic09272002 -p=icfordocker
+   - docker push ic09272002/hello_world
+
