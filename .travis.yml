@@ -7,12 +7,12 @@ services:
 
 before_install:
    - docker build -t hello_world .
-   - docker run -d -p 9090:9090 hello_world
    - docker ps -a
+
+#- docker run -d -p 9090:9090 hello_world
 
 
 ### For codecov
 script:
-  - sh ./.codecov.sh
-after_success:
-  - bash <(curl -s https://codecov.io/bash)
+  - docker run hello_world  -v 
+  - docker run hello_world "bash <(curl -s https://codecov.io/bash)>"
