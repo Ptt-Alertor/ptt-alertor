@@ -14,5 +14,4 @@ before_install:
 
 ### For codecov
 script:
-  - docker run hello_world  -v 
-  - docker run hello_world "bash <(curl -s https://codecov.io/bash)>"
+  - docker run -d -p 9090:9090 hello_world
