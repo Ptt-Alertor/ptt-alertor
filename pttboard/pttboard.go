@@ -1,20 +1,19 @@
-package main
+package pttboard
 
 import (
-	"fmt"
 	"log"
 	"net/http"
+
+	"encoding/json"
 
 	"golang.org/x/net/html"
 )
 
-const board string = "FREE_BOX"
-
 type article struct {
-	title  string
-	href   string
-	date   string
-	author string
+	Title  string
+	Link   string
+	Date   string
+	Author string
 }
 
 var articles []article
@@ -29,13 +28,19 @@ func fetchHTML(board string) (response *http.Response) {
 	return response
 }
 
-func parseHTML(response *http.Response) {
+func parseHTML(response *http.Response) *html.Node {
 	doc, err := html.Parse(response.Body)
 	if err != nil {
 		log.Fatal(err)
 	}
+	return doc
+}
 
-	articleBlocks := traverseHTMLNode(doc, findArticleBlocks)
+func buildArticles(board string) []article {
+
+	htmlNodes := parseHTML(fetchHTML(board))
+
+	articleBlocks := traverseHTMLNode(htmlNodes, findArticleBlocks)
 	targetNodes = make([]*html.Node, 0)
 	articles = make([]article, len(articleBlocks))
 
@@ -46,31 +51,28 @@ func parseHTML(response *http.Response) {
 			anchors := traverseHTMLNode(titleDiv, findAnchor)
 
 			if len(anchors) == 0 {
-				articles[index].title = titleDiv.FirstChild.Data
-				articles[index].href = ""
+				articles[index].Title = titleDiv.FirstChild.Data
+				articles[index].Link = ""
 				continue
 			}
 
 			for _, anchor := range traverseHTMLNode(titleDiv, findAnchor) {
-				articles[index].title = anchor.FirstChild.Data
-				articles[index].href = getAnchorLink(anchor)
+				articles[index].Title = anchor.FirstChild.Data
+				articles[index].Link = getAnchorLink(anchor)
 			}
 		}
 		for _, metaDiv := range traverseHTMLNode(articleBlock, findMetaDiv) {
 			targetNodes = make([]*html.Node, 0)
 
 			for _, date := range traverseHTMLNode(metaDiv, findDateDiv) {
-				articles[index].date = date.FirstChild.Data
+				articles[index].Date = date.FirstChild.Data
 			}
 			for _, author := range traverseHTMLNode(metaDiv, findAuthorDiv) {
-				articles[index].author = author.FirstChild.Data
+				articles[index].Author = author.FirstChild.Data
 			}
 		}
 	}
-
-	for _, article := range articles {
-		fmt.Println(article)
-	}
+	return articles
 }
 
 func getAnchorLink(anchor *html.Node) string {
@@ -137,13 +139,11 @@ func findDivByClassName(node *html.Node, className string) *html.Node {
 	return nil
 }
 
-func Json() []byte {
-	// fmt.Printf("%s", fetchHTML(board))
-	parseHTML(fetchHTML(board))
-	var json []byte
-	return json
-}
-
-func main() {
-	Json()
+func FirstPage(board string) []byte {
+	articles := buildArticles(board)
+	articlesJSON, err := json.Marshal(articles)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return articlesJSON
 }
