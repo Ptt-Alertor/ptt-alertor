@@ -1,31 +1,20 @@
 language: go
 go:
-   - 1.7.x
-
+- 1.7.x
 services:
-   - docker
-
+- docker
 before_install:
-   - docker build -t ic09272002/hello_world .
-   - docker ps -a
-
-#- docker run -d -p 9090:9090 hello_world
-
-
-### For codecov
+- docker build -t ic09272002/hello_world .
+- docker ps -a
 script:
-   - docker run -d -p 9090:9090 ic09272002/hello_world
-after_success:
-   - docker login -u=ic09272002 -p=icfordocker
-   - docker push ic09272002/hello_world
+- docker run -d -p 9090:9090 ic09272002/hello_world
 deploy:
-   - provider: codedeploy
-     access_key_id: "AKIAICUDJINSD4HSL7VQ"
-     secret_access_key: "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"
-     bucket: "S3 Bucket"
-     revision_type: github
-     key: latest/MyApp.zip
-     application: MyApp
-     deployment_group: MyDeploymentGroup
-     on:
-       branch: test_travisCI
+  provider: s3
+  access_key_id: AKIAIJ2BDRBZK5Y2FKXA
+  secret_access_key:
+    secure: Ogm9Cln4QsvxMRt3p2mSJKLgALPZzLdmF7p7mq3LFfnY7Z8tuVxwX6+QERqr1phG3iiAF1xurBU0MIEy0ZL0sPBFmf9shcWL8Fq48SyGBW1OBRkDn9jjlsfrWDLrePNcV675P404otpHOqQf4WZWgHO/UEVxeY7lf3zWu9aeTWWKOXcfnDLrUH9PT/qG0QQnrsjgGcVk1OyXyItmfj5ZghLUSjUFFO9YgWHbecCQ5OkZt327PTbm0ZnyqQEebhNOWQ9gUim2CCRxnaAU+/XBuJvFUxfsmobwFfc0f8fJo9bdtFQNRQVuLpPiR8a6K3hWzPQ9lI6T8lysdeD0uN2qFx6K0NCas205uEQ9ugh7tCM7dBU4fmC3XqLfcVHr3eJtPqenQea/w08HuU6vZSR9c8VbX1IPlduceSLVOL+xsMxw8YTc20SxmPLo8z6WRcRWUziupvFw6nJD/9polQncS42uApkvg9rioQpUSM7qR/nmFwUu+K4TKvFdKXESYx3pC6aJK2UTsnWTWlC+xWJLsojEwyuBQpKhfi06nunw6RaALVojoeO9SCvRC0ZA8hgwoqe6XmHs6M+S+apAnzMTUGch9PZfVMw7VtKklxUkWlNv1sG7JHoWqUPWpGjy8SA5DXL9nMYZnOgTY/hHFzccumZKdDeAt08wF8JBeUXJ/4c=
+  bucket: ichelloworld
+  acl: private
+  on:
+    repo: liam-lai/ptt-alertor
+    branch: test_travisCI
