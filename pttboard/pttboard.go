@@ -35,21 +35,35 @@ func parseHTML(response *http.Response) {
 		log.Fatal(err)
 	}
 
-	nodes := traverseHTMLNode(doc, findArticleBlocks)
+	articleBlocks := traverseHTMLNode(doc, findArticleBlocks)
 	targetNodes = make([]*html.Node, 0)
-	articles = make([]article, 0)
-	var article article
+	articles = make([]article, len(articleBlocks))
 
-	for _, node := range nodes {
-		divs := traverseHTMLNode(node, findTitleDiv)
-		fmt.Println(divs)
-		for _, div := range divs {
+	for index, articleBlock := range articleBlocks {
+		for _, titleDiv := range traverseHTMLNode(articleBlock, findTitleDiv) {
 			targetNodes = make([]*html.Node, 0)
 
-			for _, anchor := range traverseHTMLNode(div, findAnchor) {
-				article.title = anchor.FirstChild.Data
-				article.href = getAnchorLink(anchor)
-				articles = append(articles, article)
+			anchors := traverseHTMLNode(titleDiv, findAnchor)
+
+			if len(anchors) == 0 {
+				articles[index].title = titleDiv.FirstChild.Data
+				articles[index].href = ""
+				continue
+			}
+
+			for _, anchor := range traverseHTMLNode(titleDiv, findAnchor) {
+				articles[index].title = anchor.FirstChild.Data
+				articles[index].href = getAnchorLink(anchor)
+			}
+		}
+		for _, metaDiv := range traverseHTMLNode(articleBlock, findMetaDiv) {
+			targetNodes = make([]*html.Node, 0)
+
+			for _, date := range traverseHTMLNode(metaDiv, findDateDiv) {
+				articles[index].date = date.FirstChild.Data
+			}
+			for _, author := range traverseHTMLNode(metaDiv, findAuthorDiv) {
+				articles[index].author = author.FirstChild.Data
 			}
 		}
 	}
