@@ -21,6 +21,8 @@ after_success:
 
 deploy:
    - provider: s3
+     on:
+       branch: test_travisCI
       # rest of S3 deployment for MyApp.zip
    - provider: codedeploy
      access_key_id: "AKIAICUDJINSD4HSL7VQ"
@@ -29,3 +31,5 @@ deploy:
      key: latest/MyApp.zip
      application: MyApp
      deployment_group: MyDeploymentGroup
+     on:
+       branch:test_travisCI
