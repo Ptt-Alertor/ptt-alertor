@@ -4,38 +4,19 @@ go:
 services:
 - docker
 before_install:
-- docker build -t ic09272002/hello_world .
+- docker build -t liam-lai/ptt-alertor .
 - docker ps -a
 script:
-- docker run -d -p 9090:9090 ic09272002/hello_world
-
-before_deploy:
-  - zip -r latest *
-  - mkdir -p dpl_cd_upload
-  - mv latest.zip dpl_cd_upload/latest.zip
-
-deploy:
-- provider: s3
-  access_key_id: AKIAIJ2BDRBZK5Y2FKXA
-  secret_access_key: &1
-    secure: Y0zB+4p9rsxX7j8K7eKOUgdsoV4lZGm3+7j2pjRmI/Kp+Tr2FJyqLkYGxyx1JGqE7sdoPQGH7P7vUchRs/A8SD1lQtV6GlwUZcwiTS6wfnUeNBARSnF75gVTkIueAuhd9TkV4JSodiWjZe52JYL37RzPgAdYKmiQQDWZh6oB07Un3y0l98MIXgzbmmGk6Wk/nWdUHwx7T1g5JKHAT70dvVGRDYpHgzMogzGhD3J9UR5YEBnwueZGu6Ov1kGyj2Dp5czoeggj+aNVFHO2uIHHnZVAlE9Jp5vmKKlBq4xkuVrTdM1V4J5Pmh+dqLM4HbHZlGawpeCU9CUqPot+T9l+MAlh2nyMT9SnyDzqmcgPFJMAke5jAla5ezIToCOwIzmhNacGyWC8ep27HcuQTwy6NYPpQj5+3a81IYclbq4uYiQx1IArIlaZ/mILP1CLEhI1LX6Tgh04uQ927mhqposIh4AtWV5GkJBDY8AOcxhw8XG6bTe6ZiSpScmSR3f7nC6Q2SiYqhh7wIeb4Gyp3f9cJYJenXwxDT++zmuvaN8aVUulI8DW3CSjuPkDW9cY0WuqDV0faKiQMjWMdFj8IgTDDO4lePX/lBEJxyoahV1snrq6CK82kWXkqZO/S94sAxnyQIV+5AdlDX5dH2FpjaOqoEC4xgMDWITPy0yBrHAEcbY=
-  local_dir: dpl_cd_upload
-  skip_cleanup: true
-  region: us-west-2
-  on: &2
-    repo: liam-lai/ptt-alertor
-    branch: test_travisCI
-  bucket: ichelloworld
-
-- provider: codedeploy
-  access_key_id: AKIAIJ2BDRBZK5Y2FKXA
-  secret_access_key: *1
-  bucket: ichelloworld
-  key: 'latest.zip'
-  bundle_type: 'zip'
-  application: ptt-alertor
-  deployment_group: myGroup
-  region: us-west-2
-  wait-until-deployed: true
-  on: *2
-
+- docker run -d -p 9090:9090 liam-lai/ptt-alertor
+after_success:
+- docker --version
+- pip install --user awscli
+- export PATH=$PATH:$HOME/.local/bin
+- export AWS_ACCESS_KEY_ID=AKIAIJ2BDRBZK5Y2FKXA
+- eval $(aws ecr get-login --region us-west-2)
+- docker build -t my_example_app .
+- docker tag liam-lai/ptt-alertor:latest 896146012256.dkr.ecr.us-west-2.amazonaws.com/liam-lai/ptt-alertor:latest
+- docker push 896146012256.dkr.ecr.us-west-2.amazonaws.com/liam-lai/ptt-alertor:latest
+env:
+  global:
+    secure: jAP0fJY1q+t+Polx6aBIfnVtwz64NMDYsdkfmJYepc0h//daRkOngskeaF1+ZDwLYM3BFGYH3x4NI/jvWHeYshB6XgRnRSFxlKq2InmMR1tL2mw6yXYC7xIzMCfCIM4pNLLZR+oE4MdjHp87gv9MfpGGHUw9Y02rVuqDBuC/bc0qqiJ+9BmFu03xfJw5JERWOjjd+NR8wiU+82kul4u5uJFvvzNWOmQoh6vB12KtTw2Jfnp018A919CR7Ct2h/GUYJb7UECJ675RCpD/PiXrneffotV1WKdAAX/6zWqSqN+2HHfDFM8UJsyNiLvrYbjGEk+E9iYErulgnAQecG5PQusqrvffPbntg2dFuG55lytkic8+f3u6U6Wtf+eVq+Ib0E3Uu7MzUZ1rMmK3lct+fgsR9dElgdsxam00bUADur3kUAwthpSEvV/clmtJ00Mf4y0+4P9NpKRF0uLW7BOA/dffd3+wpgy0Y0qod1Rq0MeItlLNdln6H/iFSH5Vp9MGYYqoADJ9JYrurZIdMms03w55qgOBQ4buYj6dafUD762LVzrppKOuj2YMZ5vWPPF8Y1pJubjjxQuFm0i3v0Yr03VE99TwFF3TFmrXztr9U/t2U+1FEupf9YPjvEgCAovv/sPcfqkxkwLfn4k9cpJM+dflxxh6uxF7DP4CD9YrKfo=
