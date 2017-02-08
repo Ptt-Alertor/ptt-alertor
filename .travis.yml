@@ -24,8 +24,9 @@ deploy:
      access_key_id: "AKIAICUDJINSD4HSL7VQ"
      secret_access_key: "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"
      bucket: "S3 Bucket"
+     revision_type: github
      key: latest/MyApp.zip
      application: MyApp
      deployment_group: MyDeploymentGroup
      on:
-       branch:test_travisCI
+       branch: test_travisCI
