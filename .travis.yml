@@ -26,6 +26,7 @@ deploy:
     repo: liam-lai/ptt-alertor
     branch: test_travisCI
   bucket: ichelloworld
+
 - provider: codedeploy
   access_key_id: AKIAIJ2BDRBZK5Y2FKXA
   secret_access_key: *1
