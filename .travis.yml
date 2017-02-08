@@ -8,6 +8,12 @@ before_install:
 - docker ps -a
 script:
 - docker run -d -p 9090:9090 ic09272002/hello_world
+
+before_deploy:
+  - zip -r latest *
+  - mkdir -p dpl_cd_upload
+  - mv latest.zip dpl_cd_upload/latest.zip
+
 deploy:
 - provider: s3
   access_key_id: AKIAIJ2BDRBZK5Y2FKXA
@@ -23,11 +29,10 @@ deploy:
   access_key_id: AKIAIJ2BDRBZK5Y2FKXA
   secret_access_key: *1
   bucket: ichelloworld
-  key: ''
-  bundle_type: ''
+  key: 'latest.zip'
+  bundle_type: 'zip'
   application: ptt-alertor
   deployment_group: myGroup
+  region: us-west-1
   on: *2
-before_deploy:
-- mkdir -p dpl_cd_upload
-- mv '' dpl_cd_upload/''
+
