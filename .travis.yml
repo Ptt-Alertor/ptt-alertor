@@ -21,7 +21,7 @@ deploy:
     secure: Y0zB+4p9rsxX7j8K7eKOUgdsoV4lZGm3+7j2pjRmI/Kp+Tr2FJyqLkYGxyx1JGqE7sdoPQGH7P7vUchRs/A8SD1lQtV6GlwUZcwiTS6wfnUeNBARSnF75gVTkIueAuhd9TkV4JSodiWjZe52JYL37RzPgAdYKmiQQDWZh6oB07Un3y0l98MIXgzbmmGk6Wk/nWdUHwx7T1g5JKHAT70dvVGRDYpHgzMogzGhD3J9UR5YEBnwueZGu6Ov1kGyj2Dp5czoeggj+aNVFHO2uIHHnZVAlE9Jp5vmKKlBq4xkuVrTdM1V4J5Pmh+dqLM4HbHZlGawpeCU9CUqPot+T9l+MAlh2nyMT9SnyDzqmcgPFJMAke5jAla5ezIToCOwIzmhNacGyWC8ep27HcuQTwy6NYPpQj5+3a81IYclbq4uYiQx1IArIlaZ/mILP1CLEhI1LX6Tgh04uQ927mhqposIh4AtWV5GkJBDY8AOcxhw8XG6bTe6ZiSpScmSR3f7nC6Q2SiYqhh7wIeb4Gyp3f9cJYJenXwxDT++zmuvaN8aVUulI8DW3CSjuPkDW9cY0WuqDV0faKiQMjWMdFj8IgTDDO4lePX/lBEJxyoahV1snrq6CK82kWXkqZO/S94sAxnyQIV+5AdlDX5dH2FpjaOqoEC4xgMDWITPy0yBrHAEcbY=
   local_dir: dpl_cd_upload
   skip_cleanup: true
-  region: us-west-1
+  region: us-west-2
   on: &2
     repo: liam-lai/ptt-alertor
     branch: test_travisCI
@@ -34,6 +34,6 @@ deploy:
   bundle_type: 'zip'
   application: ptt-alertor
   deployment_group: myGroup
-  region: us-west-1
+  region: us-west-2
   on: *2
 
