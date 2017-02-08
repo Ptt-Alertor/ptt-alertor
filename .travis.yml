@@ -20,10 +20,6 @@ after_success:
    - docker push ic09272002/hello_world
 
 deploy:
-   - provider: s3
-     on:
-       branch: test_travisCI
-      # rest of S3 deployment for MyApp.zip
    - provider: codedeploy
      access_key_id: "AKIAICUDJINSD4HSL7VQ"
      secret_access_key: "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"
