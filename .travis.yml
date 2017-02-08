@@ -23,9 +23,9 @@ deploy:
    - provider: s3
       # rest of S3 deployment for MyApp.zip
    - provider: codedeploy
-      access_key_id: "AKIAICUDJINSD4HSL7VQ"
-      secret_access_key: "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"
-      bucket: "S3 Bucket"
-      key: latest/MyApp.zip
-      application: MyApp
-      deployment_group: MyDeploymentGroup
+     access_key_id: "AKIAICUDJINSD4HSL7VQ"
+     secret_access_key: "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"
+     bucket: "S3 Bucket"
+     key: latest/MyApp.zip
+     application: MyApp
+     deployment_group: MyDeploymentGroup
