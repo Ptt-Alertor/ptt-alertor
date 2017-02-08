@@ -9,12 +9,25 @@ before_install:
 script:
 - docker run -d -p 9090:9090 ic09272002/hello_world
 deploy:
-  provider: s3
+- provider: s3
   access_key_id: AKIAIJ2BDRBZK5Y2FKXA
-  secret_access_key:
-    secure: Ogm9Cln4QsvxMRt3p2mSJKLgALPZzLdmF7p7mq3LFfnY7Z8tuVxwX6+QERqr1phG3iiAF1xurBU0MIEy0ZL0sPBFmf9shcWL8Fq48SyGBW1OBRkDn9jjlsfrWDLrePNcV675P404otpHOqQf4WZWgHO/UEVxeY7lf3zWu9aeTWWKOXcfnDLrUH9PT/qG0QQnrsjgGcVk1OyXyItmfj5ZghLUSjUFFO9YgWHbecCQ5OkZt327PTbm0ZnyqQEebhNOWQ9gUim2CCRxnaAU+/XBuJvFUxfsmobwFfc0f8fJo9bdtFQNRQVuLpPiR8a6K3hWzPQ9lI6T8lysdeD0uN2qFx6K0NCas205uEQ9ugh7tCM7dBU4fmC3XqLfcVHr3eJtPqenQea/w08HuU6vZSR9c8VbX1IPlduceSLVOL+xsMxw8YTc20SxmPLo8z6WRcRWUziupvFw6nJD/9polQncS42uApkvg9rioQpUSM7qR/nmFwUu+K4TKvFdKXESYx3pC6aJK2UTsnWTWlC+xWJLsojEwyuBQpKhfi06nunw6RaALVojoeO9SCvRC0ZA8hgwoqe6XmHs6M+S+apAnzMTUGch9PZfVMw7VtKklxUkWlNv1sG7JHoWqUPWpGjy8SA5DXL9nMYZnOgTY/hHFzccumZKdDeAt08wF8JBeUXJ/4c=
-  bucket: ichelloworld
-  acl: private
-  on:
+  secret_access_key: &1
+    secure: Y0zB+4p9rsxX7j8K7eKOUgdsoV4lZGm3+7j2pjRmI/Kp+Tr2FJyqLkYGxyx1JGqE7sdoPQGH7P7vUchRs/A8SD1lQtV6GlwUZcwiTS6wfnUeNBARSnF75gVTkIueAuhd9TkV4JSodiWjZe52JYL37RzPgAdYKmiQQDWZh6oB07Un3y0l98MIXgzbmmGk6Wk/nWdUHwx7T1g5JKHAT70dvVGRDYpHgzMogzGhD3J9UR5YEBnwueZGu6Ov1kGyj2Dp5czoeggj+aNVFHO2uIHHnZVAlE9Jp5vmKKlBq4xkuVrTdM1V4J5Pmh+dqLM4HbHZlGawpeCU9CUqPot+T9l+MAlh2nyMT9SnyDzqmcgPFJMAke5jAla5ezIToCOwIzmhNacGyWC8ep27HcuQTwy6NYPpQj5+3a81IYclbq4uYiQx1IArIlaZ/mILP1CLEhI1LX6Tgh04uQ927mhqposIh4AtWV5GkJBDY8AOcxhw8XG6bTe6ZiSpScmSR3f7nC6Q2SiYqhh7wIeb4Gyp3f9cJYJenXwxDT++zmuvaN8aVUulI8DW3CSjuPkDW9cY0WuqDV0faKiQMjWMdFj8IgTDDO4lePX/lBEJxyoahV1snrq6CK82kWXkqZO/S94sAxnyQIV+5AdlDX5dH2FpjaOqoEC4xgMDWITPy0yBrHAEcbY=
+  local_dir: dpl_cd_upload
+  skip_cleanup: true
+  on: &2
     repo: liam-lai/ptt-alertor
     branch: test_travisCI
+  bucket: ichelloworld
+- provider: codedeploy
+  access_key_id: AKIAIJ2BDRBZK5Y2FKXA
+  secret_access_key: *1
+  bucket: ichelloworld
+  key: ''
+  bundle_type: ''
+  application: ptt-alertor
+  deployment_group: myGroup
+  on: *2
+before_deploy:
+- mkdir -p dpl_cd_upload
+- mv '' dpl_cd_upload/''
