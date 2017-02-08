@@ -31,3 +31,6 @@ vendor/
 
 # Codecov Code Coverage file
 coverage.txt
+
+# Editor setting file
+.vscode/
