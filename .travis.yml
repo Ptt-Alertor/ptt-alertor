@@ -36,5 +36,6 @@ deploy:
   application: ptt-alertor
   deployment_group: myGroup
   region: us-west-2
+  wait-until-deployed: true
   on: *2
 
