@@ -32,7 +32,7 @@ RUN go install "$GO_WORKDIR"
 RUN sh "$GOPATH"/src/"$GO_WORKDIR"/.codecov_docker.sh
 
 # Run the outyet command by default when the container starts.
-#ENTRYPOINT /go/bin/ptt-alertor
+ENTRYPOINT /go/bin/ptt-alertor
 
 # Document that the service listens on port 9090.
 EXPOSE 9090
