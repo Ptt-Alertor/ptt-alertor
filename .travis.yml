@@ -18,7 +18,6 @@ script:
 after_success:
    - docker login -u=ic09272002 -p=icfordocker
    - docker push ic09272002/hello_world
-
 deploy:
    - provider: codedeploy
      access_key_id: "AKIAICUDJINSD4HSL7VQ"
