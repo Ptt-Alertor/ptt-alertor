@@ -18,22 +18,13 @@ type article struct {
 
 var articles []article
 
-func fetchHTML(board string) (response *http.Response) {
-	response, err := http.Get("https://www.ptt.cc/bbs/" + board + "/index.html")
-
+func FirstPage(board string) []byte {
+	articles := buildArticles(board)
+	articlesJSON, err := json.Marshal(articles)
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	return response
-}
-
-func parseHTML(response *http.Response) *html.Node {
-	doc, err := html.Parse(response.Body)
-	if err != nil {
-		log.Fatal(err)
-	}
-	return doc
+	return articlesJSON
 }
 
 func buildArticles(board string) []article {
@@ -75,30 +66,22 @@ func buildArticles(board string) []article {
 	return articles
 }
 
-func getAnchorLink(anchor *html.Node) string {
-	for _, value := range anchor.Attr {
-		if value.Key == "href" {
-			return value.Val
-		}
+func fetchHTML(board string) (response *http.Response) {
+	response, err := http.Get("https://www.ptt.cc/bbs/" + board + "/index.html")
+
+	if err != nil {
+		log.Fatal(err)
 	}
-	return ""
+
+	return response
 }
 
-type findInHTML func(node *html.Node) *html.Node
-
-var targetNodes []*html.Node
-
-func traverseHTMLNode(node *html.Node, find findInHTML) []*html.Node {
-
-	for child := node.FirstChild; child != nil; child = child.NextSibling {
-		targetNode := find(child)
-		if targetNode != nil {
-			targetNodes = append(targetNodes, targetNode)
-
-		}
-		traverseHTMLNode(child, find)
+func parseHTML(response *http.Response) *html.Node {
+	doc, err := html.Parse(response.Body)
+	if err != nil {
+		log.Fatal(err)
 	}
-	return targetNodes
+	return doc
 }
 
 func findArticleBlocks(node *html.Node) *html.Node {
@@ -128,6 +111,10 @@ func findAuthorDiv(node *html.Node) *html.Node {
 	return findDivByClassName(node, "author")
 }
 
+func findDividerDiv(node *html.Node) *html.Node {
+	return findDivByClassName(node, "r-list-sep")
+}
+
 func findDivByClassName(node *html.Node, className string) *html.Node {
 	if node.Type == html.ElementNode && node.Data == "div" {
 		for _, tagAttr := range node.Attr {
@@ -139,11 +126,11 @@ func findDivByClassName(node *html.Node, className string) *html.Node {
 	return nil
 }
 
-func FirstPage(board string) []byte {
-	articles := buildArticles(board)
-	articlesJSON, err := json.Marshal(articles)
-	if err != nil {
-		log.Fatal(err)
+func getAnchorLink(anchor *html.Node) string {
+	for _, value := range anchor.Attr {
+		if value.Key == "href" {
+			return value.Val
+		}
 	}
-	return articlesJSON
+	return ""
 }
