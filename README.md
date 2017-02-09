@@ -8,6 +8,6 @@ Happy Chinese New Year
 
 ## Path
 
-* /articles?board=[board name]
+* /board/[board name]/articles
 
-  [http://localhost:9090/articles?board=free_box](http://localhost:9090/articles?board=free_box)
+  [http://localhost:9090/board/free_box/articles](http://localhost:9090/board/free_box/articles)
