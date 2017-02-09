@@ -84,6 +84,23 @@ func parseHTML(response *http.Response) *html.Node {
 	return doc
 }
 
+type findInHTML func(node *html.Node) *html.Node
+
+var targetNodes []*html.Node
+
+func traverseHTMLNode(node *html.Node, find findInHTML) []*html.Node {
+
+	for child := node.FirstChild; child != nil; child = child.NextSibling {
+		targetNode := find(child)
+		if targetNode != nil {
+			targetNodes = append(targetNodes, targetNode)
+
+		}
+		traverseHTMLNode(child, find)
+	}
+	return targetNodes
+}
+
 func findArticleBlocks(node *html.Node) *html.Node {
 	return findDivByClassName(node, "r-ent")
 }
