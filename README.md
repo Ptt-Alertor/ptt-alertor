@@ -5,3 +5,9 @@
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 Happy Chinese New Year
+
+## Path
+
+* /articles?board=[board name]
+
+  [http://localhost:9090/articles?board=free_box](http://localhost:9090/articles?board=free_box)
