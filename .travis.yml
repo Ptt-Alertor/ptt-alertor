@@ -26,6 +26,8 @@ deploy:
 #after_deploy:
 #Test
 
+notifications:
+  slack: meifamily:9oYnHKf0nlRn8QafX4PRZ1lC
 
 env:
   global:
