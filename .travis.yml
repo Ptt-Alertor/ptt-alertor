@@ -8,6 +8,7 @@ services:
 #- docker ps -a
 script:
 - pip install --user awscli
+- export AWS_ACCESS_KEY_ID=AKIAIJ2BDRBZK5Y2FKXA
 #- docker run -d -p 9090:9090 liam-lai/ptt-alertor
 #after_success:
 #- docker --version
