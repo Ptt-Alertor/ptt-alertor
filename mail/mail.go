@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/liam-lai/ptt-alertor/myutil"
+
 	"io/ioutil"
 
 	"encoding/json"
-
-	"os"
 
 	"gopkg.in/mailgun/mailgun-go.v1"
 )
@@ -40,8 +40,8 @@ func main() {
 }
 
 func readConfig() map[string]string {
-	dir, _ := os.Getwd()
-	mailgunConfigJSON, err := ioutil.ReadFile(dir + "/config/mailgun.json")
+	projectRoot := myutil.ProjectRootPath()
+	mailgunConfigJSON, err := ioutil.ReadFile(projectRoot + "/config/mailgun.json")
 	if err != nil {
 		log.Fatal(err)
 	}
