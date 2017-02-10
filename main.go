@@ -19,7 +19,7 @@ func index(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 
 func board(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	board := strings.ToUpper(params.ByName("boardName"))
-	fmt.Fprintf(w, "%s", pttboard.FirstPage(board))
+	fmt.Fprintf(w, "%s", pttboard.Index(board))
 }
 
 func main() {

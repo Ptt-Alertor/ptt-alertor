@@ -18,7 +18,7 @@ type article struct {
 
 var articles []article
 
-func FirstPage(board string) []byte {
+func Index(board string) []byte {
 	articles := buildArticles(board)
 	articlesJSON, err := json.Marshal(articles)
 	if err != nil {
