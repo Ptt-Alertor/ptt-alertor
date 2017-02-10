@@ -17,6 +17,12 @@ after_success:
 - docker build -t my_example_app .
 - docker tag liam-lai/ptt-alertor:latest 896146012256.dkr.ecr.us-west-2.amazonaws.com/liam-lai/ptt-alertor:latest
 - docker push 896146012256.dkr.ecr.us-west-2.amazonaws.com/liam-lai/ptt-alertor:latest
+
+deploy:
+   - ./deploy/ecs-deploy -r us-west-2 -c NewCluster -n NewService -i 896146012256.dkr.ecr.us-west-2.amazonaws.com/liam-lai/ptt-alertor -m 0 -M 200 -t 240 -D 1
+
+#after_deploy:
+#Test
 env:
   global:
     secure: jAP0fJY1q+t+Polx6aBIfnVtwz64NMDYsdkfmJYepc0h//daRkOngskeaF1+ZDwLYM3BFGYH3x4NI/jvWHeYshB6XgRnRSFxlKq2InmMR1tL2mw6yXYC7xIzMCfCIM4pNLLZR+oE4MdjHp87gv9MfpGGHUw9Y02rVuqDBuC/bc0qqiJ+9BmFu03xfJw5JERWOjjd+NR8wiU+82kul4u5uJFvvzNWOmQoh6vB12KtTw2Jfnp018A919CR7Ct2h/GUYJb7UECJ675RCpD/PiXrneffotV1WKdAAX/6zWqSqN+2HHfDFM8UJsyNiLvrYbjGEk+E9iYErulgnAQecG5PQusqrvffPbntg2dFuG55lytkic8+f3u6U6Wtf+eVq+Ib0E3Uu7MzUZ1rMmK3lct+fgsR9dElgdsxam00bUADur3kUAwthpSEvV/clmtJ00Mf4y0+4P9NpKRF0uLW7BOA/dffd3+wpgy0Y0qod1Rq0MeItlLNdln6H/iFSH5Vp9MGYYqoADJ9JYrurZIdMms03w55qgOBQ4buYj6dafUD762LVzrppKOuj2YMZ5vWPPF8Y1pJubjjxQuFm0i3v0Yr03VE99TwFF3TFmrXztr9U/t2U+1FEupf9YPjvEgCAovv/sPcfqkxkwLfn4k9cpJM+dflxxh6uxF7DP4CD9YrKfo=
