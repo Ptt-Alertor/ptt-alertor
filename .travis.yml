@@ -19,10 +19,10 @@ services:
 #- docker push 896146012256.dkr.ecr.us-west-2.amazonaws.com/liam-lai/ptt-alertor:latest
 
 deploy:
-   provider: script
-   script: bash ./deploy/ecs-deploy -r us-west-2 -c NewCluster -n NewService -i 896146012256.dkr.ecr.us-west-2.amazonaws.com/liam-lai/ptt-alertor -m 0 -M 200 -t 240 -D 1
-   on:
-      branch: master 
+   - provider: script
+     script: bash ./deploy/ecs-deploy -r us-west-2 -c NewCluster -n NewService -i 896146012256.dkr.ecr.us-west-2.amazonaws.com/liam-lai/ptt-alertor -m 0 -M 200 -t 240 -D 1
+     on:
+       branch: master 
 #after_deploy:
 #Test
 
