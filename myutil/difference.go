@@ -1,13 +1,13 @@
 package myutil
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"reflect"
-	"strings"
 )
 
-func DifferenceJSON(jsonOld string, jsonNew string) []byte {
+func DifferenceJSON(jsonOld []byte, jsonNew []byte) []byte {
 	mapOld, mapNew := jsonToMap(jsonOld), jsonToMap(jsonNew)
 	mapDiff := DifferenceMap(mapOld, mapNew)
 
@@ -23,7 +23,7 @@ func DifferenceMap(mapOld []map[string]string, mapNew []map[string]string) []map
 			if reflect.DeepEqual(objectNew, objectOld) {
 				break
 			}
-			if index == len(mapNew)-1 {
+			if index == len(mapOld)-1 {
 				mapDiff = append(mapDiff, objectNew)
 			}
 		}
@@ -31,9 +31,9 @@ func DifferenceMap(mapOld []map[string]string, mapNew []map[string]string) []map
 	return mapDiff
 }
 
-func jsonToMap(jsonString string) []map[string]string {
+func jsonToMap(jsonString []byte) []map[string]string {
 	var articles []map[string]string
-	err := json.NewDecoder(strings.NewReader(jsonString)).Decode(&articles)
+	err := json.NewDecoder(bytes.NewReader(jsonString)).Decode(&articles)
 	if err != nil {
 		fmt.Println(err)
 	}
