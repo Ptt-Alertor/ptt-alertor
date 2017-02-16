@@ -1,42 +1,79 @@
-package main
+package mail
 
 import (
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
+	"strconv"
 
 	"github.com/liam-lai/ptt-alertor/myutil"
-
-	"io/ioutil"
-
-	"encoding/json"
-
 	"gopkg.in/mailgun/mailgun-go.v1"
 )
 
-func main() {
+type Mail struct {
+	Title
+	Body
+	Receiver string
+}
+
+type Title struct {
+	BoardName       string
+	Keyword         string
+	articleQuantity int
+}
+
+func (title Title) String() string {
+	return "[PTTAlertor] 在 " + title.BoardName + " 版有 " + strconv.Itoa(title.articleQuantity) + " 篇關於「" + title.Keyword + "」的文章發表"
+}
+
+type Body struct {
+	Articles
+}
+
+type Articles []article
+
+type article struct {
+	Title  string
+	Link   string
+	Date   string
+	Author string
+}
+
+func (body Body) String() string {
+	var content string
+	for _, article := range body.Articles {
+		content += article.Title + "\r\n" +
+			"https://www.ptt.cc" + article.Link + "\r\n" +
+			"\r\n"
+	}
+	return content + "Send From PTT Alertor"
+}
+
+func (mail Mail) Send() {
+	mg := newMailgun()
+
+	mail.articleQuantity = len(mail.Body.Articles)
+	message := mailgun.NewMessage(
+		"PttAlertor@mg.dinolai.com",
+		mail.Title.String(),
+		mail.Body.String(),
+		mail.Receiver)
+	resp, id, err := mg.Send(message)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Printf("ID: %s Resp: %s\n", id, resp)
+}
+
+func newMailgun() mailgun.Mailgun {
 	config := readConfig()
 
 	domain := config["domain"]
 	apiKey := config["apiKey"]
 	publicAPIKey := config["publicAPIKey"]
 
-	mg := mailgun.NewMailgun(domain, apiKey, publicAPIKey)
-
-	body := "[公告] LoL 板 開始舉辦樂透!\r\n" +
-		"https://www.ptt.cc/bbs/LoL/M.1486635540.A.605.html\r\n" +
-		"\r\n" +
-		"Send From PTT Alertor"
-
-	message := mailgun.NewMessage(
-		"PttAlertor@mg.dinolai.com",
-		"[PTTAlertor] 在 LoL 版有一篇關於「樂透」的文章發表",
-		body,
-		"dinos80152@gmail.com")
-	resp, id, err := mg.Send(message)
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Printf("ID: %s Resp: %s\n", id, resp)
+	return mailgun.NewMailgun(domain, apiKey, publicAPIKey)
 }
 
 func readConfig() map[string]string {
