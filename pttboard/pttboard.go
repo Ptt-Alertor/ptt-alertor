@@ -1,10 +1,13 @@
 package pttboard
 
 import (
+	"errors"
 	"log"
 	"net/http"
 
 	"encoding/json"
+
+	"fmt"
 
 	"golang.org/x/net/html"
 )
@@ -67,13 +70,49 @@ func buildArticles(board string) []article {
 }
 
 func fetchHTML(board string) (response *http.Response) {
-	response, err := http.Get("https://www.ptt.cc/bbs/" + board + "/index.html")
+
+	client := &http.Client{
+		CheckRedirect: func(req *http.Request, via []*http.Request) error {
+			return errors.New("Redirect")
+		},
+	}
+
+	reqURL := "https://www.ptt.cc/bbs/" + board + "/index.html"
+	response, err := client.Get(reqURL)
+
+	if response.StatusCode == http.StatusNotFound {
+		fmt.Println(404)
+	}
 
 	if err != nil {
-		log.Fatal(err)
+		if response.StatusCode == http.StatusFound {
+			req := passR18(reqURL)
+			response, err = client.Do(req)
+		} else {
+			log.Fatal(err)
+		}
 	}
 
 	return response
+}
+
+func passR18(reqURL string) (req *http.Request) {
+
+	req, _ = http.NewRequest("GET", reqURL, nil)
+
+	over18Cookie := http.Cookie{
+		Name:       "over18",
+		Value:      "1",
+		Domain:     "www.ptt.cc",
+		Path:       "/",
+		RawExpires: "Session",
+		MaxAge:     0,
+		HttpOnly:   false,
+	}
+
+	req.AddCookie(&over18Cookie)
+
+	return req
 }
 
 func parseHTML(response *http.Response) *html.Node {
