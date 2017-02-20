@@ -7,6 +7,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 		libc6-dev \
 		make \
 		pkg-config \
+	        cron \
 	&& rm -rf /var/lib/apt/lists/*
 
 ENV GOLANG_VERSION 1.7.5
@@ -26,14 +27,21 @@ RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH"
 WORKDIR $GOPATH
 
 COPY docker_golang_1.7/go-wrapper /usr/local/bin/
+
+ADD crontab /etc/cron.d/ptt-alertor-cron
+RUN chmod 0644 /etc/cron.d/ptt-alertor-cron
+RUN touch /var/log/cron.log
+
 ADD . "$GOPATH"/src/"$GO_WORKDIR"
 
 RUN go get "$GO_WORKDIR"
 RUN go install "$GO_WORKDIR"
+
+CMD cron && tail -f /var/log/cron.log
 #RUN sh "$GOPATH"/src/"$GO_WORKDIR"/.codecov_docker.sh
 
 # Run the outyet command by default when the container starts.
-ENTRYPOINT /go/bin/ptt-alertor
+#ENTRYPOINT /go/bin/ptt-alertor
 
 # Document that the service listens on port 9090.
 EXPOSE 9090
