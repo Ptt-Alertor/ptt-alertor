@@ -9,8 +9,18 @@ import (
 )
 
 func main() {
-	//TODO: Read database or setting file
-	boards := []string{"free_box", "lol"}
+	var boards []string
+
+	articlesDir := myutil.StoragePath() + "/articles/"
+	files, _ := ioutil.ReadDir(articlesDir)
+	for _, file := range files {
+		boardName, ok := myutil.JsonFile(file)
+		if !ok {
+			continue
+		}
+		boards = append(boards, boardName)
+	}
+
 	for _, board := range boards {
 		articlesJSON := pttboard.Index(board)
 		err := ioutil.WriteFile(myutil.ProjectRootPath()+"/storage/articles/"+board+".json", articlesJSON, 0644)
