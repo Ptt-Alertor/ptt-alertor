@@ -50,7 +50,7 @@ func main() {
 					keywordArticles := articlesHaveKeyword(keyword, articles)
 					if len(keywordArticles) != 0 {
 						fmt.Println(user.Profile.Email + ":" + keyword + " in " + subscribe.Board)
-						sendMail(user, subscribe.Board, keyword, articles)
+						sendMail(user, subscribe.Board, keyword, keywordArticles)
 					}
 				}
 			}
