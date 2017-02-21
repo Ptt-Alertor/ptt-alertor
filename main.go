@@ -9,7 +9,7 @@ import (
 	"github.com/julienschmidt/httprouter"
 
 	"github.com/liam-lai/ptt-alertor/hello"
-	"github.com/liam-lai/ptt-alertor/pttboard"
+	"github.com/liam-lai/ptt-alertor/ptt/board"
 )
 
 func index(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
@@ -17,9 +17,10 @@ func index(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	fmt.Fprintf(w, hello.HelloWorld())
 }
 
-func board(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-	board := strings.ToUpper(params.ByName("boardName"))
-	fmt.Fprintf(w, "%s", pttboard.Index(board))
+func boardIndex(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+	b := new(board.Board)
+	b.Name = strings.ToUpper(params.ByName("boardName"))
+	fmt.Fprintf(w, "%s", b.IndexJSON())
 }
 
 func main() {
@@ -27,7 +28,7 @@ func main() {
 
 	router := httprouter.New()
 	router.GET("/", index)
-	router.GET("/board/:boardName/articles", board)
+	router.GET("/board/:boardName/articles", boardIndex)
 
 	err := http.ListenAndServe(":9090", router)
 	if err != nil {

@@ -5,11 +5,11 @@ import (
 	"log"
 
 	"github.com/liam-lai/ptt-alertor/myutil"
-	"github.com/liam-lai/ptt-alertor/pttboard"
+	"github.com/liam-lai/ptt-alertor/ptt/board"
 )
 
 func main() {
-	var boards []string
+	var boards []board.Board
 
 	articlesDir := myutil.StoragePath() + "/articles/"
 	files, _ := ioutil.ReadDir(articlesDir)
@@ -18,12 +18,14 @@ func main() {
 		if !ok {
 			continue
 		}
-		boards = append(boards, boardName)
+		b := new(board.Board)
+		b.Name = boardName
+		boards = append(boards, *b)
 	}
 
 	for _, board := range boards {
-		articlesJSON := pttboard.Index(board)
-		err := ioutil.WriteFile(myutil.ProjectRootPath()+"/storage/articles/"+board+".json", articlesJSON, 0644)
+		articlesJSON := board.IndexJSON()
+		err := ioutil.WriteFile(articlesDir+board.Name+".json", articlesJSON, 0644)
 		if err != nil {
 			log.Fatal(err)
 		}

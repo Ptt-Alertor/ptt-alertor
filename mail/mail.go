@@ -8,6 +8,7 @@ import (
 	"strconv"
 
 	"github.com/liam-lai/ptt-alertor/myutil"
+	"github.com/liam-lai/ptt-alertor/ptt/article"
 	"gopkg.in/mailgun/mailgun-go.v1"
 )
 
@@ -23,21 +24,12 @@ type Title struct {
 	articleQuantity int
 }
 
+type Body struct {
+	Articles []article.Article
+}
+
 func (title Title) String() string {
 	return "[PTTAlertor] 在 " + title.BoardName + " 版有 " + strconv.Itoa(title.articleQuantity) + " 篇關於「" + title.Keyword + "」的文章發表"
-}
-
-type Body struct {
-	Articles
-}
-
-type Articles []article
-
-type article struct {
-	Title  string
-	Link   string
-	Date   string
-	Author string
 }
 
 func (body Body) String() string {

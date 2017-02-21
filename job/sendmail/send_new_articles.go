@@ -1,105 +1,40 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
-	"io/ioutil"
-	"log"
-	"strings"
 
 	"github.com/liam-lai/ptt-alertor/mail"
 	"github.com/liam-lai/ptt-alertor/myutil"
-	"github.com/liam-lai/ptt-alertor/pttboard"
+	"github.com/liam-lai/ptt-alertor/ptt/article"
+	"github.com/liam-lai/ptt-alertor/ptt/board"
+	"github.com/liam-lai/ptt-alertor/user"
 )
 
-type User struct {
-	Profile struct {
-		Email string
-	}
-	Subscribes
-}
-
-type Subscribes []Subscribe
-
-type Subscribe struct {
-	Board    string
-	Keywords []string
-}
-
-type articles mail.Articles
+type articles []article.Article
 
 var storageDir string = myutil.StoragePath()
 
 func main() {
-
-	boards := boardsWithNewArticles()
-
-	usersDir := storageDir + "/users/"
-	files, _ := ioutil.ReadDir(usersDir)
-	for _, file := range files {
-		_, ok := myutil.JsonFile(file)
-		if !ok {
-			continue
-		}
-		userJSON, _ := ioutil.ReadFile(usersDir + file.Name())
-		var user User
-		_ = json.Unmarshal(userJSON, &user)
-		for _, subscribe := range user.Subscribes {
-			if articles, ok := boards[subscribe.Board]; ok {
-				for _, keyword := range subscribe.Keywords {
-					keywordArticles := articlesHaveKeyword(keyword, articles)
-					if len(keywordArticles) != 0 {
-						fmt.Println(user.Profile.Email + ":" + keyword + " in " + subscribe.Board)
-						sendMail(user, subscribe.Board, keyword, keywordArticles)
+	bs := new(board.Boards).All().WithNewArticles(true)
+	users := new(user.Users).All()
+	for _, bd := range bs {
+		for _, user := range users {
+			for _, subscribe := range user.Subscribes {
+				if bd.Name == subscribe.Board {
+					for _, keyword := range subscribe.Keywords {
+						keywordArticles := bd.NewArticles.ContainKeyword(keyword)
+						if len(keywordArticles) != 0 {
+							fmt.Println(user.Profile.Email + ":" + keyword + " in " + subscribe.Board)
+							sendMail(user, subscribe.Board, keyword, keywordArticles)
+						}
 					}
 				}
 			}
 		}
 	}
-
 }
 
-func boardsWithNewArticles() (boards map[string]mail.Articles) {
-	articlesDir := storageDir + "/articles/"
-	files, _ := ioutil.ReadDir(articlesDir)
-	boards = make(map[string]mail.Articles)
-	for _, file := range files {
-		boardName, ok := myutil.JsonFile(file)
-		if !ok {
-			continue
-		}
-		newArticles := newArticles(articlesDir, boardName)
-		var articles mail.Articles
-		json.Unmarshal(newArticles, &articles)
-		boards[boardName] = append(boards[boardName], articles...)
-	}
-	return boards
-}
-
-func newArticles(dir string, BoardName string) []byte {
-
-	oldArticlesJSON, err := ioutil.ReadFile(dir + BoardName + ".json")
-	if err != nil {
-		log.Fatal(err)
-	}
-	nowArticlesJSON := pttboard.Index(BoardName)
-
-	newArticlesJSON := myutil.DifferenceJSON(oldArticlesJSON, nowArticlesJSON)
-
-	return newArticlesJSON
-}
-
-func articlesHaveKeyword(keyword string, newArticles mail.Articles) mail.Articles {
-	articles := make(mail.Articles, 0)
-	for _, article := range newArticles {
-		if strings.Contains(article.Title, keyword) {
-			articles = append(articles, article)
-		}
-	}
-	return articles
-}
-
-func sendMail(user User, board string, keyword string, articles mail.Articles) {
+func sendMail(user *user.User, board string, keyword string, articles []article.Article) {
 	m := new(mail.Mail)
 	m.Title.BoardName = board
 	m.Title.Keyword = keyword
