@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
-	"os"
 	"strings"
 
 	"github.com/liam-lai/ptt-alertor/mail"
@@ -38,7 +37,7 @@ func main() {
 	usersDir := storageDir + "/users/"
 	files, _ := ioutil.ReadDir(usersDir)
 	for _, file := range files {
-		_, ok := jsonFile(file)
+		_, ok := myutil.JsonFile(file)
 		if !ok {
 			continue
 		}
@@ -85,7 +84,7 @@ func boardsWithNewArticles() (boards map[string]mail.Articles) {
 	files, _ := ioutil.ReadDir(articlesDir)
 	boards = make(map[string]mail.Articles)
 	for _, file := range files {
-		boardName, ok := jsonFile(file)
+		boardName, ok := myutil.JsonFile(file)
 		if !ok {
 			continue
 		}
@@ -108,16 +107,4 @@ func newArticles(dir string, BoardName string) []byte {
 	newArticlesJSON := myutil.DifferenceJSON(oldArticlesJSON, nowArticlesJSON)
 
 	return newArticlesJSON
-}
-
-func jsonFile(file os.FileInfo) (string, bool) {
-	if file.IsDir() {
-		return "", false
-	}
-
-	fileName, extension := myutil.FileNameAndExtension(file.Name())
-	if extension != "json" {
-		return "", false
-	}
-	return fileName, true
 }
