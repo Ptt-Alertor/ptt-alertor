@@ -28,7 +28,7 @@ type Subscribe struct {
 
 type articles mail.Articles
 
-var storageDir string = myutil.ProjectRootPath() + "/storage"
+var storageDir string = myutil.StoragePath()
 
 func main() {
 
@@ -59,26 +59,6 @@ func main() {
 
 }
 
-func articlesHaveKeyword(keyword string, newArticles mail.Articles) mail.Articles {
-	articles := make(mail.Articles, 0)
-	for _, article := range newArticles {
-		if strings.Contains(article.Title, keyword) {
-			articles = append(articles, article)
-		}
-	}
-	return articles
-}
-
-func sendMail(user User, board string, keyword string, articles mail.Articles) {
-	m := new(mail.Mail)
-	m.Title.BoardName = board
-	m.Title.Keyword = keyword
-	m.Body.Articles = articles
-	m.Receiver = user.Profile.Email
-
-	m.Send()
-}
-
 func boardsWithNewArticles() (boards map[string]mail.Articles) {
 	articlesDir := storageDir + "/articles/"
 	files, _ := ioutil.ReadDir(articlesDir)
@@ -107,4 +87,24 @@ func newArticles(dir string, BoardName string) []byte {
 	newArticlesJSON := myutil.DifferenceJSON(oldArticlesJSON, nowArticlesJSON)
 
 	return newArticlesJSON
+}
+
+func articlesHaveKeyword(keyword string, newArticles mail.Articles) mail.Articles {
+	articles := make(mail.Articles, 0)
+	for _, article := range newArticles {
+		if strings.Contains(article.Title, keyword) {
+			articles = append(articles, article)
+		}
+	}
+	return articles
+}
+
+func sendMail(user User, board string, keyword string, articles mail.Articles) {
+	m := new(mail.Mail)
+	m.Title.BoardName = board
+	m.Title.Keyword = keyword
+	m.Body.Articles = articles
+	m.Receiver = user.Profile.Email
+
+	m.Send()
 }
