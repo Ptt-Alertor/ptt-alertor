@@ -37,7 +37,7 @@ func checkUserSubscribeBoard(users user.Users, bd *board.Board) {
 						keywordArticles := bd.NewArticles.ContainKeyword(keyword)
 						if len(keywordArticles) != 0 {
 							fmt.Println(u.Profile.Email + ":" + keyword + " in " + subscribe.Board)
-							//sendMail(u, subscribe.Board, keyword, keywordArticles)
+							sendMail(u, subscribe.Board, keyword, keywordArticles)
 						}
 
 					}
