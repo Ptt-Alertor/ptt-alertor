@@ -27,7 +27,7 @@ _testmain.go
 *.out
 
 # External packages folder
-vendor/
+vendor/*/
 
 # Codecov Code Coverage file
 coverage.txt
