@@ -9,7 +9,9 @@ import (
 	"github.com/julienschmidt/httprouter"
 
 	"github.com/liam-lai/ptt-alertor/hello"
+	"github.com/liam-lai/ptt-alertor/jobs"
 	"github.com/liam-lai/ptt-alertor/ptt/board"
+	"github.com/robfig/cron"
 )
 
 func index(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
@@ -24,6 +26,9 @@ func boardIndex(w http.ResponseWriter, r *http.Request, params httprouter.Params
 }
 
 func main() {
+	fmt.Println("----Start Jobs----")
+	startJobs()
+	// Web Server
 	fmt.Println("----Web Server Start on Port 9090----")
 
 	router := httprouter.New()
@@ -34,4 +39,15 @@ func main() {
 	if err != nil {
 		log.Fatal("ListenAndServer ", err)
 	}
+
+}
+
+func startJobs() {
+	c := cron.New()
+	c.AddFunc("@every 1m", func() {
+		new(jobs.Message).Run()
+		jobs.NewFetcher().Run()
+	})
+	// c.AddJob("@every 1m", jobs.NewFetcher())
+	c.Start()
 }

@@ -1,4 +1,4 @@
-package main
+package jobs
 
 import (
 	"fmt"
@@ -11,12 +11,20 @@ import (
 	"github.com/liam-lai/ptt-alertor/ptt/board"
 )
 
-var articlesDir string = myutil.StoragePath() + "/articles/"
+type Fetcher struct {
+	workingDir string
+}
 
-func main() {
+func NewFetcher() *Fetcher {
+	f := new(Fetcher)
+	f.workingDir = myutil.StoragePath() + "/articles/"
+	return f
+}
+
+func (f Fetcher) Run() {
 	var boards []board.Board
 
-	files, _ := ioutil.ReadDir(articlesDir)
+	files, _ := ioutil.ReadDir(f.workingDir)
 	for _, file := range files {
 		boardName, ok := myutil.JsonFile(file)
 		if !ok {
@@ -34,11 +42,12 @@ func main() {
 			defer wg.Done()
 			fmt.Println(b.Name)
 			articlesJSON := b.IndexJSON()
-			err := ioutil.WriteFile(articlesDir+b.Name+".json", articlesJSON, 0644)
+			err := ioutil.WriteFile(f.workingDir+b.Name+".json", articlesJSON, 0644)
 			if err != nil {
 				log.Fatal(err)
 			}
 		}(b)
 	}
 	wg.Wait()
+	fmt.Println("fetcher done")
 }

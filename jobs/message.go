@@ -1,4 +1,4 @@
-package main
+package jobs
 
 import (
 	"fmt"
@@ -12,18 +12,19 @@ import (
 )
 
 type Message struct {
-	user     *user.User
+	email    string
 	board    string
 	keyword  string
 	articles []article.Article
 }
 
-func main() {
+func (msg Message) Run() {
 	bs := new(board.Boards).All().WithNewArticles(true)
 	users := new(user.Users).All()
 	msgCh := make(chan Message)
 	for _, user := range users {
-		go userChecker(user, bs, msgCh)
+		msg.email = user.Profile.Email
+		go userChecker(user, bs, msg, msgCh)
 	}
 
 	for {
@@ -31,16 +32,13 @@ func main() {
 		case m := <-msgCh:
 			sendMail(m)
 		case <-time.After(time.Second * 3):
-			fmt.Println("time out")
+			fmt.Println("message done")
 			return
 		}
 	}
 }
 
-func userChecker(user *user.User, bds board.Boards, msgCh chan Message) {
-	msg := Message{
-		user: user,
-	}
+func userChecker(user *user.User, bds board.Boards, msg Message, msgCh chan Message) {
 	for _, bd := range bds {
 		go subscribeChecker(user, bd, msg, msgCh)
 	}
@@ -62,7 +60,6 @@ func keywordChecker(keyword string, bd *board.Board, msg Message, msgCh chan Mes
 	if len(keywordArticles) != 0 {
 		msg.keyword = keyword
 		msg.articles = keywordArticles
-		fmt.Printf("%+v", msg)
 		msgCh <- msg
 	}
 }
@@ -72,7 +69,7 @@ func sendMail(msg Message) {
 	m.Title.BoardName = msg.board
 	m.Title.Keyword = msg.keyword
 	m.Body.Articles = msg.articles
-	m.Receiver = msg.user.Profile.Email
+	m.Receiver = msg.email
 
 	m.Send()
 }
