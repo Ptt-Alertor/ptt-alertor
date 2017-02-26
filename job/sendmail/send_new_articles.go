@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"sync"
+	"time"
 
 	"github.com/liam-lai/ptt-alertor/mail"
 	"github.com/liam-lai/ptt-alertor/ptt/article"
@@ -11,48 +11,68 @@ import (
 	"github.com/liam-lai/ptt-alertor/user"
 )
 
-type articles []article.Article
-
-var wg sync.WaitGroup
+type Message struct {
+	user     *user.User
+	board    string
+	keyword  string
+	articles []article.Article
+}
 
 func main() {
 	bs := new(board.Boards).All().WithNewArticles(true)
 	users := new(user.Users).All()
-	for _, bd := range bs {
-		wg.Add(1)
-		go checkUserSubscribeBoard(users, bd)
+	msgCh := make(chan Message)
+	for _, user := range users {
+		go userChecker(user, bs, msgCh)
 	}
-	wg.Wait()
+
+	for {
+		select {
+		case m := <-msgCh:
+			sendMail(m)
+		case <-time.After(time.Second * 3):
+			fmt.Println("time out")
+			return
+		}
+	}
 }
 
-func checkUserSubscribeBoard(users user.Users, bd *board.Board) {
-	defer wg.Done()
-	for _, u := range users {
-		wg.Add(1)
-		go func(u *user.User) {
-			defer wg.Done()
-			for _, subscribe := range u.Subscribes {
-				if bd.Name == subscribe.Board {
-					for _, keyword := range subscribe.Keywords {
-						keywordArticles := bd.NewArticles.ContainKeyword(keyword)
-						if len(keywordArticles) != 0 {
-							fmt.Println(u.Profile.Email + ":" + keyword + " in " + subscribe.Board)
-							sendMail(u, subscribe.Board, keyword, keywordArticles)
-						}
+func userChecker(user *user.User, bds board.Boards, msgCh chan Message) {
+	msg := Message{
+		user: user,
+	}
+	for _, bd := range bds {
+		go subscribeChecker(user, bd, msg, msgCh)
+	}
+}
 
-					}
-				}
+func subscribeChecker(user *user.User, bd *board.Board, msg Message, msgCh chan Message) {
+	for _, sub := range user.Subscribes {
+		if bd.Name == sub.Board {
+			msg.board = sub.Board
+			for _, keyword := range sub.Keywords {
+				go keywordChecker(keyword, bd, msg, msgCh)
 			}
-		}(u)
+		}
 	}
 }
 
-func sendMail(user *user.User, board string, keyword string, articles []article.Article) {
+func keywordChecker(keyword string, bd *board.Board, msg Message, msgCh chan Message) {
+	keywordArticles := bd.NewArticles.ContainKeyword(keyword)
+	if len(keywordArticles) != 0 {
+		msg.keyword = keyword
+		msg.articles = keywordArticles
+		fmt.Printf("%+v", msg)
+		msgCh <- msg
+	}
+}
+
+func sendMail(msg Message) {
 	m := new(mail.Mail)
-	m.Title.BoardName = board
-	m.Title.Keyword = keyword
-	m.Body.Articles = articles
-	m.Receiver = user.Profile.Email
+	m.Title.BoardName = msg.board
+	m.Title.Keyword = msg.keyword
+	m.Body.Articles = msg.articles
+	m.Receiver = msg.user.Profile.Email
 
 	m.Send()
 }
