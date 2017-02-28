@@ -11,7 +11,3 @@ Happy Chinese New Year
 * /board/[board name]/articles
 
   [http://localhost:9090/board/free_box/articles](http://localhost:9090/board/free_box/articles)
-
-## AWS DNS
-
-  http://ec2-52-35-134-163.us-west-2.compute.amazonaws.com
