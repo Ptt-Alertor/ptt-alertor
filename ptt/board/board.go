@@ -99,3 +99,8 @@ func (bds Boards) deleteNonNewArticleBoard() Boards {
 	}
 	return bds
 }
+
+func (bd Board) Create() error {
+	err := ioutil.WriteFile(articlesDir+bd.Name+".json", []byte("[]"), 664)
+	return err
+}
