@@ -36,28 +36,34 @@ func (b Board) Index() article.Articles {
 	return b.Articles
 }
 
-func (bs Boards) All() Boards {
-
+func (bds Boards) All() Boards {
 	files, _ := ioutil.ReadDir(articlesDir)
 	for _, file := range files {
 		name, ok := myutil.JsonFile(file)
 		if !ok {
 			continue
 		}
-		b := new(Board)
-		b.Name = name
-		articles, err := ioutil.ReadFile(articlesDir + name + ".json")
+		bd := new(Board)
+		bd.Name = name
+		bds = append(bds, bd)
+	}
+	return bds
+}
+
+func (bds Boards) WithArticles() Boards {
+	for _, bd := range bds {
+		articles, err := ioutil.ReadFile(articlesDir + bd.Name + ".json")
 		if err != nil {
 			log.Fatal(err)
 		}
-		json.Unmarshal(articles, &b.Articles)
-		bs = append(bs, b)
+		json.Unmarshal(articles, &bd.Articles)
 	}
-	return bs
+	return bds
 }
 
-func (bs Boards) WithNewArticles(clean bool) Boards {
-	for _, b := range bs {
+func (bds Boards) WithNewArticles(clean bool) Boards {
+	bds = bds.WithArticles()
+	for _, b := range bds {
 		savedArticles := b.Articles
 		onlineArticles := b.Index()
 		for _, onlineArticle := range onlineArticles {
@@ -74,22 +80,22 @@ func (bs Boards) WithNewArticles(clean bool) Boards {
 	}
 
 	if clean {
-		bs = bs.deleteNonNewArticleBoard()
+		bds = bds.deleteNonNewArticleBoard()
 	}
 
-	return bs
+	return bds
 }
 
-func (bs Boards) deleteNonNewArticleBoard() Boards {
+func (bds Boards) deleteNonNewArticleBoard() Boards {
 
-	for index, bd := range bs {
+	for index, bd := range bds {
 		if len(bd.NewArticles) == 0 {
-			if index < len(bs)-1 {
-				bs = append(bs[:index], bs[index+1:]...)
+			if index < len(bds)-1 {
+				bds = append(bds[:index], bds[index+1:]...)
 			} else {
-				bs = bs[:index]
+				bds = bds[:index]
 			}
 		}
 	}
-	return bs
+	return bds
 }
