@@ -19,12 +19,12 @@ type Message struct {
 }
 
 func (msg Message) Run() {
-	bs := new(board.Boards).All().WithNewArticles(true)
+	bds := new(board.Boards).All().WithNewArticles(true)
 	users := new(user.Users).All()
 	msgCh := make(chan Message)
 	for _, user := range users {
 		msg.email = user.Profile.Email
-		go userChecker(user, bs, msg, msgCh)
+		go userChecker(user, bds, msg, msgCh)
 	}
 
 	for {
