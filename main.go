@@ -8,9 +8,12 @@ import (
 
 	"github.com/julienschmidt/httprouter"
 
+	"encoding/json"
+
 	"github.com/liam-lai/ptt-alertor/hello"
 	"github.com/liam-lai/ptt-alertor/jobs"
 	"github.com/liam-lai/ptt-alertor/ptt/board"
+	"github.com/liam-lai/ptt-alertor/user"
 	"github.com/robfig/cron"
 )
 
@@ -25,6 +28,24 @@ func boardIndex(w http.ResponseWriter, r *http.Request, params httprouter.Params
 	fmt.Fprintf(w, "%s", b.IndexJSON())
 }
 
+func userFind(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+	u := new(user.User).Find(params.ByName("account"))
+	uJSON, _ := json.Marshal(u)
+	fmt.Fprintf(w, "%s", uJSON)
+}
+
+func userCreate(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+	u := new(user.User)
+	err := json.NewDecoder(r.Body).Decode(&u)
+	if err != nil {
+		http.Error(w, "not a json valid format", 400)
+	}
+	err = u.Save()
+	if err != nil {
+		http.Error(w, err.Error(), 400)
+	}
+}
+
 func main() {
 	fmt.Println("----Start Jobs----")
 	startJobs()
@@ -34,6 +55,8 @@ func main() {
 	router := httprouter.New()
 	router.GET("/", index)
 	router.GET("/board/:boardName/articles", boardIndex)
+	router.GET("/users/:account", userFind)
+	router.POST("/users", userCreate)
 
 	err := http.ListenAndServe(":9090", router)
 	if err != nil {
