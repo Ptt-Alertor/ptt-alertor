@@ -1,7 +1,7 @@
 package user
 
 type User interface {
-	All() Users
+	All() []*User
 	Save() error
 	Find() User
 }

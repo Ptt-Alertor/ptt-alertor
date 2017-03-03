@@ -21,82 +21,82 @@
 			"revisionTime": "2017-01-04T18:58:16Z"
 		},
 		{
-			"checksumSHA1": "KVFDqvRaye8z5+NkzQR3SnxBCPM=",
+			"checksumSHA1": "u51TZQnHBbb+BnufpYhQAa2gx/Y=",
 			"path": "github.com/liam-lai/ptt-alertor",
-			"revision": "9d6e52cc3ef715c7fb9afd2c283b6ee31dfc6586",
-			"revisionTime": "2017-03-03T14:56:30Z"
+			"revision": "9b09f64cf7b900eb34de617b9b18e6e462a665f0",
+			"revisionTime": "2017-03-03T15:04:33Z"
 		},
 		{
 			"checksumSHA1": "RhOVc4r2ZiGgj8p/YmIzCrJKIZc=",
 			"path": "github.com/liam-lai/ptt-alertor/crawler",
-			"revision": "9d6e52cc3ef715c7fb9afd2c283b6ee31dfc6586",
-			"revisionTime": "2017-03-03T14:56:30Z"
+			"revision": "9b09f64cf7b900eb34de617b9b18e6e462a665f0",
+			"revisionTime": "2017-03-03T15:04:33Z"
 		},
 		{
 			"checksumSHA1": "5Eg/YOVzwPE3JEWL2Oottd2ObMc=",
 			"path": "github.com/liam-lai/ptt-alertor/hello",
-			"revision": "9d6e52cc3ef715c7fb9afd2c283b6ee31dfc6586",
-			"revisionTime": "2017-03-03T14:56:30Z"
+			"revision": "9b09f64cf7b900eb34de617b9b18e6e462a665f0",
+			"revisionTime": "2017-03-03T15:04:33Z"
 		},
 		{
 			"checksumSHA1": "VPb0Jq5D8k6PsWfIVNRA6aX7V8U=",
 			"path": "github.com/liam-lai/ptt-alertor/jobs",
-			"revision": "9d6e52cc3ef715c7fb9afd2c283b6ee31dfc6586",
-			"revisionTime": "2017-03-03T14:56:30Z"
+			"revision": "9b09f64cf7b900eb34de617b9b18e6e462a665f0",
+			"revisionTime": "2017-03-03T15:04:33Z"
 		},
 		{
 			"checksumSHA1": "GutM4c1C3XlF6r/7eY3Awe0GPwY=",
 			"path": "github.com/liam-lai/ptt-alertor/mail",
-			"revision": "9d6e52cc3ef715c7fb9afd2c283b6ee31dfc6586",
-			"revisionTime": "2017-03-03T14:56:30Z"
+			"revision": "9b09f64cf7b900eb34de617b9b18e6e462a665f0",
+			"revisionTime": "2017-03-03T15:04:33Z"
 		},
 		{
 			"checksumSHA1": "NLJQdUsb7AfpiLkrM1/ulFrasS8=",
 			"path": "github.com/liam-lai/ptt-alertor/models/file/ptt/article",
-			"revision": "9d6e52cc3ef715c7fb9afd2c283b6ee31dfc6586",
-			"revisionTime": "2017-03-03T14:56:30Z"
+			"revision": "9b09f64cf7b900eb34de617b9b18e6e462a665f0",
+			"revisionTime": "2017-03-03T15:04:33Z"
 		},
 		{
 			"checksumSHA1": "xySQbg6FMJp8MoVgDc3FYtp2KYk=",
 			"path": "github.com/liam-lai/ptt-alertor/models/file/ptt/board",
-			"revision": "9d6e52cc3ef715c7fb9afd2c283b6ee31dfc6586",
-			"revisionTime": "2017-03-03T14:56:30Z"
+			"revision": "9b09f64cf7b900eb34de617b9b18e6e462a665f0",
+			"revisionTime": "2017-03-03T15:04:33Z"
 		},
 		{
 			"checksumSHA1": "UKnOrQmpO1IVCtqyMXtGUQnGIFs=",
 			"path": "github.com/liam-lai/ptt-alertor/models/file/user",
-			"revision": "9d6e52cc3ef715c7fb9afd2c283b6ee31dfc6586",
-			"revisionTime": "2017-03-03T14:56:30Z"
+			"revision": "9b09f64cf7b900eb34de617b9b18e6e462a665f0",
+			"revisionTime": "2017-03-03T15:04:33Z"
 		},
 		{
 			"checksumSHA1": "NRuAkMYCLnV/atQTxE93zHONIdE=",
 			"path": "github.com/liam-lai/ptt-alertor/myutil",
-			"revision": "9d6e52cc3ef715c7fb9afd2c283b6ee31dfc6586",
-			"revisionTime": "2017-03-03T14:56:30Z"
+			"revision": "9b09f64cf7b900eb34de617b9b18e6e462a665f0",
+			"revisionTime": "2017-03-03T15:04:33Z"
 		},
 		{
 			"checksumSHA1": "GPbbp7V/ex/lsvt7XirN98cpbHg=",
 			"path": "github.com/liam-lai/ptt-alertor/myutil/collection",
-			"revision": "9d6e52cc3ef715c7fb9afd2c283b6ee31dfc6586",
-			"revisionTime": "2017-03-03T14:56:30Z"
+			"revision": "9b09f64cf7b900eb34de617b9b18e6e462a665f0",
+			"revisionTime": "2017-03-03T15:04:33Z"
 		},
 		{
 			"checksumSHA1": "6DBOFsq9jHlXYbuVbFx3cukeSNc=",
 			"path": "github.com/liam-lai/ptt-alertor/ptt/article",
-			"revision": "9d6e52cc3ef715c7fb9afd2c283b6ee31dfc6586",
-			"revisionTime": "2017-03-03T14:56:30Z"
+			"revision": "9b09f64cf7b900eb34de617b9b18e6e462a665f0",
+			"revisionTime": "2017-03-03T15:04:33Z"
 		},
 		{
 			"checksumSHA1": "vYZxxQaFZy0ckZiwT3yu+Jl2/ww=",
 			"path": "github.com/liam-lai/ptt-alertor/ptt/board",
-			"revision": "9d6e52cc3ef715c7fb9afd2c283b6ee31dfc6586",
-			"revisionTime": "2017-03-03T14:56:30Z"
+			"revision": "9b09f64cf7b900eb34de617b9b18e6e462a665f0",
+			"revisionTime": "2017-03-03T15:04:33Z"
 		},
 		{
-			"checksumSHA1": "hYRCYgs06g0AVd3ZbeJhrtE0xQA=",
+			"checksumSHA1": "lVlAgQAHjF7JPK9tkPNqOLCl/Sw=",
 			"path": "github.com/liam-lai/ptt-alertor/user",
-			"revision": "9d6e52cc3ef715c7fb9afd2c283b6ee31dfc6586",
-			"revisionTime": "2017-03-03T14:56:30Z"
+			"revision": "9b09f64cf7b900eb34de617b9b18e6e462a665f0",
+			"revisionTime": "2017-03-03T15:04:33Z"
 		},
 		{
 			"checksumSHA1": "lEzkjwyqZ1e8Zv/k1t8OW0e+YVQ=",
