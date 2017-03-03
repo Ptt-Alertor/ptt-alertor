@@ -1,14 +1,15 @@
 package jobs
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
 
 	"sync"
 
+	"github.com/liam-lai/ptt-alertor/models/file/ptt/board"
 	"github.com/liam-lai/ptt-alertor/myutil"
-	"github.com/liam-lai/ptt-alertor/ptt/board"
 )
 
 type Fetcher struct {
@@ -36,18 +37,22 @@ func (f Fetcher) Run() {
 	}
 
 	var wg sync.WaitGroup
-	for _, b := range boards {
+	for _, bd := range boards {
 		wg.Add(1)
-		go func(b board.Board) {
+		go func(bd board.Board) {
 			defer wg.Done()
-			fmt.Println(b.Name)
-			articlesJSON := b.IndexJSON()
-			err := ioutil.WriteFile(f.workingDir+b.Name+".json", articlesJSON, 0644)
+			fmt.Println(bd.Name)
+			articles := bd.OnlineArticles()
+			articlesJSON, err := json.Marshal(articles)
 			if err != nil {
 				log.Fatal(err)
 			}
-		}(b)
+			err = ioutil.WriteFile(f.workingDir+bd.Name+".json", articlesJSON, 0644)
+			if err != nil {
+				log.Fatal(err)
+			}
+		}(bd)
 	}
 	wg.Wait()
-	fmt.Println("fetcher done")
+	log.Println("fetcher done")
 }

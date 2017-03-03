@@ -6,19 +6,18 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/liam-lai/ptt-alertor/ptt/article"
+	"github.com/liam-lai/ptt-alertor/models/file/ptt/article"
 
 	"golang.org/x/net/html"
 )
 
-func BuildArticles(board string) article.Articles {
+func BuildArticles(board string) []article.Article {
 
 	htmlNodes := parseHTML(fetchHTML(board))
 
 	articleBlocks := traverseHTMLNode(htmlNodes, findArticleBlocks)
 	targetNodes = make([]*html.Node, 0)
-	articles := make(article.Articles, len(articleBlocks))
-
+	articles := make([]article.Article, len(articleBlocks))
 	for index, articleBlock := range articleBlocks {
 		for _, titleDiv := range traverseHTMLNode(articleBlock, findTitleDiv) {
 			targetNodes = make([]*html.Node, 0)

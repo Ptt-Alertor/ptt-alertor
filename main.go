@@ -12,8 +12,8 @@ import (
 
 	"github.com/liam-lai/ptt-alertor/hello"
 	"github.com/liam-lai/ptt-alertor/jobs"
-	"github.com/liam-lai/ptt-alertor/ptt/board"
-	"github.com/liam-lai/ptt-alertor/user"
+	"github.com/liam-lai/ptt-alertor/models/file/ptt/board"
+	"github.com/liam-lai/ptt-alertor/models/file/user"
 	"github.com/robfig/cron"
 )
 
@@ -23,9 +23,14 @@ func index(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 }
 
 func boardIndex(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-	b := new(board.Board)
-	b.Name = strings.ToUpper(params.ByName("boardName"))
-	fmt.Fprintf(w, "%s", b.IndexJSON())
+	bd := new(board.Board)
+	bd.Name = strings.ToUpper(params.ByName("boardName"))
+	articles := bd.OnlineArticles()
+	articlesJSON, err := json.Marshal(articles)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Fprintf(w, "%s", articlesJSON)
 }
 
 func userFind(w http.ResponseWriter, r *http.Request, params httprouter.Params) {

@@ -7,8 +7,8 @@ import (
 	"log"
 	"strconv"
 
+	"github.com/liam-lai/ptt-alertor/models/file/ptt/article"
 	"github.com/liam-lai/ptt-alertor/myutil"
-	"github.com/liam-lai/ptt-alertor/ptt/article"
 	"gopkg.in/mailgun/mailgun-go.v1"
 )
 

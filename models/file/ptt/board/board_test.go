@@ -6,7 +6,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/liam-lai/ptt-alertor/ptt/article"
+	"github.com/liam-lai/ptt-alertor/models/file/ptt/article"
 )
 
 func TestIndex(t *testing.T) {
@@ -20,7 +20,7 @@ func TestIndex(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			articleJSON := tt.b.Index()
+			articleJSON, _ := json.Marshal(tt.b.OnlineArticles())
 			var articles []article.Article
 			json.NewDecoder(bytes.NewReader(articleJSON)).Decode(articles)
 
