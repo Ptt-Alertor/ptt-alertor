@@ -49,6 +49,7 @@ func (bd *Board) WithArticles() {
 }
 
 func (bd *Board) WithNewArticles() {
+	bd.WithArticles()
 	savedArticles := bd.Articles
 	onlineArticles := bd.OnlineArticles()
 	for _, onlineArticle := range onlineArticles {
