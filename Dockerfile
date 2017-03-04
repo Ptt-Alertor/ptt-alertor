@@ -37,11 +37,9 @@ ADD . "$GOPATH"/src/"$GO_WORKDIR"
 RUN go get "$GO_WORKDIR"
 RUN go install "$GO_WORKDIR"
 
-CMD cron && tail -f /var/log/cron.log
-#RUN sh "$GOPATH"/src/"$GO_WORKDIR"/.codecov_docker.sh
-
 # Run the outyet command by default when the container starts.
-#ENTRYPOINT /go/bin/ptt-alertor
+#CMD cron -f  
+ENTRYPOINT cron -f  
 
 # Document that the service listens on port 9090.
 EXPOSE 9090
