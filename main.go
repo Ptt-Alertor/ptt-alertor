@@ -12,8 +12,8 @@ import (
 
 	"github.com/liam-lai/ptt-alertor/hello"
 	"github.com/liam-lai/ptt-alertor/jobs"
-	"github.com/liam-lai/ptt-alertor/models/file/ptt/board"
-	"github.com/liam-lai/ptt-alertor/models/file/user"
+	board "github.com/liam-lai/ptt-alertor/models/ptt/board/file"
+	user "github.com/liam-lai/ptt-alertor/models/user/file"
 	"github.com/robfig/cron"
 )
 

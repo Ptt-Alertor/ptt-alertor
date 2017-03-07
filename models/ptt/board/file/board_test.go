@@ -1,12 +1,11 @@
-package board
-
+package file
 import (
 	"bytes"
 	"encoding/json"
 	"reflect"
 	"testing"
 
-	"github.com/liam-lai/ptt-alertor/models/file/ptt/article"
+	"github.com/liam-lai/ptt-alertor/models/ptt/article/file"
 )
 
 func TestIndex(t *testing.T) {

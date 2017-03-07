@@ -1,4 +1,4 @@
-package board
+package file
 
 import (
 	"encoding/json"
@@ -8,12 +8,13 @@ import (
 	"reflect"
 
 	"github.com/liam-lai/ptt-alertor/crawler"
-	"github.com/liam-lai/ptt-alertor/models/file/ptt/article"
+	"github.com/liam-lai/ptt-alertor/models/ptt/article"
+	"github.com/liam-lai/ptt-alertor/models/ptt/board"
 	"github.com/liam-lai/ptt-alertor/myutil"
 )
 
 type Board struct {
-	Name        string
+	board.Board
 	Articles    []article.Article
 	NewArticles []article.Article
 }

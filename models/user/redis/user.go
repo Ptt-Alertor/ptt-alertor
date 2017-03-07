@@ -1,4 +1,4 @@
-package user
+package redis
 
 import (
 	"encoding/json"
@@ -8,20 +8,12 @@ import (
 
 	"log"
 
+	"github.com/liam-lai/ptt-alertor/models/user"
 	"github.com/liam-lai/ptt-alertor/myutil"
 )
 
 type User struct {
-	Profile struct {
-		Account string `json:"account"`
-		Email   string `json:"email"`
-	}
-	Subscribes []Subscribe
-}
-
-type Subscribe struct {
-	Board    string
-	Keywords []string
+	user.User
 }
 
 var usersDir string = myutil.StoragePath() + "/users/"

@@ -6,7 +6,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/liam-lai/ptt-alertor/models/file/ptt/article"
+	"github.com/liam-lai/ptt-alertor/models/ptt/article"
 
 	"golang.org/x/net/html"
 )
@@ -31,6 +31,7 @@ func BuildArticles(board string) []article.Article {
 			}
 
 			for _, anchor := range traverseHTMLNode(titleDiv, findAnchor) {
+				fmt.Printf("%+v", anchor)
 				articles[index].Title = anchor.FirstChild.Data
 				articles[index].Link = getAnchorLink(anchor)
 			}

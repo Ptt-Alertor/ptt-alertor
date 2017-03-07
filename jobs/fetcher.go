@@ -8,7 +8,7 @@ import (
 
 	"sync"
 
-	"github.com/liam-lai/ptt-alertor/models/file/ptt/board"
+	board "github.com/liam-lai/ptt-alertor/models/ptt/board/file"
 	"github.com/liam-lai/ptt-alertor/myutil"
 )
 

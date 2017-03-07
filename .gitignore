@@ -34,3 +34,6 @@ coverage.txt
 
 # Editor setting file
 .vscode/
+
+# Delve golang debugger
+debug

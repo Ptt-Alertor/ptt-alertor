@@ -3,8 +3,8 @@ package jobs
 import (
 	"fmt"
 
-	"github.com/liam-lai/ptt-alertor/models/file/ptt/board"
-	"github.com/liam-lai/ptt-alertor/models/file/user"
+	board "github.com/liam-lai/ptt-alertor/models/ptt/board/file"
+	user "github.com/liam-lai/ptt-alertor/models/user/file"
 )
 
 type GenBoards struct {

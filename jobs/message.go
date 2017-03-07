@@ -5,9 +5,9 @@ import (
 	"time"
 
 	"github.com/liam-lai/ptt-alertor/mail"
-	"github.com/liam-lai/ptt-alertor/models/file/ptt/article"
-	"github.com/liam-lai/ptt-alertor/models/file/ptt/board"
-	"github.com/liam-lai/ptt-alertor/models/file/user"
+	"github.com/liam-lai/ptt-alertor/models/ptt/article"
+	board "github.com/liam-lai/ptt-alertor/models/ptt/board/file"
+	user "github.com/liam-lai/ptt-alertor/models/user/file"
 )
 
 type Message struct {
