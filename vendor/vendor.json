@@ -1,0 +1,37 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"checksumSHA1": "O/QVS0SPzCiPTGKR1H9FVGUmki4=",
+			"path": "github.com/julienschmidt/httprouter",
+			"revision": "8a45e95fc75cb77048068a62daed98cc22fdac7c",
+			"revisionTime": "2017-01-04T18:58:16Z"
+		},
+		{
+			"checksumSHA1": "lEzkjwyqZ1e8Zv/k1t8OW0e+YVQ=",
+			"path": "github.com/robfig/cron",
+			"revision": "9585fd555638e77bba25f25db5c44b41f264aeb7",
+			"revisionTime": "2016-09-27T16:42:31Z"
+		},
+		{
+			"checksumSHA1": "vqc3a+oTUGX8PmD0TS+qQ7gmN8I=",
+			"path": "golang.org/x/net/html",
+			"revision": "007e530097ad7f954752df63046b4036f98ba6a6",
+			"revisionTime": "2017-02-01T22:13:12Z"
+		},
+		{
+			"checksumSHA1": "00eQaGynDYrv3tL+C7l9xH0IDZg=",
+			"path": "golang.org/x/net/html/atom",
+			"revision": "007e530097ad7f954752df63046b4036f98ba6a6",
+			"revisionTime": "2017-02-01T22:13:12Z"
+		},
+		{
+			"checksumSHA1": "njR1GW5phOGryMm6B/zxUBQMIMc=",
+			"path": "gopkg.in/mailgun/mailgun-go.v1",
+			"revision": "369a1fa57ce6fb314e627087b9fff0db5c266c0f",
+			"revisionTime": "2016-08-25T14:42:04Z"
+		}
+	],
+	"rootPath": "github.com/liam-lai/ptt-alertor"
+}
