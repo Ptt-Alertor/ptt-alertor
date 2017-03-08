@@ -1,43 +1,52 @@
-package file
+package redis
 
 import (
 	"encoding/json"
-	"io/ioutil"
+
 	"log"
 
+	"github.com/garyburd/redigo/redis"
+	"github.com/liam-lai/ptt-alertor/connections"
 	"github.com/liam-lai/ptt-alertor/models/ptt/article"
 	"github.com/liam-lai/ptt-alertor/models/ptt/board"
-	"github.com/liam-lai/ptt-alertor/myutil"
 )
+
+const prefix string = "board:"
 
 type Board struct {
 	board.Board
 }
 
-var articlesDir string = myutil.StoragePath() + "/articles/"
-
 func (bd Board) All() []*Board {
-	files, _ := ioutil.ReadDir(articlesDir)
+	conn := connections.Redis()
+	defer conn.Close()
+	boards, err := redis.Strings(conn.Do("SMEMBERS", "boards"))
+	if err != nil {
+		log.Fatal(err)
+	}
 	bds := make([]*Board, 0)
-	for _, file := range files {
-		name, ok := myutil.JsonFile(file)
-		if !ok {
-			continue
-		}
+	for _, board := range boards {
 		bd := new(Board)
-		bd.Name = name
+		bd.Name = board
 		bds = append(bds, bd)
 	}
 	return bds
 }
 
 func (bd Board) GetArticles() []article.Article {
-	articlesJSON, err := ioutil.ReadFile(articlesDir + bd.Name + ".json")
+	conn := connections.Redis()
+	defer conn.Close()
+
+	key := prefix + bd.Name
+	articlesJSON, err := redis.Bytes(conn.Do("GET", key))
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	articles := make([]article.Article, 0)
-	json.Unmarshal(articlesJSON, &articles)
+	if articlesJSON != nil {
+		json.Unmarshal(articlesJSON, &articles)
+	}
 	return articles
 }
 
@@ -50,16 +59,21 @@ func (bd *Board) WithNewArticles() {
 }
 
 func (bd Board) Create() error {
-	err := ioutil.WriteFile(articlesDir+bd.Name+".json", []byte("[]"), 664)
+	conn := connections.Redis()
+	defer conn.Close()
+	_, err := conn.Do("SADD", "boards", bd.Name)
 	return err
 }
 
 func (bd Board) Save() error {
+	conn := connections.Redis()
+	defer conn.Close()
+
 	articlesJSON, err := json.Marshal(bd.Articles)
 	if err != nil {
 		log.Fatal(err)
 	}
-	err = ioutil.WriteFile(articlesDir+bd.Name+".json", articlesJSON, 0644)
+	_, err = conn.Do("SET", prefix+bd.Name, articlesJSON)
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -1,33 +1,29 @@
 package file
+
 import (
-	"bytes"
-	"encoding/json"
+	"fmt"
 	"reflect"
 	"testing"
 
-	"github.com/liam-lai/ptt-alertor/models/ptt/article/file"
+	"github.com/liam-lai/ptt-alertor/models/ptt/board"
 )
 
-func TestIndex(t *testing.T) {
+func TestBoard_GetArticles(t *testing.T) {
 	tests := []struct {
 		name string
-		b    Board
-		want []byte
+		bd   Board
+		want string
 	}{
 		// TODO: Add test cases.
-		{"FREE_BOX", Board{Name: "FREE_BOX"}, []byte("[{}]")},
+		{"TestJoke", Board{board.Board{Name: "joke"}}, "article.Article"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			articleJSON, _ := json.Marshal(tt.b.OnlineArticles())
-			var articles []article.Article
-			json.NewDecoder(bytes.NewReader(articleJSON)).Decode(articles)
-
-			articleType := reflect.TypeOf(articles[0])
-			if articleType.String() != "article.Article" {
-				t.Errorf("FirstPage() content error")
+			got := tt.bd.GetArticles()
+			fmt.Println(reflect.TypeOf(got[0]))
+			if reflect.TypeOf(got[0]).String() != tt.want {
+				t.Errorf("Board.GetArticles() = %v, want %v", got, tt.want)
 			}
-
 		})
 	}
 }
