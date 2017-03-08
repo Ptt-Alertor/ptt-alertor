@@ -2,6 +2,7 @@ package jobs
 
 import (
 	"fmt"
+	"log"
 
 	board "github.com/liam-lai/ptt-alertor/models/ptt/board/file"
 	user "github.com/liam-lai/ptt-alertor/models/user/file"
@@ -28,4 +29,5 @@ func (gb GenBoards) Run() {
 			}
 		}
 	}
+	log.Println("----Boards Generated----")
 }
