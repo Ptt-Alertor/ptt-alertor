@@ -59,7 +59,7 @@ func main() {
 
 	router := httprouter.New()
 	router.GET("/", index)
-	router.GET("/board/:boardName/articles", boardIndex)
+	router.GET("/boards/:boardName/articles", boardIndex)
 	router.GET("/users/:account", userFind)
 	router.POST("/users", userCreate)
 
