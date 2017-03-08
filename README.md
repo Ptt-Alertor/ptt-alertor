@@ -8,6 +8,31 @@ Happy Chinese New Year
 
 ## Path
 
-* /board/[board name]/articles
+### Board
 
-  [http://localhost:9090/board/free_box/articles](http://localhost:9090/board/free_box/articles)
+* /boards/[board name]/articles
+
+### User
+
+* GET /users/[account]
+
+* POST /users
+
+```
+{
+    "profile":{
+        "account": "sample",
+        "email":"sample@mail.com" 
+    },
+    "subscribes":[
+        {
+            "board":"gossiping",
+            "keywords":["問卦","爆卦","公告"]
+        },
+        {
+            "board":"lol",
+            "keywords":["閒聊"]
+        }
+    ]
+}
+```
