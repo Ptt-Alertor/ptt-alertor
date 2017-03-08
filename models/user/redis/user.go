@@ -2,12 +2,13 @@ package redis
 
 import (
 	"encoding/json"
-	"io/ioutil"
 
 	"errors"
 
 	"log"
 
+	"github.com/garyburd/redigo/redis"
+	"github.com/liam-lai/ptt-alertor/connections"
 	"github.com/liam-lai/ptt-alertor/models/user"
 	"github.com/liam-lai/ptt-alertor/myutil"
 )
@@ -16,27 +17,30 @@ type User struct {
 	user.User
 }
 
+const prefix string = "user:"
+
 var usersDir string = myutil.StoragePath() + "/users/"
 
 func (u User) All() []*User {
-	files, _ := ioutil.ReadDir(usersDir)
+	conn := connections.Redis()
+	userKeys, _ := redis.Strings(conn.Do("KEYS", "user:*"))
 	us := make([]*User, 0)
-	for _, file := range files {
-		_, ok := myutil.JsonFile(file)
-		if !ok {
-			continue
-		}
-		userJSON, _ := ioutil.ReadFile(usersDir + file.Name())
+	for _, uKey := range userKeys {
+		uJSON, _ := redis.Bytes(conn.Do("GET", uKey))
 		var user User
-		_ = json.Unmarshal(userJSON, &user)
+		_ = json.Unmarshal(uJSON, &user)
 		us = append(us, &user)
 	}
 	return us
 }
 
 func (u User) Save() error {
-	_, err := ioutil.ReadFile(usersDir + u.Profile.Account + ".json")
-	if err == nil {
+
+	conn := connections.Redis()
+	key := prefix + u.Profile.Account
+	val, err := conn.Do("GET", key)
+
+	if val != nil {
 		return errors.New("user already exist")
 	}
 
@@ -52,7 +56,9 @@ func (u User) Save() error {
 	if err != nil {
 		return err
 	}
-	err = ioutil.WriteFile(usersDir+u.Profile.Account+".json", uJSON, 664)
+
+	_, err = conn.Do("SET", key, uJSON, "NX")
+
 	if err != nil {
 		return err
 	}
@@ -60,13 +66,17 @@ func (u User) Save() error {
 }
 
 func (u User) Find(account string) User {
-	uJSON, err := ioutil.ReadFile(usersDir + account + ".json")
-	if err != nil {
-		return u
+	conn := connections.Redis()
+	defer conn.Close()
+
+	key := prefix + account
+	uJSON, err := redis.Bytes(conn.Do("GET", key))
+	if uJSON != nil {
+		err = json.Unmarshal(uJSON, &u)
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
-	err = json.Unmarshal(uJSON, &u)
-	if err != nil {
-		log.Fatal(err)
-	}
+
 	return u
 }
