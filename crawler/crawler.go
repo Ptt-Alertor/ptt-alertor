@@ -31,7 +31,6 @@ func BuildArticles(board string) []article.Article {
 			}
 
 			for _, anchor := range traverseHTMLNode(titleDiv, findAnchor) {
-				fmt.Printf("%+v", anchor)
 				articles[index].Title = anchor.FirstChild.Data
 				articles[index].Link = getAnchorLink(anchor)
 			}
