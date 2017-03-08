@@ -1,9 +1,7 @@
 package mail
 
 import (
-	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"strconv"
 
@@ -59,27 +57,11 @@ func (mail Mail) Send() {
 }
 
 func newMailgun() mailgun.Mailgun {
-	config := readConfig()
+	config := myutil.Config("mailgun")
 
 	domain := config["domain"]
 	apiKey := config["apiKey"]
 	publicAPIKey := config["publicAPIKey"]
 
 	return mailgun.NewMailgun(domain, apiKey, publicAPIKey)
-}
-
-func readConfig() map[string]string {
-	projectRoot := myutil.ProjectRootPath()
-	mailgunConfigJSON, err := ioutil.ReadFile(projectRoot + "/config/mailgun.json")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	var config map[string]string
-	err = json.Unmarshal(mailgunConfigJSON, &config)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	return config
 }
