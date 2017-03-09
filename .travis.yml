@@ -13,9 +13,11 @@ after_success:
 - pip install --user awscli
 - export PATH=$PATH:$HOME/.local/bin
 - export AWS_ACCESS_KEY_ID=AKIAIJ2BDRBZK5Y2FKXA
+- export AWS_Docker_Repo=896146012256.dkr.ecr.us-west-2.amazonaws.com/ptt-alertor-repo
 - eval $(aws ecr get-login --region us-west-2)
 - docker tag liam-lai/ptt-alertor:latest $AWS_Docker_Repo:latest
 - docker push $AWS_Docker_Repo:latest
+
 
 deploy:
 - provider: script
@@ -30,5 +32,4 @@ notifications:
 
 env:
   global:
-    AWS_Docker_Repo: 896146012256.dkr.ecr.us-west-2.amazonaws.com/ptt-alertor-repo
     secure: jAP0fJY1q+t+Polx6aBIfnVtwz64NMDYsdkfmJYepc0h//daRkOngskeaF1+ZDwLYM3BFGYH3x4NI/jvWHeYshB6XgRnRSFxlKq2InmMR1tL2mw6yXYC7xIzMCfCIM4pNLLZR+oE4MdjHp87gv9MfpGGHUw9Y02rVuqDBuC/bc0qqiJ+9BmFu03xfJw5JERWOjjd+NR8wiU+82kul4u5uJFvvzNWOmQoh6vB12KtTw2Jfnp018A919CR7Ct2h/GUYJb7UECJ675RCpD/PiXrneffotV1WKdAAX/6zWqSqN+2HHfDFM8UJsyNiLvrYbjGEk+E9iYErulgnAQecG5PQusqrvffPbntg2dFuG55lytkic8+f3u6U6Wtf+eVq+Ib0E3Uu7MzUZ1rMmK3lct+fgsR9dElgdsxam00bUADur3kUAwthpSEvV/clmtJ00Mf4y0+4P9NpKRF0uLW7BOA/dffd3+wpgy0Y0qod1Rq0MeItlLNdln6H/iFSH5Vp9MGYYqoADJ9JYrurZIdMms03w55qgOBQ4buYj6dafUD762LVzrppKOuj2YMZ5vWPPF8Y1pJubjjxQuFm0i3v0Yr03VE99TwFF3TFmrXztr9U/t2U+1FEupf9YPjvEgCAovv/sPcfqkxkwLfn4k9cpJM+dflxxh6uxF7DP4CD9YrKfo=
