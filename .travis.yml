@@ -14,8 +14,8 @@ after_success:
 - export PATH=$PATH:$HOME/.local/bin
 - export AWS_ACCESS_KEY_ID=AKIAIJ2BDRBZK5Y2FKXA
 - eval $(aws ecr get-login --region us-west-2)
-- docker tag liam-lai/ptt-alertor:latest 896146012256.dkr.ecr.us-west-2.amazonaws.com/ptt-alertor-repo:latest
-- docker push 896146012256.dkr.ecr.us-west-2.amazonaws.com/ptt-alertor-repo:latest
+- docker tag liam-lai/ptt-alertor:latest $AWS_Docker_Repo:latest
+- docker push $AWS_Docker_Repo:latest
 
 deploy:
 - provider: script
