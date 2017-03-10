@@ -12,7 +12,7 @@ after_success:
 - docker --version
 - pip install --user awscli
 - export PATH=$PATH:$HOME/.local/bin
-- export AWS_ACCESS_KEY_ID=AKIAIT7YQFXCSVWW2P2Q
+- export AWS_ACCESS_KEY_ID=AKIAIE4PWSIS5SCEF3TA
 - export AWS_Docker_Repo=896146012256.dkr.ecr.us-west-2.amazonaws.com/ptt-alertor-repo
 - eval $(aws ecr get-login --region us-west-2)
 - docker tag liam-lai/ptt-alertor:latest $AWS_Docker_Repo:latest
@@ -27,4 +27,4 @@ notifications:
   slack: meifamily:9oYnHKf0nlRn8QafX4PRZ1lC
 env:
   global:
-  - secure: T8e3K+KDUU17pusA5h0grzs0/Si/23kyZOkwh269KH3EmM35ZeKqm8PvLuJYsuY79577aT41u7VxQm7XVIrq4HD7L6uv6kmk6ONlKMHT9rWjMBsfBofw9CDkkOBby/NF9noQJuKA02Tb30OweeinUnAsVJ/0yTN/bjpVcFxN7+r/hyPTenO5Joz4m0InFlj54llJ4zHSsetm56yuZ2gj6rtarOgZC8CxZR/cUd/OHIilwiUX+1ce/FMFEv8ia8xWcp3/YLgjoJJEcKlkXR1+l0Y4rKgOW0PMBc/qUe4GlE6w4mNb/FQvkFnt87uijqo512Fsy7IjyB3RBVOmHNCsUYwGVdCu7pDvpumS5IUwxy9XXx+rCH2Ic1E1r9O2hKLDINT3DwotMBAxIkBfqBGSA2WYLjdUP4by3US2grmkzPnqVNBTud+8tiKuzZGvVSAaxCS1UiT3yyzeJ0ZCaj26eGklIzyFH9uad/aYJjwsvwx1L84LSodSgb2QOBxkWssCjnRIGhk3xmqGpZooZxI36mxfAj0wcNmdPafGGOOnmN2LxvegCBbWNGJoN4+3C3H28fdeUx3LbZTe2c1C8MLyjk5WDMMf23s5BS2R32RnyQFfn+a8r5w1E5SDkXP2iZ5JRt9sOIcnaysIe0e39tX39jLEnmaKxIVNxKofrCqBPJY=
+  - secure: pcK6KNugqPILq29+pgPfbPNue+iK8w+4OtiZZwHBhsJ9bsggqBHfDRhGJd7PH/AecNkz4rYuBUea80BQcB/seRKtiHiBYrGPq+Bh+6KFTSoocBeRRB1gxVMonaAUd36FNdbvozIimA1GCCjWzaUe/BfwESmmuBIzEqf1wys9qV7F3YRASDeeG377CTDgAgBw7ClFofqyh4KXK8CmbIgOGW/+fsatxdA8dGB9ATWPzKICY8qJIjU/BXFuQuRQhv48d5ePRzVUNcx1qxTKbc9XHT3gmpxoBcNB6nPDUY9/MFfq0hz7RGAUl2RQRKtVvN3Hi3iVwwSoQXV8NDJS8Rbns2XX3KbjfT5UN91J7tBh13sYM6z25UTX3/R/d+wrJS4B63Lfs0UxpzIzLMlj/jnzEN1l6At4p2SPpNscGikORbEQ+AO9bjN3CTN9Zdy4PVA10rjOv+ejd+6Ta/Khi4MjsWGx388xvcfM7Cf8CGHJz1EiNpbWsGnea/p1mdmGHzzRSSNKV410PjWwgj5o0qk3lQFppbnDJmcXGhiQobvZ7oDryt9fabzz68jZ1BWzPnRyjmlcJQc3boyyMzuXT/v+u8QbqJkKXM5CjfqP+9mL0UGT+KULBZC7V2oDAnj9LDGyYSVDyT+KgEDkyU16AMUTvF2gtzlH2jkcMk/eNdhzFi0=
