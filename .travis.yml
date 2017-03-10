@@ -8,15 +8,17 @@ before_install:
 - docker ps -a
 script:
 - docker run -d -p 9090:9090 liam-lai/ptt-alertor
+before_deploy:
+- docker --version
+- pip install --user awscli
+- export PATH=$PATH:$HOME/.local/bin
+- export AWS_ACCESS_KEY_ID=AKIAIE4PWSIS5SCEF3TA
+- export AWS_Docker_Repo=896146012256.dkr.ecr.us-west-2.amazonaws.com/ptt-alertor-repo
+- eval $(aws ecr get-login --region us-west-2)
+
 deploy:
 - provider: script
   script: 
-  - docker --version
-  - pip install --user awscli
-  - export PATH=$PATH:$HOME/.local/bin
-  - export AWS_ACCESS_KEY_ID=AKIAIE4PWSIS5SCEF3TA
-  - export AWS_Docker_Repo=896146012256.dkr.ecr.us-west-2.amazonaws.com/ptt-alertor-repo
-  - eval $(aws ecr get-login --region us-west-2)
   - docker tag liam-lai/ptt-alertor:latest $AWS_Docker_Repo:latest
   - docker push $AWS_Docker_Repo:latest
   - bash ./deploy/ecs-deploy -r us-west-2 -c ptt-alertor-cluster -n ptt-alertor-service -i $AWS_Docker_Repo -m 0 -M 200 -t 240 -D 1
