@@ -37,3 +37,6 @@ coverage.txt
 
 # Delve golang debugger
 debug
+
+# terraform tempfile 
+terra_config/terraform*
