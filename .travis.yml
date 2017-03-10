@@ -12,23 +12,19 @@ after_success:
 - docker --version
 - pip install --user awscli
 - export PATH=$PATH:$HOME/.local/bin
-- export AWS_ACCESS_KEY_ID=AKIAIJ2BDRBZK5Y2FKXA
+- export AWS_ACCESS_KEY_ID=AKIAIT7YQFXCSVWW2P2Q
 - export AWS_Docker_Repo=896146012256.dkr.ecr.us-west-2.amazonaws.com/ptt-alertor-repo
 - eval $(aws ecr get-login --region us-west-2)
 - docker tag liam-lai/ptt-alertor:latest $AWS_Docker_Repo:latest
 - docker push $AWS_Docker_Repo:latest
-
 deploy:
 - provider: script
-  script: bash ./deploy/ecs-deploy -r us-west-2 -c ptt-alertor-cluster -n ptt-alertor-service -i $AWS_Docker_Repo -m 0 -M 200 -t 240 -D 1
+  script: bash ./deploy/ecs-deploy -r us-west-2 -c ptt-alertor-cluster -n ptt-alertor-service
+    -i $AWS_Docker_Repo -m 0 -M 200 -t 240 -D 1
   on:
     branch: cronjob
-#after_deploy:
-#Test
-
 notifications:
   slack: meifamily:9oYnHKf0nlRn8QafX4PRZ1lC
-
 env:
   global:
-    secure: jAP0fJY1q+t+Polx6aBIfnVtwz64NMDYsdkfmJYepc0h//daRkOngskeaF1+ZDwLYM3BFGYH3x4NI/jvWHeYshB6XgRnRSFxlKq2InmMR1tL2mw6yXYC7xIzMCfCIM4pNLLZR+oE4MdjHp87gv9MfpGGHUw9Y02rVuqDBuC/bc0qqiJ+9BmFu03xfJw5JERWOjjd+NR8wiU+82kul4u5uJFvvzNWOmQoh6vB12KtTw2Jfnp018A919CR7Ct2h/GUYJb7UECJ675RCpD/PiXrneffotV1WKdAAX/6zWqSqN+2HHfDFM8UJsyNiLvrYbjGEk+E9iYErulgnAQecG5PQusqrvffPbntg2dFuG55lytkic8+f3u6U6Wtf+eVq+Ib0E3Uu7MzUZ1rMmK3lct+fgsR9dElgdsxam00bUADur3kUAwthpSEvV/clmtJ00Mf4y0+4P9NpKRF0uLW7BOA/dffd3+wpgy0Y0qod1Rq0MeItlLNdln6H/iFSH5Vp9MGYYqoADJ9JYrurZIdMms03w55qgOBQ4buYj6dafUD762LVzrppKOuj2YMZ5vWPPF8Y1pJubjjxQuFm0i3v0Yr03VE99TwFF3TFmrXztr9U/t2U+1FEupf9YPjvEgCAovv/sPcfqkxkwLfn4k9cpJM+dflxxh6uxF7DP4CD9YrKfo=
+  - secure: T8e3K+KDUU17pusA5h0grzs0/Si/23kyZOkwh269KH3EmM35ZeKqm8PvLuJYsuY79577aT41u7VxQm7XVIrq4HD7L6uv6kmk6ONlKMHT9rWjMBsfBofw9CDkkOBby/NF9noQJuKA02Tb30OweeinUnAsVJ/0yTN/bjpVcFxN7+r/hyPTenO5Joz4m0InFlj54llJ4zHSsetm56yuZ2gj6rtarOgZC8CxZR/cUd/OHIilwiUX+1ce/FMFEv8ia8xWcp3/YLgjoJJEcKlkXR1+l0Y4rKgOW0PMBc/qUe4GlE6w4mNb/FQvkFnt87uijqo512Fsy7IjyB3RBVOmHNCsUYwGVdCu7pDvpumS5IUwxy9XXx+rCH2Ic1E1r9O2hKLDINT3DwotMBAxIkBfqBGSA2WYLjdUP4by3US2grmkzPnqVNBTud+8tiKuzZGvVSAaxCS1UiT3yyzeJ0ZCaj26eGklIzyFH9uad/aYJjwsvwx1L84LSodSgb2QOBxkWssCjnRIGhk3xmqGpZooZxI36mxfAj0wcNmdPafGGOOnmN2LxvegCBbWNGJoN4+3C3H28fdeUx3LbZTe2c1C8MLyjk5WDMMf23s5BS2R32RnyQFfn+a8r5w1E5SDkXP2iZ5JRt9sOIcnaysIe0e39tX39jLEnmaKxIVNxKofrCqBPJY=

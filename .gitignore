@@ -40,3 +40,4 @@ debug
 
 # terraform tempfile 
 terra_config/terraform*
+terra_config/provider.tf
