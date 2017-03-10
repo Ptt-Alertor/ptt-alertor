@@ -1,1 +1,0 @@
-* * * * * root go run github.com\liam-lai\ptt-alertor\job\main.go >> /var/log/cron.log 2>&1
