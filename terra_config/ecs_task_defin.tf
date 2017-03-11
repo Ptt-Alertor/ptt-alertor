@@ -3,8 +3,8 @@ resource "aws_ecs_task_definition" "service" {
   container_definitions = "${file("task-definitions/service.json")}"
 
   volume {
-    name = "service-storage"
-    host_path = "/ecs/service-storage"
+    name = "config"
+    host_path = "/etc/ecs/config"
   }
 
   placement_constraints {

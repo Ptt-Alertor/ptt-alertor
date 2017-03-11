@@ -17,6 +17,12 @@ resource "aws_elb" "ptt-alertor" {
     lb_protocol = "http"
   }
 
+  listener {
+    instance_port = 22
+    instance_protocol = "TCP"
+    lb_port = 22
+    lb_protocol = "TCP"
+  }
   health_check {
     healthy_threshold = 2
     unhealthy_threshold = 2
@@ -29,7 +35,7 @@ resource "aws_elb" "ptt-alertor" {
   idle_timeout = 400
   connection_draining = true
   connection_draining_timeout = 400
-
+  security_groups = ["${aws_security_group.ecs.id}"]
   tags {
     Name = "ptt-alertor-terraform-elb"
   }

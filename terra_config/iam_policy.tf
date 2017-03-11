@@ -24,9 +24,29 @@ resource "aws_iam_policy" "ptt-alertor-policy" {
         "logs:PutLogEvents"
       ],
       "Resource": "*"
+    },
+
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:ListBucket"
+      ],
+      "Resource": [
+        "arn:aws:s3:::${var.s3_bucket_name}/config/*"
+      ]
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:PutObject",
+        "s3:GetObject",
+        "s3:DeleteObject"
+      ],
+      "Resource": [
+        "arn:aws:s3:::${var.s3_bucket_name}/config/*"
+      ]
     }
   ]
 }
 EOF
 }
-

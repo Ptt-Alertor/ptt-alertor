@@ -23,7 +23,7 @@ variable "ecs_cluster_name" {
 
 variable "s3_bucket_name" {
   description = "The name of the s3 bucket to store the registry data in."
-  default = "s3-ecs-docker-registry.example.com"
+  default = "ptt-alertor-bucket"
 }
 
 variable "registry_username" {
