@@ -33,7 +33,7 @@ RUN go get "$GO_WORKDIR"
 RUN go install "$GO_WORKDIR"
 
 # Run the outyet command by default when the container starts.
-#ENTRYPOINT /go/bin/ptt-alertor
+ENTRYPOINT /go/bin/ptt-alertor
 
 # Document that the service listens on port 9090.
-#EXPOSE 9090
+EXPOSE 9090
