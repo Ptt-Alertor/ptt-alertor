@@ -26,11 +26,11 @@ RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH"
 WORKDIR $GOPATH
 
 COPY docker_golang_1.7/go-wrapper /usr/local/bin/
+
 ADD . "$GOPATH"/src/"$GO_WORKDIR"
 
 RUN go get "$GO_WORKDIR"
 RUN go install "$GO_WORKDIR"
-#RUN sh "$GOPATH"/src/"$GO_WORKDIR"/.codecov_docker.sh
 
 # Run the outyet command by default when the container starts.
 ENTRYPOINT /go/bin/ptt-alertor

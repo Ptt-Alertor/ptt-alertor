@@ -1,0 +1,8 @@
+# comment 
+   .*
+   Dockerfile*
+   docker_goland_1.7/*
+   LICENSE*
+   README.md
+   logo.jpg
+   
