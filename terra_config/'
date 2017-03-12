@@ -16,40 +16,29 @@ variable "availability_zones" {
   default = "us-west-2a"
 }
 
-variable "autoscaling_group_name"      { default = "ecs-asg" }
+variable "ecs_cluster_name" {
+  description = "The name of the Amazon ECS cluster."
+  default = "default"
+}
 
-variable "autoscaling_min_size"        { default = "1"}
-variable "autoscaling_max_size"        { default = "10"}
-variable "autoscaling_desired_size"    { default = "1"}
-
-variable "launch_configuration_name"   { default = "ecs" }
-variable "cloudwatch_log_group_name"   { default = "ptt-alertor"}
-
-variable "ecs_cluster_name"            { default = "ptt-alertor-cluster" }
-
-variable "ecs_service_name"            { default = "ptt-alertor-service" }
-variable "ecs_service_desired_count"   { default = "1" }
-variable "ecs_service_healthy_min"     { default = "0" }
-variable "ecs_service_healthy_max"     { default = "200" }
-variable "ecs_service_place_type"      { default = "binpack" }
-variable "ecs_service_place_field"     { default = "cpu" }
-variable "ecs_service_lb_contain_name" { default = "first" }
-variable "ecs_service_lb_contain_port" { default = "9090" }
-
-variable "s3_bucket_name"              { default = "ptt-alertor-bucket" }
+variable "s3_bucket_name" {
+  description = "The name of the s3 bucket to store the registry data in."
+  default = "ptt-alertor-bucket"
+}
 
 variable "ecr_repository_name" {
   description = "The username to use when connecting to the registry."
-  default = "ptt-alertor-repo"
-}
-
-variable "registry_docker_image" {
-   default = "896146012256.dkr.ecr.us-west-2.amazonaws.com/ptt-alertor-repo"
+  default = "ptt-alertor_repo"
 }
 
 variable "registry_username" {
   description = "The username to use when connecting to the registry."
   default = "Registry"
+}
+
+variable "registry_docker_image" {
+  description = "The docker image to use when provisioning the registry."
+  default     = "${aws_ecr_repository.repository_url}"
 }
 
 /* ECS optimized AMIs per region */

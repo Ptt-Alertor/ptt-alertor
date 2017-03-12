@@ -1,7 +1,7 @@
 [
 {
-   "name": "first",
-      "image": "896146012256.dkr.ecr.us-west-2.amazonaws.com/ptt-alertor-repo",
+      "name": "first",
+      "image": "${var.registry_docker_image}",
       "cpu": 10,
       "memory": 128,
       "essential": true,

@@ -1,5 +1,5 @@
 resource "aws_s3_bucket" "ptt-alertor" {
-    bucket = "ptt-alertor-bucket"
+    bucket = "${var.s3_bucket_name}"
     acl = "public-read-write"
 
     tags {
