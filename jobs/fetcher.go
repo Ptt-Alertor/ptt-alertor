@@ -5,7 +5,7 @@ import (
 	"log"
 	"sync"
 
-	board "github.com/liam-lai/ptt-alertor/models/ptt/board/file"
+	board "github.com/liam-lai/ptt-alertor/models/ptt/board/redis"
 )
 
 type Fetcher struct {

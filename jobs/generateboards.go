@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"log"
 
-	board "github.com/liam-lai/ptt-alertor/models/ptt/board/file"
-	user "github.com/liam-lai/ptt-alertor/models/user/file"
+	board "github.com/liam-lai/ptt-alertor/models/ptt/board/redis"
+	user "github.com/liam-lai/ptt-alertor/models/user/redis"
 )
 
 type GenBoards struct {
