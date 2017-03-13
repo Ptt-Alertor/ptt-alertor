@@ -25,7 +25,7 @@
       "mountPoints": [
          {
          "sourceVolume": "config",
-         "containerPath": "/go/src/github.com/liam-lai/ptt-alertor/config",
+         "containerPath": "/go/config",
          "readOnly": true
          }
       ]
