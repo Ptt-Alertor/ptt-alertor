@@ -16,5 +16,6 @@ type Subscribe struct {
 type UserAction interface {
 	All() []*User
 	Save() error
+	Update() error
 	Find() User
 }

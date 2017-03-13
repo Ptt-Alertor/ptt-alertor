@@ -51,6 +51,25 @@ func userCreate(w http.ResponseWriter, r *http.Request, params httprouter.Params
 	}
 }
 
+func userModify(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+	account := params.ByName("account")
+	u := new(user.User)
+	err := json.NewDecoder(r.Body).Decode(&u)
+	if err != nil {
+		http.Error(w, "not a json valid format", 400)
+	}
+
+	if u.Profile.Account != account {
+		http.Error(w, "account does not match", 400)
+	}
+
+	err = u.Update()
+	if err != nil {
+		http.Error(w, err.Error(), 400)
+	}
+
+}
+
 func main() {
 	fmt.Println("----Start Jobs----")
 	startJobs()
@@ -60,8 +79,11 @@ func main() {
 	router := httprouter.New()
 	router.GET("/", index)
 	router.GET("/boards/:boardName/articles", boardIndex)
+
+	// users apis
 	router.GET("/users/:account", userFind)
 	router.POST("/users", userCreate)
+	router.PUT("/users/:account", userModify)
 
 	err := http.ListenAndServe(":9090", router)
 	if err != nil {

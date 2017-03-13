@@ -59,6 +59,27 @@ func (u User) Save() error {
 	return nil
 }
 
+func (u User) Update() error {
+	val, err := ioutil.ReadFile(usersDir + u.Profile.Account + ".json")
+	if val == nil {
+		return errors.New("user not exist")
+	}
+
+	if u.Profile.Account == "" {
+		return errors.New("account can not be empty")
+	}
+
+	uJSON, err := json.Marshal(u)
+	if err != nil {
+		return err
+	}
+	err = ioutil.WriteFile(usersDir+u.Profile.Account+".json", uJSON, 664)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (u User) Find(account string) User {
 	uJSON, err := ioutil.ReadFile(usersDir + account + ".json")
 	if err != nil {
