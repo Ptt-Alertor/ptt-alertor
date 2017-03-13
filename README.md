@@ -36,3 +36,15 @@ Happy Chinese New Year
     ]
 }
 ```
+
+* PUT /users/[account]
+
+```
+{
+    "profile":{
+        "account": "sample",
+        "email":"sample@mail.com" 
+    },
+    "subscribes":[]
+}
+```
