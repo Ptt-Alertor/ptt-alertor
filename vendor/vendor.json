@@ -3,6 +3,12 @@
 	"ignore": "test",
 	"package": [
 		{
+			"checksumSHA1": "Iqsh6VibFdj9DR8jakgVTF5c0GI=",
+			"path": "github.com/Sirupsen/logrus",
+			"revision": "1deb2db2a6fff8a35532079061b903c3a25eed52",
+			"revisionTime": "2017-03-08T20:36:35Z"
+		},
+		{
 			"checksumSHA1": "O/QVS0SPzCiPTGKR1H9FVGUmki4=",
 			"path": "github.com/julienschmidt/httprouter",
 			"revision": "8a45e95fc75cb77048068a62daed98cc22fdac7c",
@@ -25,6 +31,12 @@
 			"path": "golang.org/x/net/html/atom",
 			"revision": "007e530097ad7f954752df63046b4036f98ba6a6",
 			"revisionTime": "2017-02-01T22:13:12Z"
+		},
+		{
+			"checksumSHA1": "/oZpHfYc+ZgOwYAhlvcMhmETYpw=",
+			"path": "golang.org/x/sys/unix",
+			"revision": "99f16d856c9836c42d24e7ab64ea72916925fa97",
+			"revisionTime": "2017-03-08T15:04:45Z"
 		},
 		{
 			"checksumSHA1": "njR1GW5phOGryMm6B/zxUBQMIMc=",

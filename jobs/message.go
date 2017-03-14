@@ -1,8 +1,9 @@
 package jobs
 
 import (
-	"log"
 	"time"
+
+	log "github.com/Sirupsen/logrus"
 
 	"github.com/liam-lai/ptt-alertor/mail"
 	"github.com/liam-lai/ptt-alertor/models/ptt/article"
@@ -27,6 +28,7 @@ func (msg Message) Run() {
 	msgCh := make(chan Message)
 	for _, user := range users {
 		msg.email = user.Profile.Email
+		log.WithField("user", user.Profile.Account).Info("Checking User Subscribes")
 		go userChecker(user, bds, msg, msgCh)
 	}
 
@@ -35,7 +37,7 @@ func (msg Message) Run() {
 		case m := <-msgCh:
 			sendMail(m)
 		case <-time.After(time.Second * 3):
-			log.Println("message done")
+			log.Info("Message Done")
 			return
 		}
 	}

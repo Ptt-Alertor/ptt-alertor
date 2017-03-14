@@ -3,20 +3,20 @@ package myutil
 import (
 	"encoding/json"
 	"io/ioutil"
-	"log"
 )
 
 func Config(name string) map[string]string {
 	projectRoot := ProjectRootPath()
-	configJSON, err := ioutil.ReadFile(projectRoot + "/config/" + name + ".json")
+	filePath := projectRoot + "/config/" + name + ".json"
+	configJSON, err := ioutil.ReadFile(filePath)
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 
 	var config map[string]string
 	err = json.Unmarshal(configJSON, &config)
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 
 	return config

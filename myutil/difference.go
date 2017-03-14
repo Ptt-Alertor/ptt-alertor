@@ -3,7 +3,6 @@ package myutil
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"reflect"
 )
 
@@ -32,10 +31,10 @@ func DifferenceMap(mapOld []map[string]string, mapNew []map[string]string) []map
 }
 
 func jsonToMap(jsonString []byte) []map[string]string {
-	var articles []map[string]string
-	err := json.NewDecoder(bytes.NewReader(jsonString)).Decode(&articles)
+	var maps []map[string]string
+	err := json.NewDecoder(bytes.NewReader(jsonString)).Decode(&maps)
 	if err != nil {
-		fmt.Println(err)
+		panic(err)
 	}
-	return articles
+	return maps
 }
