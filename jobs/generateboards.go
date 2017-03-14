@@ -1,8 +1,7 @@
 package jobs
 
 import (
-	"fmt"
-	"log"
+	log "github.com/Sirupsen/logrus"
 
 	board "github.com/liam-lai/ptt-alertor/models/ptt/board/redis"
 	user "github.com/liam-lai/ptt-alertor/models/user/redis"
@@ -24,10 +23,10 @@ func (gb GenBoards) Run() {
 			if !boardNameBool[sub.Board] {
 				bd := new(board.Board)
 				bd.Name = sub.Board
-				fmt.Println(bd.Name)
 				bd.Create()
+				log.WithField("board", bd.Name).Info("Added Board")
 			}
 		}
 	}
-	log.Println("----Boards Generated----")
+	log.Info("Boards Generated")
 }

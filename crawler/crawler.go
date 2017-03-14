@@ -2,9 +2,9 @@ package crawler
 
 import (
 	"errors"
-	"fmt"
-	"log"
 	"net/http"
+
+	log "github.com/Sirupsen/logrus"
 
 	"github.com/liam-lai/ptt-alertor/models/ptt/article"
 
@@ -61,16 +61,16 @@ func fetchHTML(board string) (response *http.Response) {
 	response, err := client.Get(reqURL)
 
 	if response.StatusCode == http.StatusNotFound {
-		fmt.Println(404)
+		log.WithField("url", reqURL).Warn("Fetched URL Not Found")
+	}
+
+	if err != nil && response.StatusCode == http.StatusFound {
+		req := passR18(reqURL)
+		response, err = client.Do(req)
 	}
 
 	if err != nil {
-		if response.StatusCode == http.StatusFound {
-			req := passR18(reqURL)
-			response, err = client.Do(req)
-		} else {
-			log.Fatal(err)
-		}
+		log.WithField("url", reqURL).Error("Fetch URL Failed")
 	}
 
 	return response
@@ -98,7 +98,7 @@ func passR18(reqURL string) (req *http.Request) {
 func parseHTML(response *http.Response) *html.Node {
 	doc, err := html.Parse(response.Body)
 	if err != nil {
-		log.Fatal(err)
+		log.Error(err)
 	}
 	return doc
 }

@@ -3,12 +3,13 @@ package redis
 import (
 	"encoding/json"
 
-	"log"
-
+	log "github.com/Sirupsen/logrus"
 	"github.com/garyburd/redigo/redis"
+
 	"github.com/liam-lai/ptt-alertor/connections"
 	"github.com/liam-lai/ptt-alertor/models/ptt/article"
 	"github.com/liam-lai/ptt-alertor/models/ptt/board"
+	"github.com/liam-lai/ptt-alertor/myutil"
 )
 
 const prefix string = "board:"
@@ -22,7 +23,7 @@ func (bd Board) All() []*Board {
 	defer conn.Close()
 	boards, err := redis.Strings(conn.Do("SMEMBERS", "boards"))
 	if err != nil {
-		log.Fatal(err)
+		log.WithField("runtime", myutil.BasicRuntimeInfo()).WithError(err).Error()
 	}
 	bds := make([]*Board, 0)
 	for _, board := range boards {
@@ -40,12 +41,15 @@ func (bd Board) GetArticles() []article.Article {
 	key := prefix + bd.Name
 	articlesJSON, err := redis.Bytes(conn.Do("GET", key))
 	if err != nil {
-		log.Fatal(err)
+		log.WithField("runtime", myutil.BasicRuntimeInfo()).WithError(err).Error()
 	}
 
 	articles := make([]article.Article, 0)
 	if articlesJSON != nil {
-		json.Unmarshal(articlesJSON, &articles)
+		err = json.Unmarshal(articlesJSON, &articles)
+		if err != nil {
+			myutil.LogJSONDecode(err, articlesJSON)
+		}
 	}
 	return articles
 }
@@ -62,6 +66,9 @@ func (bd Board) Create() error {
 	conn := connections.Redis()
 	defer conn.Close()
 	_, err := conn.Do("SADD", "boards", bd.Name)
+	if err != nil {
+		log.WithField("runtime", myutil.BasicRuntimeInfo()).WithError(err).Error()
+	}
 	return err
 }
 
@@ -71,11 +78,12 @@ func (bd Board) Save() error {
 
 	articlesJSON, err := json.Marshal(bd.Articles)
 	if err != nil {
-		log.Fatal(err)
+		myutil.LogJSONEncode(err, bd.Articles)
+		return err
 	}
 	_, err = conn.Do("SET", prefix+bd.Name, articlesJSON)
 	if err != nil {
-		log.Fatal(err)
+		log.WithField("runtime", myutil.BasicRuntimeInfo()).WithError(err).Error()
 	}
 	return err
 }

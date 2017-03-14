@@ -3,7 +3,10 @@ package myutil
 import "os"
 
 func ProjectRootPath() string {
-	dir, _ := os.Getwd()
+	dir, err := os.Getwd()
+	if err != nil {
+		panic(err)
+	}
 	return dir
 }
 

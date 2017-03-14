@@ -1,24 +1,23 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 	"strings"
 
+	log "github.com/Sirupsen/logrus"
 	"github.com/julienschmidt/httprouter"
-
-	"encoding/json"
+	"github.com/robfig/cron"
 
 	"github.com/liam-lai/ptt-alertor/hello"
 	"github.com/liam-lai/ptt-alertor/jobs"
 	board "github.com/liam-lai/ptt-alertor/models/ptt/board/redis"
 	user "github.com/liam-lai/ptt-alertor/models/user/redis"
-	"github.com/robfig/cron"
+	"github.com/liam-lai/ptt-alertor/myutil"
 )
 
 func index(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	fmt.Println(r.RemoteAddr + " visit: " + r.URL.Path)
 	fmt.Fprintf(w, hello.HelloWorld())
 }
 
@@ -28,14 +27,17 @@ func boardIndex(w http.ResponseWriter, r *http.Request, params httprouter.Params
 	articles := bd.OnlineArticles()
 	articlesJSON, err := json.Marshal(articles)
 	if err != nil {
-		log.Fatal(err)
+		myutil.LogJSONEncode(err, articles)
 	}
 	fmt.Fprintf(w, "%s", articlesJSON)
 }
 
 func userFind(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	u := new(user.User).Find(params.ByName("account"))
-	uJSON, _ := json.Marshal(u)
+	uJSON, err := json.Marshal(u)
+	if err != nil {
+		myutil.LogJSONEncode(err, u)
+	}
 	fmt.Fprintf(w, "%s", uJSON)
 }
 
@@ -43,6 +45,7 @@ func userCreate(w http.ResponseWriter, r *http.Request, params httprouter.Params
 	u := new(user.User)
 	err := json.NewDecoder(r.Body).Decode(&u)
 	if err != nil {
+		myutil.LogJSONDecode(err, r.Body)
 		http.Error(w, "not a json valid format", 400)
 	}
 	err = u.Save()
@@ -56,6 +59,7 @@ func userModify(w http.ResponseWriter, r *http.Request, params httprouter.Params
 	u := new(user.User)
 	err := json.NewDecoder(r.Body).Decode(&u)
 	if err != nil {
+		myutil.LogJSONDecode(err, r.Body)
 		http.Error(w, "not a json valid format", 400)
 	}
 
@@ -70,13 +74,32 @@ func userModify(w http.ResponseWriter, r *http.Request, params httprouter.Params
 
 }
 
+type myRouter struct {
+	httprouter.Router
+}
+
+func (mr myRouter) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	log.WithFields(log.Fields{
+		"IP":  r.RemoteAddr,
+		"URI": r.URL.Path,
+	}).Info("visit")
+	mr.Router.ServeHTTP(w, r)
+}
+
+func newRouter() *myRouter {
+	return &myRouter{
+		Router: *httprouter.New(),
+	}
+}
+
 func main() {
-	fmt.Println("----Start Jobs----")
+	log.Info("Start Jobs")
 	startJobs()
 	// Web Server
-	fmt.Println("----Web Server Start on Port 9090----")
+	log.Info("Web Server Start on Port 9090")
 
-	router := httprouter.New()
+	router := newRouter()
+
 	router.GET("/", index)
 	router.GET("/boards/:boardName/articles", boardIndex)
 

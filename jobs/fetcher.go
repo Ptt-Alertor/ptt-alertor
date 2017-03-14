@@ -1,9 +1,9 @@
 package jobs
 
 import (
-	"fmt"
-	"log"
 	"sync"
+
+	log "github.com/Sirupsen/logrus"
 
 	board "github.com/liam-lai/ptt-alertor/models/ptt/board/redis"
 )
@@ -24,11 +24,11 @@ func (f Fetcher) Run() {
 		wg.Add(1)
 		go func(bd board.Board) {
 			defer wg.Done()
-			fmt.Println(bd.Name)
 			bd.Articles = bd.OnlineArticles()
 			bd.Save()
+			log.WithField("board", bd.Name).Info("Fetched")
 		}(*bd)
 	}
 	wg.Wait()
-	log.Println("fetcher done")
+	log.Info("All fetcher done")
 }

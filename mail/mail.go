@@ -1,9 +1,9 @@
 package mail
 
 import (
-	"fmt"
-	"log"
 	"strconv"
+
+	log "github.com/Sirupsen/logrus"
 
 	"github.com/liam-lai/ptt-alertor/models/ptt/article"
 	"github.com/liam-lai/ptt-alertor/myutil"
@@ -51,9 +51,13 @@ func (mail Mail) Send() {
 		mail.Receiver)
 	resp, id, err := mg.Send(message)
 	if err != nil {
-		log.Fatal(err)
+		log.WithError(err).Error("Sent Email Failed")
+	} else {
+		log.WithFields(log.Fields{
+			"ID":   id,
+			"Resp": resp,
+		}).Info("Sent Email")
 	}
-	fmt.Printf("ID: %s Resp: %s\n", id, resp)
 }
 
 func newMailgun() mailgun.Mailgun {

@@ -3,7 +3,8 @@ package file
 import (
 	"encoding/json"
 	"io/ioutil"
-	"log"
+
+	log "github.com/Sirupsen/logrus"
 
 	"github.com/liam-lai/ptt-alertor/models/ptt/article"
 	"github.com/liam-lai/ptt-alertor/models/ptt/board"
@@ -17,7 +18,10 @@ type Board struct {
 var articlesDir string = myutil.StoragePath() + "/articles/"
 
 func (bd Board) All() []*Board {
-	files, _ := ioutil.ReadDir(articlesDir)
+	files, err := ioutil.ReadDir(articlesDir)
+	if err != nil {
+		log.WithField("runtime", myutil.BasicRuntimeInfo()).WithError(err).Error()
+	}
 	bds := make([]*Board, 0)
 	for _, file := range files {
 		name, ok := myutil.JsonFile(file)
@@ -32,12 +36,19 @@ func (bd Board) All() []*Board {
 }
 
 func (bd Board) GetArticles() []article.Article {
-	articlesJSON, err := ioutil.ReadFile(articlesDir + bd.Name + ".json")
+	file := articlesDir + bd.Name + ".json"
+	articlesJSON, err := ioutil.ReadFile(file)
 	if err != nil {
-		log.Fatal(err)
+		log.WithFields(log.Fields{
+			"file":    file,
+			"runtime": myutil.BasicRuntimeInfo(),
+		}).WithError(err).Error("Read File Error")
 	}
 	articles := make([]article.Article, 0)
-	json.Unmarshal(articlesJSON, &articles)
+	err = json.Unmarshal(articlesJSON, &articles)
+	if err != nil {
+		myutil.LogJSONDecode(err, articlesJSON)
+	}
 	return articles
 }
 
@@ -51,17 +62,20 @@ func (bd *Board) WithNewArticles() {
 
 func (bd Board) Create() error {
 	err := ioutil.WriteFile(articlesDir+bd.Name+".json", []byte("[]"), 664)
+	if err != nil {
+		log.WithField("runtime", myutil.BasicRuntimeInfo()).WithError(err).Error()
+	}
 	return err
 }
 
 func (bd Board) Save() error {
 	articlesJSON, err := json.Marshal(bd.Articles)
 	if err != nil {
-		log.Fatal(err)
+		myutil.LogJSONEncode(err, bd.Articles)
 	}
 	err = ioutil.WriteFile(articlesDir+bd.Name+".json", articlesJSON, 0644)
 	if err != nil {
-		log.Fatal(err)
+		log.WithField("runtime", myutil.BasicRuntimeInfo()).WithError(err).Error()
 	}
 	return err
 }
