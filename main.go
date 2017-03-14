@@ -92,21 +92,36 @@ func newRouter() *myRouter {
 	}
 }
 
+func basicAuth(handle httprouter.Handle, requiredUser, requiredPassword string) httprouter.Handle {
+	return func(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+		user, password, hasAuth := r.BasicAuth()
+		if hasAuth && user == requiredUser && password == requiredPassword {
+			handle(w, r, params)
+		} else {
+			w.Header().Set("WWW-Authenticate", "Basic realm=Restricted")
+			http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
+		}
+	}
+}
+
 func main() {
 	log.Info("Start Jobs")
 	startJobs()
 	// Web Server
 	log.Info("Web Server Start on Port 9090")
 
-	router := newRouter()
+	// temp user and password
+	user := "dinobruce"
+	password := "brucedino"
 
+	router := newRouter()
 	router.GET("/", index)
 	router.GET("/boards/:boardName/articles", boardIndex)
 
 	// users apis
 	router.GET("/users/:account", userFind)
-	router.POST("/users", userCreate)
-	router.PUT("/users/:account", userModify)
+	router.POST("/users", basicAuth(userCreate, user, password))
+	router.PUT("/users/:account", basicAuth(userModify, user, password))
 
 	err := http.ListenAndServe(":9090", router)
 	if err != nil {
