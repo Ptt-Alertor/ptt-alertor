@@ -17,12 +17,12 @@ resource "aws_elb" "ptt-alertor" {
     lb_protocol = "http"
   }
 
-  listener {
-    instance_port = 22
-    instance_protocol = "TCP"
-    lb_port = 22
-    lb_protocol = "TCP"
-  }
+  #listener {
+  #  instance_port = 22
+  #  instance_protocol = "TCP"
+  #  lb_port = 22
+  #  lb_protocol = "TCP"
+  #}
   health_check {
     healthy_threshold = 2
     unhealthy_threshold = 2
