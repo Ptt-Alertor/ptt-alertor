@@ -56,8 +56,8 @@ func main() {
 
 	// users apis
 	router.GET("/users/:account", ctrlr.UserFind)
-	router.POST("/users", basicAuth(ctrlr.UserCreate))
-	router.PUT("/users/:account", basicAuth(ctrlr.UserModify))
+	router.POST("/users", ctrlr.UserCreate)
+	router.PUT("/users/:account", ctrlr.UserModify)
 
 	err := http.ListenAndServe(":9090", router)
 	if err != nil {
