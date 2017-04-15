@@ -1,12 +1,9 @@
-package example
+package session
 
 import (
 	"html/template"
 	"net/http"
 	"time"
-
-	_ "github.com/liam-lai/ptt-alertor/session/memory"
-	"encoding/gob"
 )
 
 var globalSessions *Manager
@@ -47,8 +44,4 @@ func count(w http.ResponseWriter, r *http.Request) {
 	t, _ := template.ParseFiles("count.gtpl")
 	w.Header().Set("Content-Type", "text/html")
 	t.Execute(w, sess.Get("countnum"))
-}
-
-func test (){
-	gob.Register()
 }
