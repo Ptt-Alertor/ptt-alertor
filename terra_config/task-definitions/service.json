@@ -29,5 +29,26 @@
          "readOnly": true
          }
       ]
+},
+{
+      "name": "second",
+      "image": "896146012256.dkr.ecr.us-west-2.amazonaws.com/ptt-alertor-repo",
+      "cpu": 10,
+      "memory": 128,
+      "essential": true,
+      "logConfiguration": {
+         "logDriver": "awslogs",
+         "options": {
+              "awslogs-group": "ptt-alertor",
+              "awslogs-region": "us-west-2"
+         }
+      },
+      "mountPoints": [
+         {
+         "sourceVolume": "config",
+         "containerPath": "/go/config",
+         "readOnly": true
+         }
+      ]
 }
 ]

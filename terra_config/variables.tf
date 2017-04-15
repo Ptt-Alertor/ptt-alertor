@@ -37,6 +37,8 @@ variable "ecs_service_lb_contain_name" { default = "first" }
 variable "ecs_service_lb_contain_port" { default = "9090" }
 
 variable "s3_bucket_name"              { default = "ptt-alertor-bucket" }
+variable "s3_tfstate_name"              { default = "ptt-alertor-terraform-state-file" }
+variable "s3_log_name"              { default = "s3-liamlai-log" }
 
 variable "ecr_repository_name" {
   description = "The username to use when connecting to the registry."
