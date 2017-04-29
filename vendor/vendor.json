@@ -15,10 +15,28 @@
 			"revisionTime": "2017-01-04T18:58:16Z"
 		},
 		{
+			"checksumSHA1": "nFfsELKSy7Rda6oLDvxSe8sVKh0=",
+			"path": "github.com/line/line-bot-sdk-go/linebot",
+			"revision": "ec620b9af9b5ebdba700370820c0b6f657f37a3d",
+			"revisionTime": "2017-04-26T04:47:58Z"
+		},
+		{
 			"checksumSHA1": "lEzkjwyqZ1e8Zv/k1t8OW0e+YVQ=",
 			"path": "github.com/robfig/cron",
 			"revision": "9585fd555638e77bba25f25db5c44b41f264aeb7",
 			"revisionTime": "2016-09-27T16:42:31Z"
+		},
+		{
+			"checksumSHA1": "Y+HGqEkYM15ir+J93MEaHdyFy0c=",
+			"path": "golang.org/x/net/context",
+			"revision": "da118f7b8e5954f39d0d2130ab35d4bf0e3cb344",
+			"revisionTime": "2017-04-23T14:02:46Z"
+		},
+		{
+			"checksumSHA1": "WHc3uByvGaMcnSoI21fhzYgbOgg=",
+			"path": "golang.org/x/net/context/ctxhttp",
+			"revision": "da118f7b8e5954f39d0d2130ab35d4bf0e3cb344",
+			"revisionTime": "2017-04-23T14:02:46Z"
 		},
 		{
 			"checksumSHA1": "vqc3a+oTUGX8PmD0TS+qQ7gmN8I=",
