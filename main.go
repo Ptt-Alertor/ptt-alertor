@@ -59,6 +59,8 @@ func main() {
 	router.POST("/users", ctrlr.UserCreate)
 	router.PUT("/users/:account", ctrlr.UserModify)
 
+	router.POST("/line/callback", ctrlr.LineCallback)
+
 	err := http.ListenAndServe(":9090", router)
 	if err != nil {
 		log.Fatal("ListenAndServer ", err)
