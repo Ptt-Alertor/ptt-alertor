@@ -16,7 +16,7 @@ resource "aws_key_pair" "ecs" {
  * Launch configuration used by autoscaling group
  */
 resource "aws_launch_configuration" "ecs" {
-  name                 = "${var.launch_configuration_name}"
+  name                 = "${var.launch_config_name}"
   #image_id             = "${lookup(var.amis, var.region)}"
   image_id             = "ami-022b9262"
   instance_type        = "${var.instance_type}"
