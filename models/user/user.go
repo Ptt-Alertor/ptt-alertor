@@ -1,5 +1,7 @@
 package user
 
+import "github.com/liam-lai/ptt-alertor/models/subscription"
+
 type User struct {
 	Enable  bool `json:"enable"`
 	Profile struct {
@@ -7,12 +9,7 @@ type User struct {
 		Email   string `json:"email"`
 		Line    string `json:"line"`
 	}
-	Subscribes []Subscribe
-}
-
-type Subscribe struct {
-	Board    string
-	Keywords []string
+	Subscribes subscription.Subscribes
 }
 
 type UserAction interface {

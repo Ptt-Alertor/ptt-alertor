@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	log "github.com/Sirupsen/logrus"
+	"github.com/liam-lai/ptt-alertor/models/subscription"
 	user "github.com/liam-lai/ptt-alertor/models/user/redis"
 	"github.com/liam-lai/ptt-alertor/myutil"
 	"github.com/line/line-bot-sdk-go/linebot"
@@ -13,6 +14,12 @@ import (
 
 var bot *linebot.Client
 var err error
+var commands = map[string]string{
+	"清單": "正在追蹤的看板與關鍵字",
+	"新增": "新增訂閱看板關鍵字。ex: 新增 lol 樂透",
+	"刪除": "取消訂閱看板關鍵字。ex: 刪除 lol 樂透",
+	"指令": "可使用的指令清單",
+}
 
 func init() {
 	config := myutil.Config("line")
@@ -39,26 +46,44 @@ func HandleRequest(r *http.Request) {
 	}
 }
 
-/*
- * 清單
- * 追蹤 LoL 樂透
- * 取消 LoL 樂透
- * 指令
- */
+/**
+ * check board exist or not
+ * 1. hotboard
+ * 2. allboard
+ **/
 func handleMessage(event *linebot.Event) {
 	var responseText string
+	userID := event.Source.UserID
 	switch message := event.Message.(type) {
 	case *linebot.TextMessage:
 		args := strings.Fields(message.Text)
 		command := args[0]
 		if strings.EqualFold(command, "清單") {
-			responseText = "lol: 樂透"
+			responseText = new(user.User).Find(userID).Subscribes.String()
 		} else if strings.EqualFold(command, "指令") {
-			responseText = "清單\n追蹤\n取消\n指令\n"
-		} else if strings.EqualFold(command, "追蹤") {
-			responseText = "追蹤成功"
-		} else if strings.EqualFold(command, "取消") {
-			responseText = "取消成功"
+			responseText = stringCommands()
+		} else if strings.EqualFold(command, "新增") {
+			if len(args) < 3 {
+				responseText = "指令格式錯誤。\n範例:\n新增 lol 樂透\n新增 lol 樂透,電競"
+			} else {
+				err := subscribe(userID, args[1], strings.Split(args[2], ","))
+				if err != nil {
+					responseText = "新增失敗，請等待修復。"
+				} else {
+					responseText = "新增成功"
+				}
+			}
+		} else if strings.EqualFold(command, "刪除") {
+			if len(args) < 3 {
+				responseText = "指令格式錯誤。\n範例:\n刪除 lol 樂透\n刪除 lol 樂透,電競"
+			} else {
+				err := unsubscribe(userID, args[1], strings.Split(args[2], ","))
+				if err != nil {
+					responseText = "刪除失敗，請等待修復。"
+				} else {
+					responseText = "刪除成功"
+				}
+			}
 		} else {
 			responseText = "無此指令，請打「指令」查看指令清單"
 		}
@@ -67,6 +92,42 @@ func handleMessage(event *linebot.Event) {
 	if err != nil {
 		log.Error(err)
 	}
+}
+
+func stringCommands() string {
+	str := ""
+	for key, val := range commands {
+		str += key + ": " + val + "\n"
+	}
+	return str
+}
+
+func subscribe(account string, board string, keywords []string) error {
+	u := new(user.User).Find(account)
+	sub := subscription.Subscribe{
+		Board:    board,
+		Keywords: keywords,
+	}
+	u.Subscribes.Add(sub)
+	err := u.Update()
+	if err != nil {
+		log.Error(err)
+	}
+	return err
+}
+
+func unsubscribe(account string, board string, keywords []string) error {
+	u := new(user.User).Find(account)
+	sub := subscription.Subscribe{
+		Board:    board,
+		Keywords: keywords,
+	}
+	u.Subscribes.Remove(sub)
+	err := u.Update()
+	if err != nil {
+		log.Error(err)
+	}
+	return err
 }
 
 func handleFollow(event *linebot.Event) {
