@@ -1,9 +1,11 @@
 package user
 
 type User struct {
+	Enable  bool `json:"enable"`
 	Profile struct {
 		Account string `json:"account"`
 		Email   string `json:"email"`
+		Line    string `json:"line"`
 	}
 	Subscribes []Subscribe
 }

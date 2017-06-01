@@ -5,6 +5,8 @@ import (
 
 	"strings"
 
+	log "github.com/Sirupsen/logrus"
+	user "github.com/liam-lai/ptt-alertor/models/user/redis"
 	"github.com/liam-lai/ptt-alertor/myutil"
 	"github.com/line/line-bot-sdk-go/linebot"
 )
@@ -16,14 +18,14 @@ func init() {
 	config := myutil.Config("line")
 	bot, err = linebot.New(config["channelSecret"], config["channelAccessToken"])
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 }
 
 func HandleRequest(r *http.Request) {
 	events, err := bot.ParseRequest(r)
 	if err != nil {
-		panic(err)
+		log.Error(err)
 	}
 	for _, event := range events {
 		switch event.Type {
@@ -63,7 +65,7 @@ func handleMessage(event *linebot.Event) {
 	}
 	_, err := bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(responseText)).Do()
 	if err != nil {
-		panic(err)
+		log.Error(err)
 	}
 }
 
@@ -71,19 +73,36 @@ func handleFollow(event *linebot.Event) {
 	userID := event.Source.UserID
 	profile, err := bot.GetProfile(userID).Do()
 	if err != nil {
-		panic(err)
+		log.Error(err)
 	}
-	_, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage("Welcome:"+profile.DisplayName)).Do()
+	log.Info("User Follow:" + profile.UserID)
+
+	u := new(user.User).Find(profile.UserID)
+
+	if u.Profile.Account != "" {
+		u.Enable = true
+		u.Update()
+	} else {
+		u.Profile.Account = profile.UserID
+		u.Profile.Line = profile.UserID
+		u.Enable = true
+		err = u.Save()
+		if err != nil {
+			log.Error(err)
+		}
+	}
+
+	_, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(profile.DisplayName+" 歡迎使用 PTT Alertor")).Do()
 	if err != nil {
-		panic(err)
+		log.Error(err)
 	}
 }
 
-/*
- * Remove User
- */
 func handleUnfollow(event *linebot.Event) {
-	// userID := event.Source.UserID
+	userID := event.Source.UserID
+	u := new(user.User).Find(userID)
+	u.Enable = false
+	u.Update()
 }
 
 // useless
