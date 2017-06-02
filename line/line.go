@@ -37,7 +37,7 @@ func init() {
 func HandleRequest(r *http.Request) {
 	events, err := bot.ParseRequest(r)
 	if err != nil {
-		log.Error(err)
+		log.WithError(err).Error("Line ParseRequest Error")
 	}
 	for _, event := range events {
 		switch event.Type {
@@ -57,7 +57,7 @@ func HandleRequest(r *http.Request) {
  * 2. allboard
  *
  * TODO: check command format correct
- *
+ * TODO: split keyword by full case comma
  **/
 func handleMessage(event *linebot.Event) {
 	var responseText string
@@ -71,7 +71,7 @@ func handleMessage(event *linebot.Event) {
 		} else if strings.EqualFold(command, "指令") {
 			responseText = stringCommands()
 		} else if strings.EqualFold(command, "新增") {
-			if len(args) < 3 {
+			if len(args) != 3 {
 				responseText = "指令格式錯誤。\n範例:\n新增 lol 樂透\n新增 lol 樂透,電競"
 			} else {
 				err := subscribe(userID, args[1], strings.Split(args[2], ","))
@@ -82,7 +82,7 @@ func handleMessage(event *linebot.Event) {
 				}
 			}
 		} else if strings.EqualFold(command, "刪除") {
-			if len(args) < 3 {
+			if len(args) != 3 {
 				responseText = "指令格式錯誤。\n範例:\n刪除 lol 樂透\n刪除 lol 樂透,電競"
 			} else {
 				err := unsubscribe(userID, args[1], strings.Split(args[2], ","))
@@ -98,7 +98,7 @@ func handleMessage(event *linebot.Event) {
 	}
 	_, err := bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(responseText)).Do()
 	if err != nil {
-		log.Error(err)
+		log.WithError(err).Error("Line Reply Message Failed")
 	}
 }
 
@@ -119,7 +119,7 @@ func subscribe(account string, board string, keywords []string) error {
 	u.Subscribes.Add(sub)
 	err := u.Update()
 	if err != nil {
-		log.Error(err)
+		log.WithError(err).Error("Line Subscribe Update Error")
 	}
 	return err
 }
@@ -133,7 +133,7 @@ func unsubscribe(account string, board string, keywords []string) error {
 	u.Subscribes.Remove(sub)
 	err := u.Update()
 	if err != nil {
-		log.Error(err)
+		log.WithError(err).Error("Line UnSubscribe Update Error")
 	}
 	return err
 }
@@ -142,33 +142,45 @@ func handleFollow(event *linebot.Event) {
 	userID := event.Source.UserID
 	profile, err := bot.GetProfile(userID).Do()
 	if err != nil {
-		log.Error(err)
+		log.WithError(err).Error("")
 	}
-	log.Info("User Follow:" + profile.UserID)
+
+	log.WithFields(log.Fields{
+		"ID": profile.UserID,
+	}).Info("Line Follow")
 
 	u := new(user.User).Find(profile.UserID)
 
 	if u.Profile.Account != "" {
+		log.WithFields(log.Fields{
+			"ID": profile.UserID,
+		}).Info("Line ReFollow")
 		u.Enable = true
 		u.Update()
 	} else {
+		log.WithFields(log.Fields{
+			"ID": profile.UserID,
+		}).Info("Line Follow")
 		u.Profile.Account = profile.UserID
 		u.Profile.Line = profile.UserID
 		u.Enable = true
 		err = u.Save()
 		if err != nil {
-			log.Error(err)
+			log.WithError(err).Error("Line Follow Save User Failed")
 		}
 	}
 
 	_, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(profile.DisplayName+" 歡迎使用 PTT Alertor\n輸入「指令」查看相關功能。")).Do()
 	if err != nil {
-		log.Error(err)
+		log.WithError(err).Error("Line Follow Replay Message Failed")
 	}
 }
 
 func handleUnfollow(event *linebot.Event) {
 	userID := event.Source.UserID
+	log.WithFields(log.Fields{
+		"ID": userID,
+	}).Info("Line Unfollow")
 	u := new(user.User).Find(userID)
 	u.Enable = false
 	u.Update()
@@ -208,6 +220,10 @@ func PushTextMessage(id string, message string) {
 func BroadcastTextMessage(ids []string, message string) {
 	_, err := bot.Multicast(ids, linebot.NewTextMessage(message)).Do()
 	if err != nil {
-		log.Error(err)
+		log.WithError(err).Error("Line Broadcast Message Failed")
+	} else {
+		log.WithFields(log.Fields{
+			"IDs": ids,
+		}).Info("Line BroadCast Message")
 	}
 }
