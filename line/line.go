@@ -7,6 +7,7 @@ package line
 
 import (
 	"net/http"
+	"regexp"
 
 	"strings"
 
@@ -20,10 +21,10 @@ import (
 var bot *linebot.Client
 var err error
 var commands = map[string]string{
-	"清單": "正在追蹤的看板與關鍵字",
-	"新增": "新增看板關鍵字。\n\tex: 新增 gossiping 爆卦",
-	"刪除": "刪除看板關鍵字。\n\tex: 刪除 gossiping 爆卦",
 	"指令": "可使用的指令清單",
+	"清單": "目前追蹤的看板與關鍵字",
+	"新增": "新增看板關鍵字。範例：\n\t\t新增 gossiping 爆卦\n\t\t新增 gossiping 爆卦,問卦\n\t\t新增 gossiping 爆卦，問卦",
+	"刪除": "刪除看板關鍵字。範例：\n\t\t刪除 gossiping 爆卦\n\t\t刪除 gossiping 爆卦,問卦\n\t\t刪除 gossiping 爆卦，問卦",
 }
 
 func init() {
@@ -55,46 +56,13 @@ func HandleRequest(r *http.Request) {
  * TODO: check board exist or not
  * 1. hotboard
  * 2. allboard
- *
- * TODO: check command format correct
- * TODO: split keyword by full case comma
  **/
 func handleMessage(event *linebot.Event) {
 	var responseText string
 	userID := event.Source.UserID
 	switch message := event.Message.(type) {
 	case *linebot.TextMessage:
-		args := strings.Fields(message.Text)
-		command := args[0]
-		if strings.EqualFold(command, "清單") {
-			responseText = new(user.User).Find(userID).Subscribes.String()
-		} else if strings.EqualFold(command, "指令") {
-			responseText = stringCommands()
-		} else if strings.EqualFold(command, "新增") {
-			if len(args) != 3 {
-				responseText = "指令格式錯誤。\n範例:\n新增 lol 樂透\n新增 lol 樂透,電競"
-			} else {
-				err := subscribe(userID, args[1], strings.Split(args[2], ","))
-				if err != nil {
-					responseText = "新增失敗，請等待修復。"
-				} else {
-					responseText = "新增成功"
-				}
-			}
-		} else if strings.EqualFold(command, "刪除") {
-			if len(args) != 3 {
-				responseText = "指令格式錯誤。\n範例:\n刪除 lol 樂透\n刪除 lol 樂透,電競"
-			} else {
-				err := unsubscribe(userID, args[1], strings.Split(args[2], ","))
-				if err != nil {
-					responseText = "刪除失敗，請等待修復。"
-				} else {
-					responseText = "刪除成功"
-				}
-			}
-		} else {
-			responseText = "無此指令，請打「指令」查看指令清單"
-		}
+		responseText = handleCommand(message.Text, userID)
 	}
 	_, err := bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(responseText)).Do()
 	if err != nil {
@@ -102,12 +70,60 @@ func handleMessage(event *linebot.Event) {
 	}
 }
 
+func handleCommand(text string, userID string) string {
+	args := strings.Fields(text)
+	command, args := args[0], args[1:]
+	switch command {
+	case "清單":
+		return new(user.User).Find(userID).Subscribes.String()
+	case "指令":
+		return stringCommands()
+	case "新增", "刪除":
+		matched, err := regexp.MatchString("^(新增|刪除)(\\s+)([\\w\\d]+)(\\s+)([^\\s]+)$", text)
+		if err != nil {
+			log.WithError(err).Error("Line Check Command Failed")
+		}
+		if !matched {
+			return "指令格式錯誤。關鍵字與逗號間不可有空格。範例：\n" + command + " gossiping 問卦,爆卦"
+		}
+		board := args[0]
+		keywords := splitKeywords(args[1])
+		if command == "新增" {
+			err := subscribe(userID, board, keywords)
+			if err != nil {
+				return "新增失敗，請等待修復。"
+			}
+			return "新增成功"
+		}
+		if command == "刪除" {
+			err := unsubscribe(userID, board, keywords)
+			if err != nil {
+				return "刪除失敗，請等待修復。"
+			}
+			return "刪除成功"
+		}
+	}
+	return "無此指令，請打「指令」查看指令清單"
+}
+
 func stringCommands() string {
 	str := ""
 	for key, val := range commands {
-		str += key + ": " + val + "\n"
+		str += key + "：" + val + "\n"
 	}
 	return str
+}
+
+func splitKeywords(keywords string) []string {
+	if strings.Contains(keywords, ",") {
+		return strings.Split(keywords, ",")
+	}
+
+	if strings.Contains(keywords, "，") {
+		return strings.Split(keywords, "，")
+	}
+
+	return []string{keywords}
 }
 
 func subscribe(account string, board string, keywords []string) error {
