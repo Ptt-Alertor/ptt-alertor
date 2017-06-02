@@ -19,6 +19,14 @@ func UserFind(w http.ResponseWriter, r *http.Request, params httprouter.Params) 
 	fmt.Fprintf(w, "%s", uJSON)
 }
 
+func UserAll(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+	us := new(user.User).All()
+	fmt.Fprintf(w, "總人數：%d\n", len(us))
+	for _, u := range us {
+		fmt.Fprintf(w, "%s\n", u.Profile.Account)
+	}
+}
+
 func UserCreate(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	u := new(user.User)
 	err := json.NewDecoder(r.Body).Decode(&u)

@@ -55,6 +55,7 @@ func main() {
 	router.GET("/boards/:boardName/articles", ctrlr.BoardIndex)
 
 	// users apis
+	router.GET("/users", ctrlr.UserAll)
 	router.GET("/users/:account", ctrlr.UserFind)
 	router.POST("/users", ctrlr.UserCreate)
 	router.PUT("/users/:account", ctrlr.UserModify)
