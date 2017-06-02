@@ -5,6 +5,7 @@ import (
 
 	log "github.com/Sirupsen/logrus"
 
+	"github.com/liam-lai/ptt-alertor/line"
 	"github.com/liam-lai/ptt-alertor/mail"
 	"github.com/liam-lai/ptt-alertor/models/ptt/article"
 	board "github.com/liam-lai/ptt-alertor/models/ptt/board/redis"
@@ -13,9 +14,10 @@ import (
 
 type Message struct {
 	email    string
+	line     string
 	board    string
 	keyword  string
-	articles []article.Article
+	articles article.Articles
 }
 
 func (msg Message) Run() {
@@ -27,15 +29,19 @@ func (msg Message) Run() {
 	users := new(user.User).All()
 	msgCh := make(chan Message)
 	for _, user := range users {
-		msg.email = user.Profile.Email
-		log.WithField("user", user.Profile.Account).Info("Checking User Subscribes")
-		go userChecker(user, bds, msg, msgCh)
+		if user.Enable {
+			// msg.email = user.Profile.Email
+			msg.line = user.Profile.Line
+			log.WithField("user", user.Profile.Account).Info("Checking User Subscribes")
+			go userChecker(user, bds, msg, msgCh)
+		}
 	}
 
 	for {
 		select {
 		case m := <-msgCh:
-			sendMail(m)
+			// sendMail(m)
+			sendLine(m)
 		case <-time.After(time.Second * 3):
 			log.Info("Message Done")
 			return
@@ -74,7 +80,7 @@ func subscribeChecker(user *user.User, bd *board.Board, msg Message, msgCh chan 
 }
 
 func keywordChecker(keyword string, bd *board.Board, msg Message, msgCh chan Message) {
-	keywordArticles := make([]article.Article, 0)
+	keywordArticles := make(article.Articles, 0)
 	for _, newAtcl := range bd.NewArticles {
 		if newAtcl.ContainKeyword(keyword) {
 			keywordArticles = append(keywordArticles, newAtcl)
@@ -95,4 +101,8 @@ func sendMail(msg Message) {
 	m.Receiver = msg.email
 
 	m.Send()
+}
+
+func sendLine(msg Message) {
+	line.PushTextMessage(msg.line, msg.articles.String())
 }

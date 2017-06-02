@@ -1,3 +1,8 @@
+/**
+ * [x]remove multiple keywords at once
+ * [x]add multiple keywords at once
+ **/
+
 package line
 
 import (
@@ -16,8 +21,8 @@ var bot *linebot.Client
 var err error
 var commands = map[string]string{
 	"清單": "正在追蹤的看板與關鍵字",
-	"新增": "新增訂閱看板關鍵字。ex: 新增 lol 樂透",
-	"刪除": "取消訂閱看板關鍵字。ex: 刪除 lol 樂透",
+	"新增": "新增看板關鍵字。\n\tex: 新增 gossiping 爆卦",
+	"刪除": "刪除看板關鍵字。\n\tex: 刪除 gossiping 爆卦",
 	"指令": "可使用的指令清單",
 }
 
@@ -47,9 +52,12 @@ func HandleRequest(r *http.Request) {
 }
 
 /**
- * check board exist or not
+ * TODO: check board exist or not
  * 1. hotboard
  * 2. allboard
+ *
+ * TODO: check command format correct
+ *
  **/
 func handleMessage(event *linebot.Event) {
 	var responseText string
@@ -153,7 +161,7 @@ func handleFollow(event *linebot.Event) {
 		}
 	}
 
-	_, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(profile.DisplayName+" 歡迎使用 PTT Alertor")).Do()
+	_, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(profile.DisplayName+" 歡迎使用 PTT Alertor\n輸入「指令」查看相關功能。")).Do()
 	if err != nil {
 		log.Error(err)
 	}
@@ -186,9 +194,20 @@ func handleBeacon() {
 
 }
 
-func broadcastTextMessage(ids []string, message string) {
+func PushTextMessage(id string, message string) {
+	_, err := bot.PushMessage(id, linebot.NewTextMessage(message)).Do()
+	if err != nil {
+		log.WithError(err).Error("Line Push Message Failed")
+	} else {
+		log.WithFields(log.Fields{
+			"ID": id,
+		}).Info("Line Push Message")
+	}
+}
+
+func BroadcastTextMessage(ids []string, message string) {
 	_, err := bot.Multicast(ids, linebot.NewTextMessage(message)).Do()
 	if err != nil {
-		panic(err)
+		log.Error(err)
 	}
 }

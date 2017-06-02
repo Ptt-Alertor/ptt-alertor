@@ -16,3 +16,15 @@ type ArticleAction interface {
 func (a Article) ContainKeyword(keyword string) bool {
 	return strings.Contains(a.Title, keyword)
 }
+
+type Articles []Article
+
+func (as Articles) String() string {
+	var content string
+	for _, article := range as {
+		content += article.Title + "\r\n" +
+			"https://www.ptt.cc" + article.Link + "\r\n" +
+			"\r\n"
+	}
+	return content
+}

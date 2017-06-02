@@ -23,7 +23,7 @@ type Title struct {
 }
 
 type Body struct {
-	Articles []article.Article
+	Articles article.Articles
 }
 
 func (title Title) String() string {
@@ -31,13 +31,7 @@ func (title Title) String() string {
 }
 
 func (body Body) String() string {
-	var content string
-	for _, article := range body.Articles {
-		content += article.Title + "\r\n" +
-			"https://www.ptt.cc" + article.Link + "\r\n" +
-			"\r\n"
-	}
-	return content + "Send From PTT Alertor"
+	return body.Articles.String() + "Send From PTT Alertor"
 }
 
 func (mail Mail) Send() {
