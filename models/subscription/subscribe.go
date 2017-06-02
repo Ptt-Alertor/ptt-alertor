@@ -1,6 +1,10 @@
 package subscription
 
-import "strings"
+import (
+	"strings"
+
+	"github.com/liam-lai/ptt-alertor/myutil/collection"
+)
 
 type Subscribe struct {
 	Board    string
@@ -21,12 +25,15 @@ func (ss Subscribes) String() string {
 	return str
 }
 
-//TODO: check keyword exist or not
 func (ss *Subscribes) Add(sub Subscribe) {
 	sub.Keywords = removeStringsSpace(sub.Keywords)
 	for i, s := range *ss {
 		if s.Board == sub.Board {
-			(*ss)[i].Keywords = append((*ss)[i].Keywords, sub.Keywords...)
+			for _, keyword := range sub.Keywords {
+				if !collection.In(s.Keywords, keyword) {
+					(*ss)[i].Keywords = append((*ss)[i].Keywords, keyword)
+				}
+			}
 			return
 		}
 	}
