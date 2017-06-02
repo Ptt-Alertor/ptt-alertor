@@ -30,7 +30,7 @@ func (msg Message) Run() {
 	msgCh := make(chan Message)
 	for _, user := range users {
 		if user.Enable {
-			// msg.email = user.Profile.Email
+			msg.email = user.Profile.Email
 			msg.line = user.Profile.Line
 			log.WithField("user", user.Profile.Account).Info("Checking User Subscribes")
 			go userChecker(user, bds, msg, msgCh)
@@ -40,8 +40,7 @@ func (msg Message) Run() {
 	for {
 		select {
 		case m := <-msgCh:
-			// sendMail(m)
-			sendLine(m)
+			sendMessage(m)
 		case <-time.After(time.Second * 3):
 			log.Info("Message Done")
 			return
@@ -90,6 +89,15 @@ func keywordChecker(keyword string, bd *board.Board, msg Message, msgCh chan Mes
 		msg.keyword = keyword
 		msg.articles = keywordArticles
 		msgCh <- msg
+	}
+}
+
+func sendMessage(msg Message) {
+	if msg.email != "" {
+		sendMail(msg)
+	}
+	if msg.line != "" {
+		sendLine(msg)
 	}
 }
 
