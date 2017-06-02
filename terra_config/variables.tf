@@ -22,7 +22,7 @@ variable "autoscaling_min_size"        { default = "1"}
 variable "autoscaling_max_size"        { default = "10"}
 variable "autoscaling_desired_size"    { default = "1"}
 
-variable "launch_configuration_name"   { default = "ecs" }
+variable "launch_config_name"   { default = "ecs" }
 variable "cloudwatch_log_group_name"   { default = "ptt-alertor"}
 
 variable "ecs_cluster_name"            { default = "ptt-alertor-cluster" }
