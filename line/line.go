@@ -94,7 +94,7 @@ func handleCommand(text string, userID string) string {
 		if command == "新增" {
 			err := subscribe(userID, boardName, keywords)
 			if bErr, ok := err.(boardproto.BoardNotExistError); ok {
-				return "版名錯誤，請確認拼字。建議：\n" + bErr.Suggestion
+				return "版名錯誤，請確認拼字。可能版名：\n" + bErr.Suggestion
 			}
 			if err != nil {
 				return "新增失敗，請等待修復。"
@@ -104,7 +104,7 @@ func handleCommand(text string, userID string) string {
 		if command == "刪除" {
 			err := unsubscribe(userID, boardName, keywords)
 			if bErr, ok := err.(boardproto.BoardNotExistError); ok {
-				return "版名錯誤，請確認拼字。建議：\n" + bErr.Suggestion
+				return "版名錯誤，請確認拼字。可能版名：\n" + bErr.Suggestion
 			}
 			if err != nil {
 				return "刪除失敗，請等待修復。"
