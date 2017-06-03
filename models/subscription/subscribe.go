@@ -29,8 +29,8 @@ func (ss Subscribes) String() string {
 }
 
 func (ss *Subscribes) Add(sub Subscribe) error {
-	if !checkBoardExist(sub.Board) {
-		return boardProto.BoardNotExist
+	if ok, suggestion := checkBoardExist(sub.Board); !ok {
+		return boardProto.BoardNotExistError{suggestion}
 	}
 	sub.Keywords = removeStringsSpace(sub.Keywords)
 	for i, s := range *ss {
@@ -48,8 +48,8 @@ func (ss *Subscribes) Add(sub Subscribe) error {
 }
 
 func (ss *Subscribes) Remove(sub Subscribe) error {
-	if !checkBoardExist(sub.Board) {
-		return boardProto.BoardNotExist
+	if ok, suggestion := checkBoardExist(sub.Board); !ok {
+		return boardProto.BoardNotExistError{suggestion}
 	}
 	sub.Keywords = removeStringsSpace(sub.Keywords)
 	for i := 0; i < len(*ss); i++ {
@@ -77,15 +77,16 @@ func removeStringsSpace(strs []string) []string {
 	return strings.Split(strings.Replace(strings.Join(strs, ","), " ", "", -1), ",")
 }
 
-func checkBoardExist(boardName string) bool {
+func checkBoardExist(boardName string) (bool, string) {
 	bd := new(board.Board)
 	bd.Name = boardName
 	if bd.Exist() {
-		return true
+		return true, ""
 	}
 	if crawler.CheckBoardExist(boardName) {
 		bd.Create()
-		return true
+		return true, ""
 	}
-	return false
+
+	return false, bd.SuggestBoardName()
 }

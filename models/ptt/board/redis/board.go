@@ -2,6 +2,7 @@ package redis
 
 import (
 	"encoding/json"
+	"strings"
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/garyburd/redigo/redis"
@@ -10,6 +11,7 @@ import (
 	"github.com/liam-lai/ptt-alertor/models/ptt/article"
 	"github.com/liam-lai/ptt-alertor/models/ptt/board"
 	"github.com/liam-lai/ptt-alertor/myutil"
+	"github.com/liam-lai/ptt-alertor/myutil/maputil"
 )
 
 const prefix string = "board:"
@@ -101,4 +103,18 @@ func (bd Board) Save() error {
 		log.WithField("runtime", myutil.BasicRuntimeInfo()).WithError(err).Error()
 	}
 	return err
+}
+
+func (bd Board) SuggestBoardName() string {
+	strs := bd.listName()
+	shortlist := map[string]int{}
+	chars := strings.Split(bd.Name, "")
+	for _, char := range chars {
+		for _, str := range strs {
+			if strings.Contains(str, char) {
+				shortlist[str]++
+			}
+		}
+	}
+	return maputil.FirstByValueInt(shortlist)
 }

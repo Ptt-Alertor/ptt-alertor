@@ -89,12 +89,12 @@ func handleCommand(text string, userID string) string {
 		if !matched {
 			return "指令格式錯誤。關鍵字與逗號間不可有空格。範例：\n" + command + " gossiping 問卦,爆卦"
 		}
-		board := args[0]
+		boardName := args[0]
 		keywords := splitKeywords(args[1])
 		if command == "新增" {
-			err := subscribe(userID, board, keywords)
-			if err == boardproto.BoardNotExist {
-				return "版名錯誤，請確認拼字。"
+			err := subscribe(userID, boardName, keywords)
+			if bErr, ok := err.(boardproto.BoardNotExistError); ok {
+				return "版名錯誤，請確認拼字。建議：\n" + bErr.Suggestion
 			}
 			if err != nil {
 				return "新增失敗，請等待修復。"
@@ -102,10 +102,10 @@ func handleCommand(text string, userID string) string {
 			return "新增成功"
 		}
 		if command == "刪除" {
-			if err == boardproto.BoardNotExist {
-				return "版名錯誤，請確認拼字。"
+			err := unsubscribe(userID, boardName, keywords)
+			if bErr, ok := err.(boardproto.BoardNotExistError); ok {
+				return "版名錯誤，請確認拼字。建議：\n" + bErr.Suggestion
 			}
-			err := unsubscribe(userID, board, keywords)
 			if err != nil {
 				return "刪除失敗，請等待修復。"
 			}

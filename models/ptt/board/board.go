@@ -1,14 +1,19 @@
 package board
 
 import (
-	"errors"
 	"reflect"
 
 	"github.com/liam-lai/ptt-alertor/crawler"
 	"github.com/liam-lai/ptt-alertor/models/ptt/article"
 )
 
-var BoardNotExist = errors.New("Board is not exist")
+type BoardNotExistError struct {
+	Suggestion string
+}
+
+func (e BoardNotExistError) Error() string {
+	return "board is not exist"
+}
 
 type Board struct {
 	Name        string
