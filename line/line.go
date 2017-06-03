@@ -12,12 +12,15 @@ import (
 	"strings"
 
 	log "github.com/Sirupsen/logrus"
+	boardproto "github.com/liam-lai/ptt-alertor/models/ptt/board"
+	board "github.com/liam-lai/ptt-alertor/models/ptt/board/redis"
 	"github.com/liam-lai/ptt-alertor/models/subscription"
 	user "github.com/liam-lai/ptt-alertor/models/user/redis"
 	"github.com/liam-lai/ptt-alertor/myutil"
 	"github.com/line/line-bot-sdk-go/linebot"
 )
 
+var bd board.Board
 var bot *linebot.Client
 var err error
 var commands = map[string]string{
@@ -90,12 +93,18 @@ func handleCommand(text string, userID string) string {
 		keywords := splitKeywords(args[1])
 		if command == "新增" {
 			err := subscribe(userID, board, keywords)
+			if err == boardproto.BoardNotExist {
+				return "版名錯誤，請確認拼字。"
+			}
 			if err != nil {
 				return "新增失敗，請等待修復。"
 			}
 			return "新增成功"
 		}
 		if command == "刪除" {
+			if err == boardproto.BoardNotExist {
+				return "版名錯誤，請確認拼字。"
+			}
 			err := unsubscribe(userID, board, keywords)
 			if err != nil {
 				return "刪除失敗，請等待修復。"
@@ -126,14 +135,17 @@ func splitKeywords(keywords string) []string {
 	return []string{keywords}
 }
 
-func subscribe(account string, board string, keywords []string) error {
+func subscribe(account string, boardname string, keywords []string) error {
 	u := new(user.User).Find(account)
 	sub := subscription.Subscribe{
-		Board:    board,
+		Board:    boardname,
 		Keywords: keywords,
 	}
-	u.Subscribes.Add(sub)
-	err := u.Update()
+	err := u.Subscribes.Add(sub)
+	if err != nil {
+		return err
+	}
+	err = u.Update()
 	if err != nil {
 		log.WithError(err).Error("Line Subscribe Update Error")
 	}
@@ -146,8 +158,11 @@ func unsubscribe(account string, board string, keywords []string) error {
 		Board:    board,
 		Keywords: keywords,
 	}
-	u.Subscribes.Remove(sub)
-	err := u.Update()
+	err := u.Subscribes.Remove(sub)
+	if err != nil {
+		return err
+	}
+	err = u.Update()
 	if err != nil {
 		log.WithError(err).Error("Line UnSubscribe Update Error")
 	}

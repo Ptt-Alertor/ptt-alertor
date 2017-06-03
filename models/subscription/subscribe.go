@@ -3,6 +3,9 @@ package subscription
 import (
 	"strings"
 
+	"github.com/liam-lai/ptt-alertor/crawler"
+	boardProto "github.com/liam-lai/ptt-alertor/models/ptt/board"
+	board "github.com/liam-lai/ptt-alertor/models/ptt/board/redis"
 	"github.com/liam-lai/ptt-alertor/myutil/collection"
 )
 
@@ -25,7 +28,10 @@ func (ss Subscribes) String() string {
 	return str
 }
 
-func (ss *Subscribes) Add(sub Subscribe) {
+func (ss *Subscribes) Add(sub Subscribe) error {
+	if !checkBoardExist(sub.Board) {
+		return boardProto.BoardNotExist
+	}
 	sub.Keywords = removeStringsSpace(sub.Keywords)
 	for i, s := range *ss {
 		if s.Board == sub.Board {
@@ -34,13 +40,17 @@ func (ss *Subscribes) Add(sub Subscribe) {
 					(*ss)[i].Keywords = append((*ss)[i].Keywords, keyword)
 				}
 			}
-			return
+			return nil
 		}
 	}
 	*ss = append(*ss, sub)
+	return nil
 }
 
-func (ss *Subscribes) Remove(sub Subscribe) {
+func (ss *Subscribes) Remove(sub Subscribe) error {
+	if !checkBoardExist(sub.Board) {
+		return boardProto.BoardNotExist
+	}
 	sub.Keywords = removeStringsSpace(sub.Keywords)
 	for i := 0; i < len(*ss); i++ {
 		s := (*ss)[i]
@@ -60,8 +70,22 @@ func (ss *Subscribes) Remove(sub Subscribe) {
 			i--
 		}
 	}
+	return nil
 }
 
 func removeStringsSpace(strs []string) []string {
 	return strings.Split(strings.Replace(strings.Join(strs, ","), " ", "", -1), ",")
+}
+
+func checkBoardExist(boardName string) bool {
+	bd := new(board.Board)
+	bd.Name = boardName
+	if bd.Exist() {
+		return true
+	}
+	if crawler.CheckBoardExist(boardName) {
+		bd.Create()
+		return true
+	}
+	return false
 }

@@ -11,13 +11,14 @@ import (
 	"golang.org/x/net/html"
 )
 
-func BuildArticles(board string) []article.Article {
+// BuildArticles makes board's index articles to a article slice
+func BuildArticles(board string) article.Articles {
 
 	htmlNodes := parseHTML(fetchHTML(board))
 
 	articleBlocks := traverseHTMLNode(htmlNodes, findArticleBlocks)
 	targetNodes = make([]*html.Node, 0)
-	articles := make([]article.Article, len(articleBlocks))
+	articles := make(article.Articles, len(articleBlocks))
 	for index, articleBlock := range articleBlocks {
 		for _, titleDiv := range traverseHTMLNode(articleBlock, findTitleDiv) {
 			targetNodes = make([]*html.Node, 0)
@@ -47,6 +48,15 @@ func BuildArticles(board string) []article.Article {
 		}
 	}
 	return articles
+}
+
+// CheckBoardExist use for checking board exist or not
+func CheckBoardExist(board string) bool {
+	response := fetchHTML(board)
+	if response.StatusCode == http.StatusNotFound {
+		return false
+	}
+	return true
 }
 
 func fetchHTML(board string) (response *http.Response) {

@@ -18,13 +18,18 @@ type Board struct {
 	board.Board
 }
 
-func (bd Board) All() []*Board {
-	conn := connections.Redis()
-	defer conn.Close()
-	boards, err := redis.Strings(conn.Do("SMEMBERS", "boards"))
-	if err != nil {
-		log.WithField("runtime", myutil.BasicRuntimeInfo()).WithError(err).Error()
+func (bd Board) Exist() bool {
+	names := bd.listName()
+	for _, name := range names {
+		if bd.Name == name {
+			return true
+		}
 	}
+	return false
+}
+
+func (bd Board) All() []*Board {
+	boards := bd.listName()
 	bds := make([]*Board, 0)
 	for _, board := range boards {
 		bd := new(Board)
@@ -32,6 +37,16 @@ func (bd Board) All() []*Board {
 		bds = append(bds, bd)
 	}
 	return bds
+}
+
+func (bd Board) listName() []string {
+	conn := connections.Redis()
+	defer conn.Close()
+	boards, err := redis.Strings(conn.Do("SMEMBERS", "boards"))
+	if err != nil {
+		log.WithField("runtime", myutil.BasicRuntimeInfo()).WithError(err).Error()
+	}
+	return boards
 }
 
 func (bd Board) GetArticles() []article.Article {
