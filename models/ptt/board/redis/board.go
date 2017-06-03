@@ -49,7 +49,7 @@ func (bd Board) listName() []string {
 	return boards
 }
 
-func (bd Board) GetArticles() []article.Article {
+func (bd Board) GetArticles() article.Articles {
 	conn := connections.Redis()
 	defer conn.Close()
 
@@ -59,7 +59,7 @@ func (bd Board) GetArticles() []article.Article {
 		log.WithField("runtime", myutil.BasicRuntimeInfo()).WithError(err).Error()
 	}
 
-	articles := make([]article.Article, 0)
+	articles := make(article.Articles, 0)
 	if articlesJSON != nil {
 		err = json.Unmarshal(articlesJSON, &articles)
 		if err != nil {

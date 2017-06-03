@@ -35,7 +35,7 @@ func (bd Board) All() []*Board {
 	return bds
 }
 
-func (bd Board) GetArticles() []article.Article {
+func (bd Board) GetArticles() article.Articles {
 	file := articlesDir + bd.Name + ".json"
 	articlesJSON, err := ioutil.ReadFile(file)
 	if err != nil {
@@ -44,7 +44,7 @@ func (bd Board) GetArticles() []article.Article {
 			"runtime": myutil.BasicRuntimeInfo(),
 		}).WithError(err).Error("Read File Error")
 	}
-	articles := make([]article.Article, 0)
+	articles := make(article.Articles, 0)
 	err = json.Unmarshal(articlesJSON, &articles)
 	if err != nil {
 		myutil.LogJSONDecode(err, articlesJSON)
