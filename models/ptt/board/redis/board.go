@@ -108,7 +108,7 @@ func (bd Board) Save() error {
 func (bd Board) SuggestBoardName() string {
 	strs := bd.listName()
 	shortlist := map[string]int{}
-	chars := strings.Split(bd.Name, "")
+	chars := strings.Split(strings.ToLower(bd.Name), "")
 	for _, char := range chars {
 		for _, str := range strs {
 			if strings.Contains(str, char) {
