@@ -78,7 +78,11 @@ func handleCommand(text string, userID string) string {
 	command, args := args[0], args[1:]
 	switch command {
 	case "清單":
-		return new(user.User).Find(userID).Subscribes.String()
+		rspText := new(user.User).Find(userID).Subscribes.String()
+		if rspText == "" {
+			rspText = "尚未建立清單。請打「指令」查看新增方法。"
+		}
+		return rspText
 	case "指令":
 		return stringCommands()
 	case "新增", "刪除":
