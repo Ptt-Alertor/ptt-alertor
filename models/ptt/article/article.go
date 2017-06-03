@@ -14,7 +14,7 @@ type ArticleAction interface {
 }
 
 func (a Article) ContainKeyword(keyword string) bool {
-	return strings.Contains(a.Title, keyword)
+	return strings.Contains(strings.ToLower(a.Title), strings.ToLower(keyword))
 }
 
 type Articles []Article
