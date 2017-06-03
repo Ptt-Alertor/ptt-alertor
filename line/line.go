@@ -79,7 +79,7 @@ func handleCommand(text string, userID string) string {
 	case "指令":
 		return stringCommands()
 	case "新增", "刪除":
-		matched, err := regexp.MatchString("^(新增|刪除)(\\s+)([\\w\\d]+)(\\s+)([^\\s]+)$", text)
+		matched, err := regexp.MatchString("^(新增|刪除)(\\s+)([\\w\\d-_]+)(\\s+)([^\\s]+)$", text)
 		if err != nil {
 			log.WithError(err).Error("Line Check Command Failed")
 		}
