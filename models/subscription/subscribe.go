@@ -10,8 +10,8 @@ import (
 )
 
 type Subscribe struct {
-	Board    string
-	Keywords []string
+	Board    string   `json:"board"`
+	Keywords []string `json:"keywords"`
 }
 
 func (s Subscribe) String() string {
@@ -29,6 +29,7 @@ func (ss Subscribes) String() string {
 }
 
 func (ss *Subscribes) Add(sub Subscribe) error {
+	sub.Board = strings.ToLower(sub.Board)
 	if ok, suggestion := checkBoardExist(sub.Board); !ok {
 		return boardProto.BoardNotExistError{suggestion}
 	}
@@ -48,6 +49,7 @@ func (ss *Subscribes) Add(sub Subscribe) error {
 }
 
 func (ss *Subscribes) Remove(sub Subscribe) error {
+	sub.Board = strings.ToLower(sub.Board)
 	if ok, suggestion := checkBoardExist(sub.Board); !ok {
 		return boardProto.BoardNotExistError{suggestion}
 	}

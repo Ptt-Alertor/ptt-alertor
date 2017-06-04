@@ -105,6 +105,17 @@ func (bd Board) Save() error {
 	return err
 }
 
+func (bd Board) Delete() error {
+	conn := connections.Redis()
+	defer conn.Close()
+	_, err := conn.Do("DEL", prefix+bd.Name)
+	_, err = conn.Do("SREM", "boards", bd.Name)
+	if err != nil {
+		log.WithField("runtime", myutil.BasicRuntimeInfo()).WithError(err).Error()
+	}
+	return err
+}
+
 func (bd Board) SuggestBoardName() string {
 	strs := bd.listName()
 	shortlist := map[string]int{}

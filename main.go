@@ -52,7 +52,10 @@ func main() {
 	router := newRouter()
 	router.NotFound = http.FileServer(http.Dir("public"))
 	router.GET("/", ctrlr.Index)
-	router.GET("/boards/:boardName/articles", ctrlr.BoardIndex)
+
+	// boards apis
+	router.GET("/boards/:boardName/articles", ctrlr.BoardArticleIndex)
+	router.GET("/boards", ctrlr.BoardIndex)
 
 	// users apis
 	router.GET("/users/:account", ctrlr.UserFind)
@@ -80,6 +83,7 @@ func startJobs() {
 }
 
 func init() {
+	new(jobs.CleanUpBoards).Run()
 	new(jobs.GenBoards).Run()
 	jobs.NewFetcher().Run()
 }
