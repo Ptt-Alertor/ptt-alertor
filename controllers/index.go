@@ -1,13 +1,13 @@
 package controllers
 
 import (
-	"fmt"
+	"html/template"
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
-	"github.com/liam-lai/ptt-alertor/hello"
 )
 
 func Index(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	fmt.Fprintf(w, hello.HelloWorld())
+	t, _ := template.ParseFiles("public/index.html")
+	t.Execute(w, nil)
 }

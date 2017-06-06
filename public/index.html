@@ -8,7 +8,7 @@
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     <title>PTT Alertor - PTT 即時文章通知</title>
 
-    <link rel="icon" href="alarmP32x32.png">
+    <link rel="icon" href="https://s3-us-west-2.amazonaws.com/ptt-alertor-bucket/assets/alarmP32x32.png">
 
     <!-- Bootstrap -->
     <!-- Latest compiled and minified CSS -->
@@ -38,53 +38,77 @@
 <body>
     <div class="container">
         <div class="header">
-            <nav>
+            <nav class="visible-xs-block">
                 <ul class="nav nav-pills pull-right">
-                    <li role="presentation"><a href="#home">Demo</a></li>
+                    <li role="presentation"><a href="#command">指令</a></li>
+                    <li role="presentation"><a href="#demo">Demo</a></li>
                     <li role="presentation"><a href="#add">加入好友</a></li>
-                    <li role="presentation"><a href="#example">實用範例</a></li>
                 </ul>
             </nav>
             <h3 class="text-muted">PTT Alertor</h3>
         </div>
         <hr>
-        <div class="row bg-success">
-            <div id="example" class="col-sm-4">
-                PTT 即時文章通知
-                <div class="panel panel-default center-block" style="max-width:400px;">
-                    <div class="panel-heading">
-                        實用範例
-                    </div>
-                    <div class="panel-body">
-                        <ul class="list-group">
-                            <li class="list-group-item">新增 lol 樂透</li>
-                            <li class="list-group-item">新增 gossping 爆卦</li>
-                            <li class="list-group-item">新增 tech_job 徵才</li>
-                            <li class="list-group-item">新增 c_chat 一拳，龍珠</li>
-                        </ul>
-                <!--<ul>
-                    <li>乞丐套餐：新增 gossiping,lol,baseball,nba,tennis 發錢</li>
-                    <li>賭徒套餐：新增 lol,baseball,nba,tennis 樂透</li>
-                    <li>工作套餐：新增 tech_job,soft_job,job,tennis 樂透</li>
-                </ul>-->
+        <h1 style="text-align:center;">訂閱看板關鍵字，即時通知最新文章</h1>
+        <div class="row bg-success" style="padding-top:20px; padding-bottom:20px;">
+            <div id="command" class="col-sm-4">
+                <div class="panel panel-primary center-block" style="max-width:400px;">
+                    <div class="panel-heading">指令</div>
+                    <div class="list-group">
+                        <a href="#" class="list-group-item">
+                            <h4 class="list-group-item-heading">指令</h4>
+                            <p class="list-group-item-text">
+                                可使用的指令清單
+                            </p>
+                        </a>
+                        <a href="#" class="list-group-item">
+                            <h4 class="list-group-item-heading">清單</h4>
+                            <p class="list-group-item-text">
+                                正在追蹤的看板與關鍵字
+                            </p>
+                        </a>
+                        <a href="#" class="list-group-item">
+                            <h4 class="list-group-item-heading">新增</h4>
+                            <p class="list-group-item-text">
+                                新增看板關鍵字。
+                            </p>
+                            <ul>
+                                <li>新增 lol 樂透</li>
+                                <li>新增 gossping 爆卦</li>
+                                <li>新增 tech_job 徵才,面試</li>
+                                <li>新增 c_chat 一拳，龍珠</li>
+                            </ul>
+                        </a>
+                        <a href="#" class="list-group-item">
+                            <h4 class="list-group-item-heading">刪除</h4>
+                            <p class="list-group-item-text">
+                                刪除看板關鍵字。
+                                <ul>
+                                    <li>刪除 gossiping 問卦</li>
+                                    <li>刪除 gossiping 公告,新聞</li>
+                                </ul>
+                            </p>
+                        </a>
                     </div>
                 </div>
             </div>
+
             <div id="demo" class="col-sm-4">
                 <img style="height:70vh" src="https://s3-us-west-2.amazonaws.com/ptt-alertor-bucket/assets/intro.gif" alt="introduction"
                     class="center-block img-rounded img-responsive">
             </div>
 
             <div id="add" class="col-sm-4">
-                <div class="center-block" style="text-align: center;">
+                <div style="text-align: center;">
                     <a href="https://line.me/R/ti/p/%40ibh1745e">
-                <img height="36" border="0" alt="加入好友" src="https://scdn.line-apps.com/n/line_add_friends/btn/zh-Hant.png">
-            </a>
+                        <img height="36" border="0" alt="加入好友" src="https://scdn.line-apps.com/n/line_add_friends/btn/zh-Hant.png">
+                    </a>
                 </div>
-                <div></div>
-                <img class="img-responsive center-block" src="http://qr-official.line.me/L/y8XL2ZbWQ8.png">
+                <div>
+                    <img class="img-responsive center-block" src="http://qr-official.line.me/L/y8XL2ZbWQ8.png">
+                </div>
             </div>
         </div>
+
         <footer class="footer" style="text-align:center;">
             <p>&copy; 2017 PTT Alertor</p>
         </footer>
