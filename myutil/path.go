@@ -13,3 +13,7 @@ func ProjectRootPath() string {
 func StoragePath() string {
 	return ProjectRootPath() + "/storage"
 }
+
+func PublicPath() string {
+	return ProjectRootPath() + "/public"
+}
