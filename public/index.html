@@ -1,9 +1,100 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 
-<head></head>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>PTT Alertor - PTT 即時文章通知</title>
+
+    <link rel="icon" href="alarmP32x32.png">
+
+    <!-- Bootstrap -->
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+        crossorigin="anonymous">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp"
+        crossorigin="anonymous">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <style>
+        #home,
+        #add,
+        #example {
+            padding-top: 20px;
+            padding-bottom: 20px;
+        }
+    </style>
+</head>
 
 <body>
-    <h1>index</h1>
+    <div class="container">
+        <div class="header">
+            <nav>
+                <ul class="nav nav-pills pull-right">
+                    <li role="presentation"><a href="#home">Demo</a></li>
+                    <li role="presentation"><a href="#add">加入好友</a></li>
+                    <li role="presentation"><a href="#example">實用範例</a></li>
+                </ul>
+            </nav>
+            <h3 class="text-muted">PTT Alertor</h3>
+        </div>
+        <hr>
+        <div class="row bg-success">
+            <div id="example" class="col-sm-4">
+                PTT 即時文章通知
+                <div class="panel panel-default center-block" style="max-width:400px;">
+                    <div class="panel-heading">
+                        實用範例
+                    </div>
+                    <div class="panel-body">
+                        <ul class="list-group">
+                            <li class="list-group-item">新增 lol 樂透</li>
+                            <li class="list-group-item">新增 gossping 爆卦</li>
+                            <li class="list-group-item">新增 tech_job 徵才</li>
+                            <li class="list-group-item">新增 c_chat 一拳，龍珠</li>
+                        </ul>
+                <!--<ul>
+                    <li>乞丐套餐：新增 gossiping,lol,baseball,nba,tennis 發錢</li>
+                    <li>賭徒套餐：新增 lol,baseball,nba,tennis 樂透</li>
+                    <li>工作套餐：新增 tech_job,soft_job,job,tennis 樂透</li>
+                </ul>-->
+                    </div>
+                </div>
+            </div>
+            <div id="demo" class="col-sm-4">
+                <img style="height:70vh" src="https://s3-us-west-2.amazonaws.com/ptt-alertor-bucket/assets/intro.gif" alt="introduction"
+                    class="center-block img-rounded img-responsive">
+            </div>
+
+            <div id="add" class="col-sm-4">
+                <div class="center-block" style="text-align: center;">
+                    <a href="https://line.me/R/ti/p/%40ibh1745e">
+                <img height="36" border="0" alt="加入好友" src="https://scdn.line-apps.com/n/line_add_friends/btn/zh-Hant.png">
+            </a>
+                </div>
+                <div></div>
+                <img class="img-responsive center-block" src="http://qr-official.line.me/L/y8XL2ZbWQ8.png">
+            </div>
+        </div>
+        <footer class="footer" style="text-align:center;">
+            <p>&copy; 2017 PTT Alertor</p>
+        </footer>
+    </div>
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+        crossorigin="anonymous"></script>
 </body>
 
 </html>
