@@ -5,10 +5,19 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     <title>PTT Alertor - PTT 即時文章通知</title>
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="訂閱看板關鍵字，即時通知最新文章">
+    <meta name="keywords" content="PTT, Line Bot, PTT Line Bot, PTT Notification, PTT 通知器, PTT 追蹤">
+    <meta name="author" content="Dino Lai, Liam Lai">
+    <!-- Facebook Open Graph -->
+    <meta property="og:url" content="http://pttalertor.dinolai.com/" />
+    <meta property="og:type" content="product" />
+    <meta property="og:title" content="PTT Alertor - PTT 即時文章通知" />
+    <meta property="og:description" content="訂閱看板關鍵字，即時通知最新文章" />
+    <meta property="og:image" content="https://s3-us-west-2.amazonaws.com/ptt-alertor-bucket/assets/alarmP.png" />
 
-    <link rel="icon" href="https://s3-us-west-2.amazonaws.com/ptt-alertor-bucket/assets/alarmP32x32.png">
+    <link rel="icon" type="image/png" href="https://s3-us-west-2.amazonaws.com/ptt-alertor-bucket/assets/alarmP32x32.png">
 
     <!-- Bootstrap -->
     <!-- Latest compiled and minified CSS -->
@@ -25,14 +34,7 @@
       <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
-    <style>
-        #home,
-        #add,
-        #example {
-            padding-top: 20px;
-            padding-bottom: 20px;
-        }
-    </style>
+    <link rel="stylesheet" href="assets/css/index.css">
 </head>
 
 <body>
@@ -48,10 +50,10 @@
             <h3 class="text-muted">PTT Alertor</h3>
         </div>
         <hr>
-        <h1 style="text-align:center;">訂閱看板關鍵字，即時通知最新文章</h1>
-        <div class="row bg-success" style="padding-top:20px; padding-bottom:20px;">
+        <h1 class="center-text">訂閱看板關鍵字，即時通知最新文章</h1>
+        <div id="main" class="row bg-success">
             <div id="command" class="col-sm-4">
-                <div class="panel panel-primary center-block" style="max-width:400px;">
+                <div class="panel panel-primary center-block">
                     <div class="panel-heading">指令</div>
                     <div class="list-group">
                         <a href="#" class="list-group-item">
@@ -93,12 +95,12 @@
             </div>
 
             <div id="demo" class="col-sm-4">
-                <img style="height:70vh" src="https://s3-us-west-2.amazonaws.com/ptt-alertor-bucket/assets/intro.gif" alt="introduction"
+                <img id="demo-img" src="https://s3-us-west-2.amazonaws.com/ptt-alertor-bucket/assets/intro.gif" alt="introduction"
                     class="center-block img-rounded img-responsive">
             </div>
 
             <div id="add" class="col-sm-4">
-                <div style="text-align: center;">
+                <div class="center-text">
                     <a href="https://line.me/R/ti/p/%40ibh1745e">
                         <img height="36" border="0" alt="加入好友" src="https://scdn.line-apps.com/n/line_add_friends/btn/zh-Hant.png">
                     </a>
@@ -109,8 +111,9 @@
             </div>
         </div>
 
-        <footer class="footer" style="text-align:center;">
-            <p>&copy; 2017 PTT Alertor</p>
+        <footer class="footer center-text">
+            <p>&copy; 2017 PTT Alertor. Icons made by <a href="http://www.flaticon.com/authors/madebyoliver" title="Madebyoliver">Madebyoliver</a> from <a href="http://www.flaticon.com" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a>
+            </p>
         </footer>
     </div>
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->

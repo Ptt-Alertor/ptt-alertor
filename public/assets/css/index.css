@@ -1,0 +1,16 @@
+#home,
+#add,
+#example {
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+.center-text {
+    text-align: center;
+}
+#main {
+        padding-top:20px;
+        padding-bottom:20px;
+}
+#demo-img {
+        height:70vh;
+}
