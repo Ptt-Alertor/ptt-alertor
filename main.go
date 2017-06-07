@@ -58,10 +58,10 @@ func main() {
 	router.GET("/boards", ctrlr.BoardIndex)
 
 	// users apis
-	router.GET("/users/:account", ctrlr.UserFind)
-	router.GET("/users", ctrlr.UserAll)
-	router.POST("/users", ctrlr.UserCreate)
-	router.PUT("/users/:account", ctrlr.UserModify)
+	router.GET("/users/:account", basicAuth(ctrlr.UserFind))
+	router.GET("/users", basicAuth(ctrlr.UserAll))
+	router.POST("/users", basicAuth(ctrlr.UserCreate))
+	router.PUT("/users/:account", basicAuth(ctrlr.UserModify))
 
 	router.POST("/line/callback", ctrlr.LineCallback)
 
