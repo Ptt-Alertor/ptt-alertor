@@ -21,13 +21,6 @@
          "containerPort": 6379,
          "hostPort": 6379
          }
-      ],
-      "mountPoints": [
-         {
-         "sourceVolume": "config",
-         "containerPath": "/go/config",
-         "readOnly": true
-         }
       ]
 },
 {
@@ -42,13 +35,6 @@
               "awslogs-group": "ptt-alertor",
               "awslogs-region": "us-west-2"
          }
-      },
-      "mountPoints": [
-         {
-         "sourceVolume": "config",
-         "containerPath": "/go/config",
-         "readOnly": true
-         }
-      ]
+      }
 }
 ]
