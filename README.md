@@ -4,15 +4,18 @@
 
 [![Build Status](https://travis-ci.org/liam-lai/ptt-alertor.svg?branch=master)](https://travis-ci.org/liam-lai/ptt-alertor)
 [![codecov](https://codecov.io/gh/liam-lai/ptt-alertor/branch/master/graph/badge.svg)](https://codecov.io/gh/liam-lai/ptt-alertor)
+[![Go Report Card](https://goreportcard.com/badge/github.com/liam-lai/ptt-alertor)](https://goreportcard.com/report/github.com/liam-lai/ptt-alertor)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 ## API
 
 ### Board
 
+* GET /boards
+
 * GET /boards/[board name]/articles
 
-### User
+### User (Auth)
 
 * GET /users/[account]
 
