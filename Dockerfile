@@ -21,7 +21,6 @@ RUN curl -kfsSL "$GOLANG_DOWNLOAD_URL" -o golang.tar.gz \
 ENV GOPATH /go/
 ENV GO_WORKDIR $GOPATH/src/github.com/liam-lai/ptt-alertor/
 ENV PATH $GOPATH/bin:/usr/local/go/bin:$PATH
-ENV CONFIG_PATH /go/src/github.com/liam-lai/ptt-alertor/config/
 
 RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH"
 WORKDIR $GO_WORKDIR
@@ -29,7 +28,6 @@ WORKDIR $GO_WORKDIR
 COPY docker_golang_1.8/go-wrapper /usr/local/bin/
 
 ADD . $GO_WORKDIR
-ADD /etc/ecs/config/* $CONFIG_PATH
 
 RUN go get
 RUN go install
