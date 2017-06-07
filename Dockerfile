@@ -19,18 +19,18 @@ RUN curl -kfsSL "$GOLANG_DOWNLOAD_URL" -o golang.tar.gz \
 	&& rm golang.tar.gz
 
 ENV GOPATH /go/
-ENV GO_WORKDIR github.com/liam-lai/ptt-alertor/
+ENV GO_WORKDIR $GOPATH/src/github.com/liam-lai/ptt-alertor/
 ENV PATH $GOPATH/bin:/usr/local/go/bin:$PATH
 
 RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH"
-WORKDIR $GOPATH
+WORKDIR $GO_WORKDIR
 
 COPY docker_golang_1.8/go-wrapper /usr/local/bin/
 
-ADD . "$GOPATH"/src/"$GO_WORKDIR"
+ADD . $GO_WORKDIR
 
-RUN go get "$GO_WORKDIR"
-RUN go install "$GO_WORKDIR"
+RUN go get
+RUN go install
 
 # Run the outyet command by default when the container starts.
 ENTRYPOINT /go/bin/ptt-alertor
