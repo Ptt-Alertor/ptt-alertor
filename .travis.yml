@@ -13,6 +13,7 @@ before_script:
 - aws s3 cp s3://ptt-alertor-bucket/config/redis.json config/
 - aws s3 cp s3://ptt-alertor-bucket/config/auth.json config/
 - aws s3 cp s3://ptt-alertor-bucket/config/line.json config/
+- aws s3 cp s3://ptt-alertor-bucket/config/messenger.json config/
 - ls -al config/
 script:
 - docker build -t liam-lai/ptt-alertor .

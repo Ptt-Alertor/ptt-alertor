@@ -7,17 +7,19 @@ import (
 
 	"github.com/liam-lai/ptt-alertor/line"
 	"github.com/liam-lai/ptt-alertor/mail"
+	"github.com/liam-lai/ptt-alertor/messenger"
 	"github.com/liam-lai/ptt-alertor/models/ptt/article"
 	board "github.com/liam-lai/ptt-alertor/models/ptt/board/redis"
 	user "github.com/liam-lai/ptt-alertor/models/user/redis"
 )
 
 type Message struct {
-	email    string
-	line     string
-	board    string
-	keyword  string
-	articles article.Articles
+	email     string
+	line      string
+	messenger string
+	board     string
+	keyword   string
+	articles  article.Articles
 }
 
 func (msg Message) Run() {
@@ -32,6 +34,7 @@ func (msg Message) Run() {
 		if user.Enable {
 			msg.email = user.Profile.Email
 			msg.line = user.Profile.Line
+			msg.messenger = user.Profile.Messenger
 			log.WithField("user", user.Profile.Account).Info("Checking User Subscribes")
 			go userChecker(user, bds, msg, msgCh)
 		}
@@ -99,6 +102,9 @@ func sendMessage(msg Message) {
 	if msg.line != "" {
 		sendLine(msg)
 	}
+	if msg.messenger != "" {
+		sendMessenger(msg)
+	}
 }
 
 func sendMail(msg Message) {
@@ -113,4 +119,9 @@ func sendMail(msg Message) {
 
 func sendLine(msg Message) {
 	line.PushTextMessage(msg.line, msg.articles.String())
+}
+
+func sendMessenger(msg Message) {
+	m := messenger.New()
+	m.SendTextMessage(msg.messenger, msg.articles.String())
 }
