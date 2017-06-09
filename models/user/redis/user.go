@@ -58,8 +58,8 @@ func (u User) Save() error {
 		return errors.New("account can not be empty")
 	}
 
-	if u.Profile.Email == "" && u.Profile.Line == "" {
-		return errors.New("Email or Line have to be complete")
+	if u.Profile.Email == "" && u.Profile.Line == "" && u.Profile.Messenger == "" {
+		return errors.New("Email or Line or Messenger have to be complete")
 	}
 
 	uJSON, err := json.Marshal(u)

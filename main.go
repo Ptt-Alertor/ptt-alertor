@@ -9,6 +9,7 @@ import (
 
 	ctrlr "github.com/liam-lai/ptt-alertor/controllers"
 	"github.com/liam-lai/ptt-alertor/jobs"
+	"github.com/liam-lai/ptt-alertor/messenger"
 	"github.com/liam-lai/ptt-alertor/myutil"
 )
 
@@ -51,8 +52,9 @@ func main() {
 
 	router := newRouter()
 	router.NotFound = http.FileServer(http.Dir("public"))
-	router.GET("/", ctrlr.Index)
 
+	router.GET("/", ctrlr.Index)
+	m := messenger.New()
 	// boards apis
 	router.GET("/boards/:boardName/articles", ctrlr.BoardArticleIndex)
 	router.GET("/boards", ctrlr.BoardIndex)
@@ -63,7 +65,12 @@ func main() {
 	router.POST("/users", basicAuth(ctrlr.UserCreate))
 	router.PUT("/users/:account", basicAuth(ctrlr.UserModify))
 
+	// line
 	router.POST("/line/callback", ctrlr.LineCallback)
+
+	// facebook messenger
+	router.GET("/messenger/webhook", m.Verify)
+	router.POST("/messenger/webhook", m.Received)
 
 	err := http.ListenAndServe(":9090", router)
 	if err != nil {

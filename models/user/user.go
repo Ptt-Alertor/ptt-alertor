@@ -5,9 +5,10 @@ import "github.com/liam-lai/ptt-alertor/models/subscription"
 type User struct {
 	Enable  bool `json:"enable"`
 	Profile struct {
-		Account string `json:"account"`
-		Email   string `json:"email"`
-		Line    string `json:"line"`
+		Account   string `json:"account"`
+		Email     string `json:"email"`
+		Line      string `json:"line"`
+		Messenger string `json:"messenger"`
 	}
 	Subscribes subscription.Subscribes
 }
