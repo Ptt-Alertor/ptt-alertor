@@ -21,12 +21,6 @@
 			"revisionTime": "2017-04-26T04:47:58Z"
 		},
 		{
-			"checksumSHA1": "1nqFsjS1Oc1pAFDxgu9TalmH7+U=",
-			"path": "github.com/paked/messenger",
-			"revision": "64c15a121b44a038131924a44f170ef8a09fd00f",
-			"revisionTime": "2017-04-09T16:58:35Z"
-		},
-		{
 			"checksumSHA1": "lEzkjwyqZ1e8Zv/k1t8OW0e+YVQ=",
 			"path": "github.com/robfig/cron",
 			"revision": "9585fd555638e77bba25f25db5c44b41f264aeb7",
