@@ -14,8 +14,8 @@ import (
 var Commands = map[string]string{
 	"指令": "可使用的指令清單",
 	"清單": "目前追蹤的看板與關鍵字",
-	"新增": "新增看板關鍵字。範例：\n\t\t新增 gossiping 爆卦\n\t\t新增 gossiping 爆卦,問卦\n\t\t新增 gossiping 爆卦，問卦",
-	"刪除": "刪除看板關鍵字。範例：\n\t\t刪除 gossiping 爆卦\n\t\t刪除 gossiping 爆卦,問卦\n\t\t刪除 gossiping 爆卦，問卦",
+	"新增": "新增看板關鍵字。範例：\n\t\t新增 nba 樂透\n\t\t新增 nba,lol 樂透 \n\t\t新增 nba,lol 樂透,情報",
+	"刪除": "刪除看板關鍵字。範例：\n\t\t刪除 nba 樂透\n\t\t刪除 nba,lol 樂透 \n\t\t刪除 nba,lol 樂透,情報",
 }
 
 func HandleCommand(text string, userID string) string {
