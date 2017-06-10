@@ -11,7 +11,7 @@ import (
 	user "github.com/liam-lai/ptt-alertor/models/user/redis"
 )
 
-var commands = map[string]string{
+var Commands = map[string]string{
 	"指令": "可使用的指令清單",
 	"清單": "目前追蹤的看板與關鍵字",
 	"新增": "新增看板關鍵字。範例：\n\t\t新增 gossiping 爆卦\n\t\t新增 gossiping 爆卦,問卦\n\t\t新增 gossiping 爆卦，問卦",
@@ -66,7 +66,7 @@ func HandleCommand(text string, userID string) string {
 
 func stringCommands() string {
 	str := ""
-	for key, val := range commands {
+	for key, val := range Commands {
 		str += key + "：" + val + "\n"
 	}
 	return str

@@ -56,18 +56,29 @@ func (m *Messenger) Received(w http.ResponseWriter, r *http.Request, _ httproute
 					}
 
 				} else if messaging.Postback != nil {
-					if messaging.Postback.Payload == "GET_STARTED_PAYLOAD" {
-						fmt.Println(id)
-						err := command.HandleMessengerFollow(id)
-						if err != nil {
-							log.WithError(err).Error("Messenger Follow Error")
-						}
-						m.SendTextMessage(id, "歡迎使用 PTT Alertor\n輸入「指令」查看相關功能。")
-					}
+					m.handlePostback(id, messaging.Postback.Payload)
 				}
 			}
 		}
 	}
+}
+
+func (m *Messenger) handlePostback(id string, payload string) {
+	var responseText string
+	switch payload {
+	case "GET_STARTED_PAYLOAD":
+		err := command.HandleMessengerFollow(id)
+		if err != nil {
+			log.WithError(err).Error("Messenger Follow Error")
+		}
+		responseText = "歡迎使用 PTT Alertor\n輸入「指令」查看相關功能。"
+	case "COMMANDS_PAYLOAD":
+		// responseText = command.HandleCommand("指令", id)
+		m.SendListMessage(id, command.Commands)
+	case "SUBSCRIPTIONS_PAYLOAD":
+		responseText = command.HandleCommand("清單", id)
+	}
+	m.SendTextMessage(id, responseText)
 }
 
 func (m *Messenger) SendTextMessage(id string, message string) {
@@ -78,7 +89,32 @@ func (m *Messenger) SendTextMessage(id string, message string) {
 	m.callSendAPI(body)
 }
 
+func (m *Messenger) SendListMessage(id string, StringMap map[string]string) {
+	elements := []Element{}
+	for key, str := range StringMap {
+		elements = append(elements, Element{
+			Title:    key,
+			Subtitle: str,
+		})
+	}
+	attachment := Attachment{
+		Type: "template",
+		Payload: Payload{
+			TemplateType:    "list",
+			TopElementStyle: "compact",
+			Elements:        elements,
+		},
+	}
+	body := Request{}
+	body.Recipient.ID = id
+	body.Message.Attachment = &attachment
+	m.callSendAPI(body)
+}
+
 func (m *Messenger) callSendAPI(body Request) {
 	url := SendAPIURL + m.AccessToken
-	callAPI(url, body)
+	err := callAPI(url, body)
+	if err != nil {
+		log.WithError(err).Error("Call Send API Error")
+	}
 }

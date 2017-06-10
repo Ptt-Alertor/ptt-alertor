@@ -25,8 +25,9 @@ type Sender struct {
 
 type Message struct {
 	Mid         string `json:"mid,omitempty"`
-	Text        string `json:"text"`
+	Text        string `json:"text,omitempty"`
 	*QuickReply `json:"quick_reply,omitempty"`
+	*Attachment `json:"attachment,omitempty"`
 }
 
 type QuickReply struct {
