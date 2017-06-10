@@ -24,6 +24,10 @@
     Send, 新增 gossiping 新聞,公告，協尋{Enter}
     Sleep, 2000
 
+    ; 新增多版多關鍵字
+    Send, 新增 lol,nba, baseball，tennis 樂透，閒聊{Enter}
+    Sleep, 2000
+
     Send, 清單{Enter}
     Sleep, 2000
 
@@ -32,16 +36,20 @@
     Send, 新增 gossping 問卦{Enter}
     Sleep, 2000
 
-    ; 新增多個版名
-    Send 新增 gossiping,lol 問卦{Enter}
+    ; 新增關鍵字逗號開頭
+    Send, 新增 gossiping ,逗號開頭{Enter}
     Sleep, 2000
 
-    ; 新增逗號開頭
-    Send 新增 gossiping ,逗號開頭{Enter}
+    ; 新增關鍵字逗號結尾
+    Send, 新增 gossiping 逗號結尾，{Enter}
     Sleep, 2000
 
-    ; 新增逗號結尾
-    Send 新增 gossiping 逗號結尾，{Enter}
+    ; 新增版名逗號開頭
+    Send, 新增 ,gossiping 逗號開頭{Enter}
+    Sleep, 2000
+
+    ; 新增版名逗號結尾
+    Send, 新增 gossiping， 逗號結尾{Enter}
     Sleep, 2000
 
     Send, 清單{Enter}
@@ -52,14 +60,30 @@
     Send, 刪除 gossping 問卦{Enter}
     Sleep, 2000
 
-    ; 刪除多個版名
-    Send 刪除 gossiping,lol 問卦{Enter}
+    ; 刪除關鍵字逗號開頭
+    Send, 刪除 gossiping ,逗號開頭{Enter}
+    Sleep, 2000
+
+    ; 刪除關鍵字逗號結尾
+    Send, 刪除 gossiping 逗號結尾，{Enter}
+    Sleep, 2000
+
+    ; 刪除版名逗號開頭
+    Send, 刪除 ，gossiping 逗號開頭{Enter}
+    Sleep, 2000
+
+    ; 刪除版名逗號結尾
+    Send, 刪除 gossiping, 逗號結尾{Enter}
     Sleep, 2000
 
     Send, 清單{Enter}
     Sleep, 2000
 
     ; 刪除正面
+    ; 刪除多版多關鍵字
+    Send, 刪除 lol,nba, baseball，tennis 樂透，閒聊{Enter}
+    Sleep, 2000
+
     Send, 刪除 gossiping 新聞， 公告{Enter}
     Sleep, 2000
 

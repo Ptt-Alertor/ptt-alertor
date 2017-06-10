@@ -33,28 +33,32 @@ func HandleCommand(text string, userID string) string {
 		re := regexp.MustCompile("^(新增|刪除)\\s+([^,，][\\w\\d-_,，\\s]+[^,，])\\s+([^,，].*[^,，]$)")
 		matched := re.MatchString(text)
 		if !matched {
-			return "指令格式錯誤。看板與關鍵字欄位開始與最後不可有逗號。範例：\n" + command + " gossiping,lol 問卦,爆卦"
+			return "指令格式錯誤。看板與關鍵字欄位開始與最後不可有逗號。正確範例：\n" + command + " gossiping,lol 問卦,爆卦"
 		}
 		args := re.FindStringSubmatch(text)
-		boardName := strings.Replace(args[2], " ", "", -1)
-		keywords := splitKeywords(args[3])
+		boardNames := splitParamString(args[2])
+		keywords := splitParamString(args[3])
 		if command == "新增" {
-			err := subscribe(userID, boardName, keywords)
-			if bErr, ok := err.(boardproto.BoardNotExistError); ok {
-				return "版名錯誤，請確認拼字。可能版名：\n" + bErr.Suggestion
-			}
-			if err != nil {
-				return "新增失敗，請等待修復。"
+			for _, boardName := range boardNames {
+				err := subscribe(userID, boardName, keywords)
+				if bErr, ok := err.(boardproto.BoardNotExistError); ok {
+					return "版名錯誤，請確認拼字。可能版名：\n" + bErr.Suggestion
+				}
+				if err != nil {
+					return "新增失敗，請等待修復。"
+				}
 			}
 			return "新增成功"
 		}
 		if command == "刪除" {
-			err := unsubscribe(userID, boardName, keywords)
-			if bErr, ok := err.(boardproto.BoardNotExistError); ok {
-				return "版名錯誤，請確認拼字。可能版名：\n" + bErr.Suggestion
-			}
-			if err != nil {
-				return "刪除失敗，請等待修復。"
+			for _, boardName := range boardNames {
+				err := unsubscribe(userID, boardName, keywords)
+				if bErr, ok := err.(boardproto.BoardNotExistError); ok {
+					return "版名錯誤，請確認拼字。可能版名：\n" + bErr.Suggestion
+				}
+				if err != nil {
+					return "刪除失敗，請等待修復。"
+				}
 			}
 			return "刪除成功"
 		}
@@ -70,30 +74,30 @@ func stringCommands() string {
 	return str
 }
 
-func splitKeywords(keywordText string) (keywords []string) {
+func splitParamString(paramString string) (params []string) {
 
-	if !strings.ContainsAny(keywordText, ",，") {
-		return []string{keywordText}
+	if !strings.ContainsAny(paramString, ",，") {
+		return []string{paramString}
 	}
 
-	if strings.Contains(keywordText, ",") {
-		keywords = strings.Split(keywordText, ",")
+	if strings.Contains(paramString, ",") {
+		params = strings.Split(paramString, ",")
 	} else {
-		keywords = []string{keywordText}
+		params = []string{paramString}
 	}
 
-	for i := 0; i < len(keywords); i++ {
-		if strings.Contains(keywords[i], "，") {
-			keywords = append(keywords[:i], append(strings.Split(keywords[i], "，"), keywords[i+1:]...)...)
+	for i := 0; i < len(params); i++ {
+		if strings.Contains(params[i], "，") {
+			params = append(params[:i], append(strings.Split(params[i], "，"), params[i+1:]...)...)
 			i--
 		}
 	}
 
-	for i, keyword := range keywords {
-		keywords[i] = strings.TrimSpace(keyword)
+	for i, param := range params {
+		params[i] = strings.TrimSpace(param)
 	}
 
-	return keywords
+	return params
 }
 
 func subscribe(account string, boardname string, keywords []string) error {
