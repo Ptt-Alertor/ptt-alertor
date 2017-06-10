@@ -9,6 +9,7 @@ import (
 
 	ctrlr "github.com/liam-lai/ptt-alertor/controllers"
 	"github.com/liam-lai/ptt-alertor/jobs"
+	"github.com/liam-lai/ptt-alertor/line"
 	"github.com/liam-lai/ptt-alertor/messenger"
 	"github.com/liam-lai/ptt-alertor/myutil"
 )
@@ -66,7 +67,7 @@ func main() {
 	router.PUT("/users/:account", basicAuth(ctrlr.UserModify))
 
 	// line
-	router.POST("/line/callback", ctrlr.LineCallback)
+	router.POST("/line/callback", line.HandleRequest)
 
 	// facebook messenger
 	router.GET("/messenger/webhook", m.Verify)

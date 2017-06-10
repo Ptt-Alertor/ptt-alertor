@@ -9,6 +9,7 @@ import (
 	"net/http"
 
 	log "github.com/Sirupsen/logrus"
+	"github.com/julienschmidt/httprouter"
 	"github.com/liam-lai/ptt-alertor/command"
 	board "github.com/liam-lai/ptt-alertor/models/ptt/board/redis"
 	user "github.com/liam-lai/ptt-alertor/models/user/redis"
@@ -28,7 +29,7 @@ func init() {
 	}
 }
 
-func HandleRequest(r *http.Request) {
+func HandleRequest(_ http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	events, err := bot.ParseRequest(r)
 	if err != nil {
 		log.WithError(err).Error("Line ParseRequest Error")
