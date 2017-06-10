@@ -19,8 +19,7 @@ var Commands = map[string]string{
 }
 
 func HandleCommand(text string, userID string) string {
-	args := strings.Fields(text)
-	command, args := args[0], args[1:]
+	command := strings.Fields(strings.TrimSpace(text))[0]
 	switch command {
 	case "清單":
 		rspText := new(user.User).Find(userID).Subscribes.String()
@@ -31,15 +30,14 @@ func HandleCommand(text string, userID string) string {
 	case "指令":
 		return stringCommands()
 	case "新增", "刪除":
-		matched, err := regexp.MatchString("^(新增|刪除)(\\s+)([\\w\\d-_]+)(\\s+)([^\\s]+)$", text)
-		if err != nil {
-			log.WithError(err).Error("Line Check Command Failed")
-		}
+		re := regexp.MustCompile("^(新增|刪除)\\s+([^,，][\\w\\d-_,，\\s]+[^,，])\\s+([^,，].*[^,，]$)")
+		matched := re.MatchString(text)
 		if !matched {
-			return "指令格式錯誤。關鍵字與逗號間不可有空格。範例：\n" + command + " gossiping 問卦,爆卦"
+			return "指令格式錯誤。看板與關鍵字欄位開始與最後不可有逗號。範例：\n" + command + " gossiping,lol 問卦,爆卦"
 		}
-		boardName := args[0]
-		keywords := splitKeywords(args[1])
+		args := re.FindStringSubmatch(text)
+		boardName := strings.Replace(args[2], " ", "", -1)
+		keywords := splitKeywords(args[3])
 		if command == "新增" {
 			err := subscribe(userID, boardName, keywords)
 			if bErr, ok := err.(boardproto.BoardNotExistError); ok {
@@ -72,16 +70,30 @@ func stringCommands() string {
 	return str
 }
 
-func splitKeywords(keywords string) []string {
-	if strings.Contains(keywords, ",") {
-		return strings.Split(keywords, ",")
+func splitKeywords(keywordText string) (keywords []string) {
+
+	if !strings.ContainsAny(keywordText, ",，") {
+		return []string{keywordText}
 	}
 
-	if strings.Contains(keywords, "，") {
-		return strings.Split(keywords, "，")
+	if strings.Contains(keywordText, ",") {
+		keywords = strings.Split(keywordText, ",")
+	} else {
+		keywords = []string{keywordText}
 	}
 
-	return []string{keywords}
+	for i := 0; i < len(keywords); i++ {
+		if strings.Contains(keywords[i], "，") {
+			keywords = append(keywords[:i], append(strings.Split(keywords[i], "，"), keywords[i+1:]...)...)
+			i--
+		}
+	}
+
+	for i, keyword := range keywords {
+		keywords[i] = strings.TrimSpace(keyword)
+	}
+
+	return keywords
 }
 
 func subscribe(account string, boardname string, keywords []string) error {

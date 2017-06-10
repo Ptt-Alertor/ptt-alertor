@@ -12,13 +12,16 @@
     Sleep, 2000
 
     ; 新增正面
+    ; 新增單項
     Send, 新增 gossiping 問卦{Enter}
     Sleep, 2000
 
-    Send, 新增 gossiping 問卦,爆卦,ＦＢ{Enter}
+    ; 新增混合有空白
+    Send, 新增 gossiping 問卦,爆卦, ＦＢ{Enter}
     Sleep, 2000
 
-    Send, 新增 gossiping 新聞，公告，協尋{Enter}
+    ; 新增混合逗號
+    Send, 新增 gossiping 新聞,公告，協尋{Enter}
     Sleep, 2000
 
     Send, 清單{Enter}
@@ -33,8 +36,12 @@
     Send 新增 gossiping,lol 問卦{Enter}
     Sleep, 2000
 
-    ; 新增關鍵字分隔錯誤
-    Send, 新增 gossiping 新聞, 公告{Enter}
+    ; 新增逗號開頭
+    Send 新增 gossiping ,逗號開頭{Enter}
+    Sleep, 2000
+
+    ; 新增逗號結尾
+    Send 新增 gossiping 逗號結尾，{Enter}
     Sleep, 2000
 
     Send, 清單{Enter}
@@ -49,15 +56,11 @@
     Send 刪除 gossiping,lol 問卦{Enter}
     Sleep, 2000
 
-    ; 刪除關鍵字分隔錯誤
-    Send, 刪除 gossiping 新聞, 公告{Enter}
-    Sleep, 2000
-
     Send, 清單{Enter}
     Sleep, 2000
 
     ; 刪除正面
-    Send, 刪除 gossiping 新聞，公告{Enter}
+    Send, 刪除 gossiping 新聞， 公告{Enter}
     Sleep, 2000
 
     Send, 刪除 gossiping 爆卦,ＦＢ{Enter}
