@@ -10,7 +10,7 @@ type User struct {
 		Line      string `json:"line"`
 		Messenger string `json:"messenger"`
 	}
-	Subscribes subscription.Subscribes
+	Subscribes subscription.Subscriptions
 }
 
 type UserAction interface {

@@ -9,18 +9,18 @@ import (
 	"github.com/liam-lai/ptt-alertor/myutil/collection"
 )
 
-type Subscribe struct {
+type Subscription struct {
 	Board    string   `json:"board"`
 	Keywords []string `json:"keywords"`
 }
 
-func (s Subscribe) String() string {
+func (s Subscription) String() string {
 	return s.Board + ": " + strings.Join(s.Keywords, ", ")
 }
 
-type Subscribes []Subscribe
+type Subscriptions []Subscription
 
-func (ss Subscribes) String() string {
+func (ss Subscriptions) String() string {
 	str := ""
 	for _, sub := range ss {
 		str += sub.String() + "\n"
@@ -28,7 +28,7 @@ func (ss Subscribes) String() string {
 	return str
 }
 
-func (ss *Subscribes) Add(sub Subscribe) error {
+func (ss *Subscriptions) Add(sub Subscription) error {
 	sub.Board = strings.ToLower(sub.Board)
 	if ok, suggestion := checkBoardExist(sub.Board); !ok {
 		return boardProto.BoardNotExistError{suggestion}
@@ -48,7 +48,7 @@ func (ss *Subscribes) Add(sub Subscribe) error {
 	return nil
 }
 
-func (ss *Subscribes) Remove(sub Subscribe) error {
+func (ss *Subscriptions) Remove(sub Subscription) error {
 	sub.Board = strings.ToLower(sub.Board)
 	if ok, suggestion := checkBoardExist(sub.Board); !ok {
 		return boardProto.BoardNotExistError{suggestion}

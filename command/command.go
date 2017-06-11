@@ -102,7 +102,7 @@ func splitParamString(paramString string) (params []string) {
 
 func subscribe(account string, boardname string, keywords []string) error {
 	u := new(user.User).Find(account)
-	sub := subscription.Subscribe{
+	sub := subscription.Subscription{
 		Board:    boardname,
 		Keywords: keywords,
 	}
@@ -119,7 +119,7 @@ func subscribe(account string, boardname string, keywords []string) error {
 
 func unsubscribe(account string, board string, keywords []string) error {
 	u := new(user.User).Find(account)
-	sub := subscription.Subscribe{
+	sub := subscription.Subscription{
 		Board:    board,
 		Keywords: keywords,
 	}
