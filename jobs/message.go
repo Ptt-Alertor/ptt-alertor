@@ -96,15 +96,24 @@ func keywordChecker(keyword string, bd *board.Board, msg Message, msgCh chan Mes
 }
 
 func sendMessage(msg Message) {
+	var account string
 	if msg.email != "" {
+		account = msg.email
 		sendMail(msg)
 	}
 	if msg.line != "" {
+		account = msg.line
 		sendLine(msg)
 	}
 	if msg.messenger != "" {
+		account = msg.messenger
 		sendMessenger(msg)
 	}
+	log.WithFields(log.Fields{
+		"account": account,
+		"board":   msg.board,
+		"keyword": msg.keyword,
+	}).Info("Message Sent")
 }
 
 func sendMail(msg Message) {

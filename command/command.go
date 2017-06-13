@@ -1,7 +1,6 @@
 package command
 
 import (
-	"fmt"
 	"regexp"
 	"strings"
 
@@ -20,6 +19,10 @@ var Commands = map[string]string{
 
 func HandleCommand(text string, userID string) string {
 	command := strings.Fields(strings.TrimSpace(text))[0]
+	log.WithFields(log.Fields{
+		"account": userID,
+		"command": command,
+	}).Info("Command Request")
 	switch command {
 	case "清單":
 		rspText := new(user.User).Find(userID).Subscribes.String()
@@ -162,6 +165,5 @@ func handleFollow(u user.User) error {
 			return err
 		}
 	}
-	fmt.Printf("%+v", u)
 	return nil
 }

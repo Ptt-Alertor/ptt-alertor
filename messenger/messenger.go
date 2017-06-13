@@ -56,7 +56,9 @@ func (m *Messenger) Received(w http.ResponseWriter, r *http.Request, _ httproute
 					}
 
 				} else if messaging.Postback != nil {
-					m.handlePostback(id, messaging.Postback.Payload)
+					payload := messaging.Postback.Payload
+					log.WithField("payload", payload).Info("Messenger Postback")
+					m.handlePostback(id, payload)
 				}
 			}
 		}
@@ -86,6 +88,7 @@ func (m *Messenger) SendTextMessage(id string, message string) {
 		Recipient{id},
 		Message{Text: message},
 	}
+	log.WithField("ID", id).Info("Messenger Sent")
 	m.callSendAPI(body)
 }
 

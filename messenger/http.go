@@ -10,7 +10,6 @@ import (
 
 func callAPI(url string, body interface{}) error {
 	data, err := json.Marshal(body)
-	fmt.Println(string(data))
 	if err != nil {
 		return err
 	}
