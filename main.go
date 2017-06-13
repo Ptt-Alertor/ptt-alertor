@@ -82,7 +82,7 @@ func main() {
 
 func startJobs() {
 	c := cron.New()
-	c.AddFunc("@every 1m", func() {
+	c.AddFunc("@every 30s", func() {
 		new(jobs.Message).Run()
 		jobs.NewFetcher().Run()
 	})
