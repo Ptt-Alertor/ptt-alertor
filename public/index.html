@@ -36,6 +36,7 @@
     <![endif]-->
     <link rel="stylesheet" href="assets/css/index.css">
     <script src="assets/js/google-analytics.js"></script>
+
 </head>
 
 <body>
@@ -57,37 +58,38 @@
                 <div class="panel panel-primary center-block">
                     <div class="panel-heading">指令</div>
                     <div class="list-group">
-                        <a href="#" class="list-group-item">
+                        <li class="list-group-item">
                             <h4 class="list-group-item-heading">指令</h4>
                             <p class="list-group-item-text">
                                 可使用的指令清單
                             </p>
                         </a>
-                        <a href="#" class="list-group-item">
+                        <li class="list-group-item">
                             <h4 class="list-group-item-heading">清單</h4>
                             <p class="list-group-item-text">
                                 正在追蹤的看板與關鍵字
                             </p>
                         </a>
-                        <a href="#" class="list-group-item">
+                        <li class="list-group-item">
                             <h4 class="list-group-item-heading">新增</h4>
                             <p class="list-group-item-text">
                                 新增看板關鍵字。
                             </p>
                             <ul>
-                                <li>新增 lol 樂透</li>
                                 <li>新增 gossping 爆卦</li>
-                                <li>新增 tech_job 徵才,面試</li>
-                                <li>新增 c_chat 一拳，龍珠</li>
+                                <li>新增 buytogether 褲，裙，鞋，外套</li>
+                                <li>新增 lol,nba,baseball,tennis 樂透</li>
+                                <li>新增 soft_job,tech_job 徵才,面試</li>
+                                <li>新增 forsale,mobilesales iphone7</li>
                             </ul>
                         </a>
-                        <a href="#" class="list-group-item">
+                        <li class="list-group-item">
                             <h4 class="list-group-item-heading">刪除</h4>
                             <p class="list-group-item-text">
                                 刪除看板關鍵字。
                                 <ul>
                                     <li>刪除 gossiping 問卦</li>
-                                    <li>刪除 gossiping 公告,新聞</li>
+                                    <li>刪除 forsale,mobilesales iphone7</li>
                                 </ul>
                             </p>
                         </a>
@@ -96,24 +98,24 @@
             </div>
 
             <div id="demo" class="col-sm-4">
-                <img id="demo-img" src="https://s3-us-west-2.amazonaws.com/ptt-alertor-bucket/assets/intro.gif" alt="introduction"
+                <img id="demo-img" src="https://s3-us-west-2.amazonaws.com/ptt-alertor-bucket/assets/messenger_intro.gif" alt="introduction"
                     class="center-block img-rounded img-responsive">
             </div>
 
             <div id="add" class="col-sm-4">
                 <div class="center-text">
-                    <a href="https://line.me/R/ti/p/%40ibh1745e">
-                        <img height="36" border="0" alt="加入好友" src="https://scdn.line-apps.com/n/line_add_friends/btn/zh-Hant.png">
-                    </a>
+                    <div class="fb-messengermessageus" messenger_app_id="138626206701047" page_id="151419948734270" color="blue" size="xlarge"></div>
                 </div>
+
                 <div>
-                    <img class="img-responsive center-block" src="http://qr-official.line.me/L/y8XL2ZbWQ8.png">
+                    <img class="img-responsive center-block" src="https://s3-us-west-2.amazonaws.com/ptt-alertor-bucket/assets/messenger_code.png">
                 </div>
             </div>
         </div>
 
         <footer class="footer center-text">
-            <p>&copy; 2017 PTT Alertor. Icons made by <a href="http://www.flaticon.com/authors/madebyoliver" title="Madebyoliver">Madebyoliver</a> from <a href="http://www.flaticon.com" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a>
+            <p>&copy; 2017 PTT Alertor. Icons made by <a href="http://www.flaticon.com/authors/madebyoliver" title="Madebyoliver">Madebyoliver</a>                from <a href="http://www.flaticon.com" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/"
+                    title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a>
             </p>
         </footer>
     </div>
@@ -123,6 +125,23 @@
     <!-- Latest compiled and minified JavaScript -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
         crossorigin="anonymous"></script>
+    <script>
+        window.fbAsyncInit = function () {
+            FB.init({
+                appId: "138626206701047",
+                xfbml: true,
+                version: "v2.6"
+            });
+        };
+
+        (function (d, s, id) {
+            var js, fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) { return; }
+            js = d.createElement(s); js.id = id;
+            js.src = "//connect.facebook.net/zh_TW/sdk.js";
+            fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));
+    </script>
 </body>
 
 </html>
