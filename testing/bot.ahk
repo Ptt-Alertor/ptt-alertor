@@ -106,6 +106,65 @@
     Send, 清單{Enter}
     Sleep, 2000
 
+    ; 新增作者
+    Send, 新增作者 gossiping ffaarr{Enter}
+    Sleep, 2000
+
+    Send, 新增作者 gossiping ffaarr,obov{Enter}
+    Sleep, 2000
+
+    Send, 新增作者 lol,boy-girl sumade,mrp{Enter}
+    Sleep, 2000
+
+    Send, 清單{Enter}
+    Sleep, 2000
+
+    ; 新增反面
+    Send, 新增作者 gossiping obov{Enter}
+    Sleep, 2000
+
+    Send, 新增作者 gossping ffaarr{Enter}
+    Sleep, 2000
+
+    Send, 新增作者 ,gossiping ffaarr{Enter}
+    Sleep, 2000
+
+    Send, 新增作者 gossiping, ffaarr{Enter}
+    Sleep, 2000
+
+    Send, 清單{Enter}
+    Sleep, 2000
+
+    ; 刪除作者
+    ; 刪除反面
+    Send, 刪除作者 gossping ffaarr{Enter}
+    Sleep, 2000
+
+    ; 刪除逗號前
+    Send, 刪除作者 ,gossiping ffaarr{Enter}
+    Sleep, 2000
+
+    ; 刪除刪除逗號後
+    Send, 刪除作者 gossiping, ffaarr{Enter}
+    Sleep, 2000
+
+    Send, 清單{Enter}
+    Sleep, 2000
+
+    ; 刪除正面
+    ; 刪除作者
+    Send, 刪除作者 gossiping ffaarr{Enter}
+    Sleep, 2000
+
+    Send, 刪除作者 gossiping ffaarr,obov{Enter}
+    Sleep, 2000
+
+    Send, 刪除作者 lol,boy-girl sumade,mrp{Enter}
+    Sleep, 2000
+
+    Send, 清單{Enter}
+    Sleep, 2000
+
 Escape::
 ExitApp
 Return

@@ -10,11 +10,24 @@ import (
 	user "github.com/liam-lai/ptt-alertor/models/user/redis"
 )
 
-var Commands = map[string]string{
-	"指令": "可使用的指令清單",
-	"清單": "目前追蹤的看板與關鍵字",
-	"新增": "新增看板關鍵字。範例：\n\t\t新增 nba 樂透\n\t\t新增 nba,lol 樂透 \n\t\t新增 nba,lol 樂透,情報",
-	"刪除": "刪除看板關鍵字。範例：\n\t\t刪除 nba 樂透\n\t\t刪除 nba,lol 樂透 \n\t\t刪除 nba,lol 樂透,情報",
+var Commands = map[string]map[string]string{
+	"一般": {
+		"指令": "可使用的指令清單",
+		"清單": "設定的看板、關鍵字、作者",
+	},
+	"關鍵字相關": {
+		"新增 看板 關鍵字": "新增看板關鍵字。",
+		"刪除 看板 關鍵字": "刪除看板關鍵字。",
+	},
+	"作者相關": {
+		"新增作者 看板 作者": "新增看板作者。",
+		"刪除作者 看板 作者": "刪除看板作者。",
+	},
+	"範例": {
+		"新增": "新增 nba,lol 樂透,情報",
+		"刪除": "刪除 nba 樂透",
+		"作者": "新增作者 gossiping ffaarr,obov",
+	},
 }
 
 func HandleCommand(text string, userID string) string {
@@ -25,54 +38,69 @@ func HandleCommand(text string, userID string) string {
 	}).Info("Command Request")
 	switch command {
 	case "清單":
-		rspText := new(user.User).Find(userID).Subscribes.String()
-		if rspText == "" {
+		var rspText string
+		subs := new(user.User).Find(userID).Subscribes
+		if len(subs) == 0 {
 			rspText = "尚未建立清單。請打「指令」查看新增方法。"
+		} else {
+			rspText = new(user.User).Find(userID).Subscribes.String()
 		}
 		return rspText
 	case "指令":
 		return stringCommands()
-	case "新增", "刪除":
-		re := regexp.MustCompile("^(新增|刪除)\\s+([^,，][\\w\\d-_,，]+[^,，])\\s+(.+)")
+	case "新增", "刪除", "新增作者", "刪除作者":
+		re := regexp.MustCompile("^(新增|新增作者|刪除|刪除作者)\\s+([^,，][\\w\\d-_,，]+[^,，])\\s+(.+)")
 		matched := re.MatchString(text)
 		if !matched {
+			if strings.Contains(command, "作者") {
+				return "指令格式錯誤。\n1.板名欄位開頭與結尾不可有逗號\n2.板名欄位間不允許空白字元。\n正確範例：" + command + " gossiping,lol ffaarr,obov"
+			}
 			return "指令格式錯誤。\n1.板名欄位開頭與結尾不可有逗號\n2.板名欄位間不允許空白字元。\n正確範例：" + command + " gossiping,lol 問卦,爆卦"
 		}
 		args := re.FindStringSubmatch(text)
 		boardNames := splitParamString(args[2])
 		keywords := splitParamString(args[3])
-		if command == "新增" {
-			for _, boardName := range boardNames {
-				err := subscribe(userID, boardName, keywords)
-				if bErr, ok := err.(boardproto.BoardNotExistError); ok {
-					return "版名錯誤，請確認拼字。可能版名：\n" + bErr.Suggestion
-				}
-				if err != nil {
-					return "新增失敗，請等待修復。"
-				}
+		var err error
+		if command == "新增" || command == "新增作者" {
+			if command == "新增" {
+				err = update(userID, boardNames, keywords, addKeywords)
+			} else if command == "新增作者" {
+				err = update(userID, boardNames, keywords, addAuthors)
+			}
+			if bErr, ok := err.(boardproto.BoardNotExistError); ok {
+				return "版名錯誤，請確認拼字。可能版名：\n" + bErr.Suggestion
+			}
+			if err != nil {
+				return "新增失敗，請等待修復。"
 			}
 			return "新增成功"
 		}
-		if command == "刪除" {
-			for _, boardName := range boardNames {
-				err := unsubscribe(userID, boardName, keywords)
-				if bErr, ok := err.(boardproto.BoardNotExistError); ok {
-					return "版名錯誤，請確認拼字。可能版名：\n" + bErr.Suggestion
-				}
-				if err != nil {
-					return "刪除失敗，請等待修復。"
-				}
+		if command == "刪除" || command == "刪除作者" {
+			if command == "刪除" {
+				err = update(userID, boardNames, keywords, removeKeywords)
+			} else if command == "刪除作者" {
+				err = update(userID, boardNames, keywords, removeAuthors)
 			}
-			return "刪除成功"
+			if bErr, ok := err.(boardproto.BoardNotExistError); ok {
+				return "版名錯誤，請確認拼字。可能版名：\n" + bErr.Suggestion
+			}
+			if err != nil {
+				return "刪除失敗，請等待修復。"
+			}
 		}
+		return "刪除成功"
 	}
 	return "無此指令，請打「指令」查看指令清單"
 }
 
 func stringCommands() string {
 	str := ""
-	for key, val := range Commands {
-		str += key + "：" + val + "\n"
+	for cat, cmds := range Commands {
+		str += "[" + cat + "]\n"
+		for cmd, doc := range cmds {
+			str += cmd + "：" + doc + "\n"
+		}
+		str += "\n"
 	}
 	return str
 }
@@ -105,38 +133,23 @@ func splitParamString(paramString string) (params []string) {
 	return params
 }
 
-func subscribe(account string, boardname string, keywords []string) error {
-	u := new(user.User).Find(account)
-	sub := subscription.Subscription{
-		Board:    boardname,
-		Keywords: keywords,
+func update(account string, boardNames []string, inputs []string, action updateAction) error {
+	for _, boardName := range boardNames {
+		u := new(user.User).Find(account)
+		sub := subscription.Subscription{
+			Board: boardName,
+		}
+		err := action(&u, sub, inputs)
+		if err != nil {
+			return err
+		}
+		err = u.Update()
+		if err != nil {
+			log.WithError(err).Error("Subscription Update Error")
+			return err
+		}
 	}
-	err := u.Subscribes.Add(sub)
-	if err != nil {
-		return err
-	}
-	err = u.Update()
-	if err != nil {
-		log.WithError(err).Error("Line Subscribe Update Error")
-	}
-	return err
-}
-
-func unsubscribe(account string, board string, keywords []string) error {
-	u := new(user.User).Find(account)
-	sub := subscription.Subscription{
-		Board:    board,
-		Keywords: keywords,
-	}
-	err := u.Subscribes.Remove(sub)
-	if err != nil {
-		return err
-	}
-	err = u.Update()
-	if err != nil {
-		log.WithError(err).Error("Line UnSubscribe Update Error")
-	}
-	return err
+	return nil
 }
 
 func HandleLineFollow(id string) error {

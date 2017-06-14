@@ -1,0 +1,72 @@
+軟體名稱：
+
+PTT Alertor
+
+軟體資訊：
+
+Facebook Messenger Bot，免安裝
+
+軟體功能：
+
+新增看板與關鍵字，即時通知最新文章。
+
+可一次新增多看板多關鍵字，目前設定為 30 秒通知一次。
+
+Demo: https://media.giphy.com/media/3ohzdF6vidM6I49lQs/giphy.gif
+
+軟體特色：
+
+有常常錯過版上樂透的經驗嗎？想第一時間知道八卦版的最新消息？想買東西？搶打工？  
+
+實用範例：
+
+賭徒：
+新增 lol,nba,baseball,tennis 樂透
+
+資訊恐慌：
+新增 gossiping 爆卦
+
+找打工、工作：
+新增 part-time 全國,台中
+新增 tech_job,soft_job 徵才
+
+買東西、合購：
+新增 buytogether 褲，裙，鞋，外套
+新增 nb-shopping,macshop macbook
+
+追星、找老婆：
+新增 gossiping,movie,japandrama,YuiAragaki 結衣
+
+下載連結：
+http://m.me/pttalertor         
+
+官方網站：
+http://pttalertor.dinolai.com
+
+粉絲團：
+http://facebook.com/pttalertor
+
+使用感想：
+
+身家都賭光了，但是又靠著在某些版第一時間幫到人又賺回來了。
+
+附註：
+
+一開始是因為我和我弟都喜歡賭 LoL 的樂透，但常常忘記跟到，所以有了這個專案。
+
+本來只想追樂透後來發現其實很多版可以用，一直改良便分享給大家試用看看。
+
+常見問題：
+
+為什麼不用 Line Bot?
+
+做完 Line Bot 後發現若要開放給大家用需要付它 $3888/月，實在是負擔不起‧‧
+
+會取得使用者 Facebook 資料嗎？                                                                                                   
+
+系統只會存 Facebook 回傳給我的專屬於此 Bot 的 id，用來回傳訊息。
+
+此 id 也無法直接連至你的 Facebook 頁面，請不用擔心資料問題。
+
+
+若有問題與建議麻煩推文或是粉絲團留言，希望大家使用愉快，謝謝。                  

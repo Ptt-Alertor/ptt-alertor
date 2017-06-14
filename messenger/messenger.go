@@ -76,7 +76,16 @@ func (m *Messenger) handlePostback(id string, payload string) {
 		responseText = "歡迎使用 PTT Alertor\n輸入「指令」查看相關功能。"
 	case "COMMANDS_PAYLOAD":
 		// responseText = command.HandleCommand("指令", id)
-		m.SendListMessage(id, command.Commands)
+		var str string
+		commands := make(map[string]string)
+		for cat, cmds := range command.Commands {
+			for cmd, doc := range cmds {
+				str += cmd + "：" + doc + "\n"
+			}
+			commands[cat] = str
+			str = ""
+		}
+		m.SendListMessage(id, commands)
 	case "SUBSCRIPTIONS_PAYLOAD":
 		responseText = command.HandleCommand("清單", id)
 	}

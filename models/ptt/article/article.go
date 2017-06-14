@@ -22,9 +22,12 @@ type Articles []Article
 func (as Articles) String() string {
 	var content string
 	for _, article := range as {
-		content += article.Title + "\r\n" +
-			"https://www.ptt.cc" + article.Link + "\r\n" +
-			"\r\n"
+		link := "https://www.ptt.cc" + article.Link
+		content += article.Title + "\r\n"
+		if article.Author != "" {
+			content += "作者: " + article.Author + "\r\n"
+		}
+		content += link + "\r\n\r\n"
 	}
 	return content
 }

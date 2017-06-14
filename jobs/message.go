@@ -5,6 +5,8 @@ import (
 
 	log "github.com/Sirupsen/logrus"
 
+	"strings"
+
 	"github.com/liam-lai/ptt-alertor/line"
 	"github.com/liam-lai/ptt-alertor/mail"
 	"github.com/liam-lai/ptt-alertor/messenger"
@@ -19,6 +21,7 @@ type Message struct {
 	messenger string
 	board     string
 	keyword   string
+	author    string
 	articles  article.Articles
 }
 
@@ -77,6 +80,9 @@ func subscribeChecker(user *user.User, bd *board.Board, msg Message, msgCh chan 
 			for _, keyword := range sub.Keywords {
 				go keywordChecker(keyword, bd, msg, msgCh)
 			}
+			for _, author := range sub.Authors {
+				go authorChecker(author, bd, msg, msgCh)
+			}
 		}
 	}
 }
@@ -85,6 +91,7 @@ func keywordChecker(keyword string, bd *board.Board, msg Message, msgCh chan Mes
 	keywordArticles := make(article.Articles, 0)
 	for _, newAtcl := range bd.NewArticles {
 		if newAtcl.ContainKeyword(keyword) {
+			newAtcl.Author = ""
 			keywordArticles = append(keywordArticles, newAtcl)
 		}
 	}
@@ -93,6 +100,21 @@ func keywordChecker(keyword string, bd *board.Board, msg Message, msgCh chan Mes
 		msg.articles = keywordArticles
 		msgCh <- msg
 	}
+}
+
+func authorChecker(author string, bd *board.Board, msg Message, msgCh chan Message) {
+	authorArticles := make(article.Articles, 0)
+	for _, newAtcl := range bd.NewArticles {
+		if strings.EqualFold(newAtcl.Author, author) {
+			authorArticles = append(authorArticles, newAtcl)
+		}
+	}
+	if len(authorArticles) != 0 {
+		msg.author = author
+		msg.articles = authorArticles
+		msgCh <- msg
+	}
+
 }
 
 func sendMessage(msg Message) {
