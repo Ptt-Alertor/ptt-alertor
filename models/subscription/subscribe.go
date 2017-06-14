@@ -20,7 +20,7 @@ func (s Subscription) String() string {
 }
 
 func (s Subscription) StringAuthor() string {
-	if len(s.Keywords) == 0 {
+	if len(s.Authors) == 0 {
 		return ""
 	}
 	return s.Board + ": " + strings.Join(s.Authors, ", ")
