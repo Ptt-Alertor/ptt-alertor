@@ -3,8 +3,6 @@ package subscription
 import (
 	"strings"
 
-	"fmt"
-
 	"github.com/liam-lai/ptt-alertor/crawler"
 	boardProto "github.com/liam-lai/ptt-alertor/models/ptt/board"
 	board "github.com/liam-lai/ptt-alertor/models/ptt/board/redis"
@@ -39,7 +37,6 @@ func (ss *Subscriptions) Add(sub Subscription) error {
 			s.Keywords.AppendNonRepeat(sub.Keywords, false)
 			s.Authors.AppendNonRepeat(sub.Authors, false)
 			(*ss)[i] = s
-			fmt.Printf("%+v", ss)
 			return nil
 		}
 	}
