@@ -33,10 +33,10 @@ func HandleCommand(text string, userID string) string {
 	case "指令":
 		return stringCommands()
 	case "新增", "刪除":
-		re := regexp.MustCompile("^(新增|刪除)\\s+([^,，][\\w\\d-_,，\\s]+[^,，])\\s+([^,，].*[^,，]$)")
+		re := regexp.MustCompile("^(新增|刪除)\\s+([^,，][\\w\\d-_,，]+[^,，])\\s+(.+)")
 		matched := re.MatchString(text)
 		if !matched {
-			return "指令格式錯誤。看板與關鍵字欄位開始與最後不可有逗號。正確範例：\n" + command + " gossiping,lol 問卦,爆卦"
+			return "指令格式錯誤。\n1.板名欄位開頭與結尾不可有逗號\n2.板名欄位間不允許空白字元。\n正確範例：" + command + " gossiping,lol 問卦,爆卦"
 		}
 		args := re.FindStringSubmatch(text)
 		boardNames := splitParamString(args[2])
@@ -78,6 +78,8 @@ func stringCommands() string {
 }
 
 func splitParamString(paramString string) (params []string) {
+
+	paramString = strings.Trim(paramString, ",，")
 
 	if !strings.ContainsAny(paramString, ",，") {
 		return []string{paramString}
