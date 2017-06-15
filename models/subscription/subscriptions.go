@@ -58,7 +58,7 @@ func (ss *Subscriptions) Remove(sub Subscription) error {
 			s.Authors.DeleteSlice(sub.Authors, false)
 			(*ss)[i] = s
 		}
-		if len((*ss)[i].Keywords) == 0 {
+		if len((*ss)[i].Keywords) == 0 && len((*ss)[i].Authors) == 0 {
 			*ss = append((*ss)[:i], (*ss)[i+1:]...)
 			i--
 		}
