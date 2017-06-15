@@ -59,13 +59,13 @@ func HandleCommand(text string, userID string) string {
 		}
 		args := re.FindStringSubmatch(text)
 		boardNames := splitParamString(args[2])
-		keywords := splitParamString(args[3])
+		inputs := splitParamString(args[3])
 		var err error
 		if command == "新增" || command == "新增作者" {
 			if command == "新增" {
-				err = update(userID, boardNames, keywords, addKeywords)
+				err = update(userID, boardNames, inputs, addKeywords)
 			} else if command == "新增作者" {
-				err = update(userID, boardNames, keywords, addAuthors)
+				err = update(userID, boardNames, inputs, addAuthors)
 			}
 			if bErr, ok := err.(boardproto.BoardNotExistError); ok {
 				return "版名錯誤，請確認拼字。可能版名：\n" + bErr.Suggestion
@@ -77,9 +77,9 @@ func HandleCommand(text string, userID string) string {
 		}
 		if command == "刪除" || command == "刪除作者" {
 			if command == "刪除" {
-				err = update(userID, boardNames, keywords, removeKeywords)
+				err = update(userID, boardNames, inputs, removeKeywords)
 			} else if command == "刪除作者" {
-				err = update(userID, boardNames, keywords, removeAuthors)
+				err = update(userID, boardNames, inputs, removeAuthors)
 			}
 			if bErr, ok := err.(boardproto.BoardNotExistError); ok {
 				return "版名錯誤，請確認拼字。可能版名：\n" + bErr.Suggestion
