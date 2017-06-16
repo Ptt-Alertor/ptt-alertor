@@ -84,7 +84,7 @@ func CatchCallback(w http.ResponseWriter, r *http.Request, _ httprouter.Params) 
 	if err != nil {
 		Notify(accessToken, "\n連結 LINE Notify 失敗。\n請至 PTT Alertor LINE 主頁回報區留言。")
 	} else {
-		Notify(accessToken, "\n請回到 PTT Alertor 輸入「指令」查看相關功能。")
+		Notify(accessToken, "\n請回到 PTT Alertor 輸入「指令」查看相關功能。\nPTT Alertor: 設定看板、作者、關鍵字\nLINE Notify: 最新文章通知")
 	}
 
 	t, err := template.ParseFiles("public/notify.html")

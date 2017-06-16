@@ -14,7 +14,7 @@ var Commands = map[string]map[string]string{
 	"一般": {
 		"指令": "可使用的指令清單",
 		"清單": "設定的看板、關鍵字、作者",
-		"PS": "封鎖此帳號也將收不到新文章通知。",
+		"備註": "封鎖此帳號也將收不到新文章通知。",
 	},
 	"關鍵字相關": {
 		"新增 看板 關鍵字": "新增看板關鍵字。",
@@ -25,9 +25,9 @@ var Commands = map[string]map[string]string{
 		"刪除作者 看板 作者": "刪除看板作者。",
 	},
 	"範例": {
-		"新增": "新增 gossiping,movie 金城武,結衣",
-		"刪除": "刪除 gossiping 金城武",
-		"作者": "新增作者 gossiping ffaarr,obov",
+		"新增 gossiping,movie 金城武,結衣":  "",
+		"刪除 gossiping 金城武":           "",
+		"新增作者 gossiping ffaarr,obov": "",
 	},
 }
 
@@ -99,7 +99,11 @@ func stringCommands() string {
 	for cat, cmds := range Commands {
 		str += "[" + cat + "]\n"
 		for cmd, doc := range cmds {
-			str += cmd + "：" + doc + "\n"
+			str += cmd
+			if doc != "" {
+				str += "：" + doc
+			}
+			str += "\n"
 		}
 		str += "\n"
 	}
