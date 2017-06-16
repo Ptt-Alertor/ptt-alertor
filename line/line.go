@@ -1,12 +1,9 @@
-/**
- * [x]remove multiple keywords at once
- * [x]add multiple keywords at once
- **/
-
 package line
 
 import (
 	"net/http"
+
+	"strings"
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/julienschmidt/httprouter"
@@ -14,6 +11,7 @@ import (
 	board "github.com/liam-lai/ptt-alertor/models/ptt/board/redis"
 	user "github.com/liam-lai/ptt-alertor/models/user/redis"
 	"github.com/liam-lai/ptt-alertor/myutil"
+	"github.com/liam-lai/ptt-alertor/shorturl"
 	"github.com/line/line-bot-sdk-go/linebot"
 )
 
@@ -56,7 +54,11 @@ func handleMessage(event *linebot.Event) {
 	userID := event.Source.UserID
 	switch message := event.Message.(type) {
 	case *linebot.TextMessage:
-		responseText = command.HandleCommand(message.Text, userID)
+		if strings.EqualFold(message.Text, "notify") {
+			responseText = shorturl.Gen(getAuthorizeURL(userID))
+		} else {
+			responseText = command.HandleCommand(message.Text, userID)
+		}
 	}
 	_, err := bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(responseText)).Do()
 	if err != nil {
@@ -81,8 +83,9 @@ func handleFollow(event *linebot.Event) {
 	if err != nil {
 		log.WithError(err).Error("Line Follow Error")
 	}
-
-	_, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(profile.DisplayName+" 歡迎使用 PTT Alertor\n輸入「指令」查看相關功能。")).Do()
+	url := shorturl.Gen(getAuthorizeURL(id))
+	text := " 歡迎使用 PTT Alertor。\n請按以下步驟啟用 Line Notify 以獲得最新文章通知。\n1. 開啟下方網址\n2. 選擇「透過1對1聊天接收LINE Notify的通知」\n3. 點擊「同意並連動」\n"
+	_, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(profile.DisplayName+text+url)).Do()
 	if err != nil {
 		log.WithError(err).Error("Line Follow Replay Message Failed")
 	}

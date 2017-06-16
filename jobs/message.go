@@ -16,13 +16,14 @@ import (
 )
 
 type Message struct {
-	email     string
-	line      string
-	messenger string
-	board     string
-	keyword   string
-	author    string
-	articles  article.Articles
+	email      string
+	line       string
+	lineNotify string
+	messenger  string
+	board      string
+	keyword    string
+	author     string
+	articles   article.Articles
 }
 
 func (msg Message) Run() {
@@ -37,6 +38,7 @@ func (msg Message) Run() {
 		if user.Enable {
 			msg.email = user.Profile.Email
 			msg.line = user.Profile.Line
+			msg.lineNotify = user.Profile.LineAccessToken
 			msg.messenger = user.Profile.Messenger
 			log.WithField("user", user.Profile.Account).Info("Checking User Subscribes")
 			go userChecker(user, bds, msg, msgCh)
@@ -123,9 +125,9 @@ func sendMessage(msg Message) {
 		account = msg.email
 		sendMail(msg)
 	}
-	if msg.line != "" {
+	if msg.lineNotify != "" {
 		account = msg.line
-		sendLine(msg)
+		sendLineNotify(msg)
 	}
 	if msg.messenger != "" {
 		account = msg.messenger
@@ -150,6 +152,10 @@ func sendMail(msg Message) {
 
 func sendLine(msg Message) {
 	line.PushTextMessage(msg.line, msg.articles.String())
+}
+
+func sendLineNotify(msg Message) {
+	line.Notify(msg.lineNotify, msg.articles.String())
 }
 
 func sendMessenger(msg Message) {
