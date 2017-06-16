@@ -23,11 +23,11 @@ func (as Articles) String() string {
 	var content string
 	for _, article := range as {
 		link := "https://www.ptt.cc" + article.Link
-		content += article.Title + "\r\n"
+		content += "\r\n" + article.Title + "\r\n"
 		if article.Author != "" {
 			content += "作者: " + article.Author + "\r\n"
 		}
-		content += link + "\r\n\r\n"
+		content += link + "\r\n"
 	}
 	return content
 }
