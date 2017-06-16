@@ -1,6 +1,7 @@
 package subscription
 
 import (
+	"sort"
 	"strings"
 
 	"github.com/liam-lai/ptt-alertor/crawler"
@@ -11,6 +12,11 @@ import (
 type Subscriptions []Subscription
 
 func (ss Subscriptions) String() string {
+
+	sort.Slice(ss, func(i, j int) bool {
+		return ss[i].Board < ss[j].Board
+	})
+
 	str := "關鍵字\n"
 	for _, sub := range ss {
 		if sub.String() != "" {
