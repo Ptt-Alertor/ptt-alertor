@@ -84,7 +84,7 @@ func handleFollow(event *linebot.Event) {
 		log.WithError(err).Error("Line Follow Error")
 	}
 	url := shorturl.Gen(getAuthorizeURL(id))
-	text := " 歡迎使用 PTT Alertor。\n請按以下步驟啟用 Line Notify 以獲得最新文章通知。\n1. 開啟下方網址\n2. 選擇「透過1對1聊天接收LINE Notify的通知」\n3. 點擊「同意並連動」\n"
+	text := " 歡迎使用 PTT Alertor。\n請按以下步驟啟用 LINE Notify 以獲得最新文章通知。\n1. 開啟下方網址\n2. 選擇「透過1對1聊天接收LINE Notify的通知」\n3. 點擊「同意並連動」\n"
 	_, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(profile.DisplayName+text+url)).Do()
 	if err != nil {
 		log.WithError(err).Error("Line Follow Replay Message Failed")
