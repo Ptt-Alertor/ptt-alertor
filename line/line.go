@@ -54,10 +54,11 @@ func handleMessage(event *linebot.Event) {
 	userID := event.Source.UserID
 	switch message := event.Message.(type) {
 	case *linebot.TextMessage:
-		if strings.EqualFold(message.Text, "notify") {
+		text := strings.TrimSpace(message.Text)
+		if strings.EqualFold(text, "notify") {
 			responseText = shorturl.Gen(getAuthorizeURL(userID))
 		} else {
-			responseText = command.HandleCommand(message.Text, userID)
+			responseText = command.HandleCommand(text, userID)
 		}
 	}
 	_, err := bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(responseText)).Do()
