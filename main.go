@@ -53,9 +53,13 @@ func main() {
 
 	router := newRouter()
 	router.NotFound = http.FileServer(http.Dir("public"))
+	m := messenger.New()
 
 	router.GET("/", ctrlr.Index)
-	m := messenger.New()
+	router.GET("/messenger", ctrlr.MessengerIndex)
+	router.GET("/line", ctrlr.LineIndex)
+	router.GET("/redirect/:sha1", ctrlr.Redirect)
+
 	// boards apis
 	router.GET("/boards/:boardName/articles", ctrlr.BoardArticleIndex)
 	router.GET("/boards", ctrlr.BoardIndex)
@@ -68,6 +72,7 @@ func main() {
 
 	// line
 	router.POST("/line/callback", line.HandleRequest)
+	router.POST("/line/notify/callback", line.CatchCallback)
 
 	// facebook messenger
 	router.GET("/messenger/webhook", m.Verify)
