@@ -54,13 +54,22 @@ func HandleCommand(text string, userID string) string {
 		matched := re.MatchString(text)
 		if !matched {
 			if strings.Contains(command, "作者") {
-				return "指令格式錯誤。\n1. 需以空白分隔動作、板名、關鍵字或作者\n2.板名欄位開頭與結尾不可有逗號\n3.板名欄位間不允許空白字元。\n\n正確範例：" + command + " gossiping,lol ffaarr,obov"
+				return inputErrorTips() + "\n\n正確範例：" + command + " gossiping,lol ffaarr,obov"
 			}
-			return "指令格式錯誤。\n1. 需以空白分隔動作、板名、關鍵字或作者\n2.板名欄位開頭與結尾不可有逗號\n3.板名欄位間不允許空白字元。\n正確範例：" + command + " gossiping,lol 問卦,爆卦"
+			return inputErrorTips() + "\n\n正確範例：" + command + " gossiping,lol 問卦,爆卦"
 		}
 		args := re.FindStringSubmatch(text)
 		boardNames := splitParamString(args[2])
-		inputs := splitParamString(args[3])
+		input := args[3]
+		var inputs []string
+		if strings.HasPrefix(input, "regexp:") {
+			if !checkRegexp(input) {
+				return "正規表示式錯誤，請檢查規則。"
+			}
+			inputs = []string{args[3]}
+		} else {
+			inputs = splitParamString(args[3])
+		}
 		var err error
 		if command == "新增" || command == "新增作者" {
 			if command == "新增" {
@@ -94,6 +103,10 @@ func HandleCommand(text string, userID string) string {
 	return "無此指令，請打「指令」查看指令清單"
 }
 
+func inputErrorTips() string {
+	return "指令格式錯誤。\n1. 需以空白分隔動作、板名、關鍵字或作者\n2.板名欄位開頭與結尾不可有逗號\n3.板名欄位間不允許空白字元。"
+}
+
 func stringCommands() string {
 	str := ""
 	for cat, cmds := range Commands {
@@ -108,6 +121,15 @@ func stringCommands() string {
 		str += "\n"
 	}
 	return str
+}
+
+func checkRegexp(input string) bool {
+	pattern := strings.Replace(strings.TrimPrefix(input, "regexp:"), "//", "////", -1)
+	_, err := regexp.Compile(pattern)
+	if err != nil {
+		return false
+	}
+	return true
 }
 
 func splitParamString(paramString string) (params []string) {

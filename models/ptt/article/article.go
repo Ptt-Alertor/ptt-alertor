@@ -1,6 +1,7 @@
 package article
 
 import "strings"
+import "regexp"
 
 type Article struct {
 	Title  string
@@ -23,7 +24,19 @@ func (a Article) MatchKeyword(keyword string) bool {
 		}
 		return true
 	}
+	if strings.HasPrefix(keyword, "regexp:") {
+		return matchRegex(a.Title, keyword)
+	}
 	return matchKeyword(a.Title, keyword)
+}
+
+func matchRegex(title string, regex string) bool {
+	pattern := strings.TrimPrefix(regex, "regexp:")
+	b, err := regexp.MatchString(pattern, title)
+	if err != nil {
+		return false
+	}
+	return b
 }
 
 func matchKeyword(title string, keyword string) bool {
