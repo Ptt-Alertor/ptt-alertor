@@ -17,17 +17,25 @@ func (a Article) MatchKeyword(keyword string) bool {
 	if strings.Contains(keyword, "&") {
 		keywords := strings.Split(keyword, "&")
 		for _, keyword := range keywords {
-			if !a.containKeyword(keyword) {
+			if !matchKeyword(a.Title, keyword) {
 				return false
 			}
 		}
 		return true
 	}
-	return a.containKeyword(keyword)
+	return matchKeyword(a.Title, keyword)
 }
 
-func (a Article) containKeyword(keyword string) bool {
-	return strings.Contains(strings.ToLower(a.Title), strings.ToLower(keyword))
+func matchKeyword(title string, keyword string) bool {
+	if strings.HasPrefix(keyword, "!") {
+		excludeKeyword := strings.Trim(keyword, "!")
+		return !containKeyword(title, excludeKeyword)
+	}
+	return containKeyword(title, keyword)
+}
+
+func containKeyword(title string, keyword string) bool {
+	return strings.Contains(strings.ToLower(title), strings.ToLower(keyword))
 }
 
 type Articles []Article

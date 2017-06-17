@@ -50,11 +50,11 @@ func HandleCommand(text string, userID string) string {
 	case "指令":
 		return stringCommands()
 	case "新增", "刪除", "新增作者", "刪除作者":
-		re := regexp.MustCompile("^(新增|新增作者|刪除|刪除作者)\\s+([^,，][\\w\\d-_,，]+[^,，\\s])\\s+(.+)")
+		re := regexp.MustCompile("^(新增|新增作者|刪除|刪除作者)\\s+([^,，][\\w\\d-_,，]+[^,，:\\s]):?\\s+(.+)")
 		matched := re.MatchString(text)
 		if !matched {
 			if strings.Contains(command, "作者") {
-				return "指令格式錯誤。\n1. 需以空白分隔動作、板名、關鍵字或作者\n2.板名欄位開頭與結尾不可有逗號\n3.板名欄位間不允許空白字元。\n正確範例：" + command + " gossiping,lol ffaarr,obov"
+				return "指令格式錯誤。\n1. 需以空白分隔動作、板名、關鍵字或作者\n2.板名欄位開頭與結尾不可有逗號\n3.板名欄位間不允許空白字元。\n\n正確範例：" + command + " gossiping,lol ffaarr,obov"
 			}
 			return "指令格式錯誤。\n1. 需以空白分隔動作、板名、關鍵字或作者\n2.板名欄位開頭與結尾不可有逗號\n3.板名欄位間不允許空白字元。\n正確範例：" + command + " gossiping,lol 問卦,爆卦"
 		}

@@ -41,6 +41,14 @@
     Send, 新增 gossiping 新聞&柯文哲{Enter}
     Sleep, 2000
 
+    ; 新增不要的關鍵字
+    Send, 新增 gossiping !問卦{Enter}
+    Sleep, 2000
+
+    ; 新增有此關鍵字但是除了不要的
+    Send, 新增 gossiping 柯文哲&!問卦{Enter}
+    Sleep, 2000
+
     Send, 清單{Enter}
     Sleep, 2000
 
@@ -107,6 +115,18 @@
     Send, 刪除 gossiping 卦{Enter}
     Sleep, 2000
 
+    ; 刪除同時出現的關鍵字
+    Send, 刪除 gossiping 新聞&柯文哲{Enter}
+    Sleep, 2000
+
+    ; 刪除不要的關鍵字
+    Send, 刪除 gossiping !問卦{Enter}
+    Sleep, 2000
+
+    ; 刪除有此關鍵字但是除了不要的
+    Send, 刪除 gossiping 柯文哲&!問卦{Enter}
+    Sleep, 2000
+
     Send, 清單{Enter}
     Sleep, 2000
 
@@ -150,10 +170,6 @@
 
     ; 刪除刪除逗號後
     Send, 刪除作者 gossiping, ffaarr{Enter}
-    Sleep, 2000
-
-    ; 刪除同時出現的關鍵字
-    Send, 刪除 gossiping 新聞&柯文哲{Enter}
     Sleep, 2000
 
     Send, 清單{Enter}
