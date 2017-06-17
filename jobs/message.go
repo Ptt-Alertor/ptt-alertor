@@ -92,7 +92,7 @@ func subscribeChecker(user *user.User, bd *board.Board, msg Message, msgCh chan 
 func keywordChecker(keyword string, bd *board.Board, msg Message, msgCh chan Message) {
 	keywordArticles := make(article.Articles, 0)
 	for _, newAtcl := range bd.NewArticles {
-		if newAtcl.ContainKeyword(keyword) {
+		if newAtcl.MatchKeyword(keyword) {
 			newAtcl.Author = ""
 			keywordArticles = append(keywordArticles, newAtcl)
 		}

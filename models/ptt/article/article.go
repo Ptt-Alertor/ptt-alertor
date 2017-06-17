@@ -13,7 +13,20 @@ type ArticleAction interface {
 	ContainKeyword(keyword string) bool
 }
 
-func (a Article) ContainKeyword(keyword string) bool {
+func (a Article) MatchKeyword(keyword string) bool {
+	if strings.Contains(keyword, "&") {
+		keywords := strings.Split(keyword, "&")
+		for _, keyword := range keywords {
+			if !a.containKeyword(keyword) {
+				return false
+			}
+		}
+		return true
+	}
+	return a.containKeyword(keyword)
+}
+
+func (a Article) containKeyword(keyword string) bool {
 	return strings.Contains(strings.ToLower(a.Title), strings.ToLower(keyword))
 }
 

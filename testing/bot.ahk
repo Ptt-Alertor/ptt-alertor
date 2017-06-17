@@ -37,6 +37,10 @@
     Send, 新增 lol,nba, baseball，tennis 樂透，閒聊{Enter}
     Sleep, 2000
 
+    ; 新增同時出現的關鍵字
+    Send, 新增 gossiping 新聞&柯文哲{Enter}
+    Sleep, 2000
+
     Send, 清單{Enter}
     Sleep, 2000
 
@@ -146,6 +150,10 @@
 
     ; 刪除刪除逗號後
     Send, 刪除作者 gossiping, ffaarr{Enter}
+    Sleep, 2000
+
+    ; 刪除同時出現的關鍵字
+    Send, 刪除 gossiping 新聞&柯文哲{Enter}
     Sleep, 2000
 
     Send, 清單{Enter}
