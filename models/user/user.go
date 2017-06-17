@@ -1,10 +1,16 @@
 package user
 
-import "github.com/liam-lai/ptt-alertor/models/subscription"
+import (
+	"time"
+
+	"github.com/liam-lai/ptt-alertor/models/subscription"
+)
 
 type User struct {
-	Enable  bool `json:"enable"`
-	Profile struct {
+	Enable     bool      `json:"enable"`
+	CreateTime time.Time `json:"createTime"`
+	UpdateTime time.Time `json:"updateTime"`
+	Profile    struct {
 		Account         string `json:"account"`
 		Email           string `json:"email"`
 		Line            string `json:"line"`

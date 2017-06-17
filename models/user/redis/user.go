@@ -2,6 +2,7 @@ package redis
 
 import (
 	"encoding/json"
+	"time"
 
 	"errors"
 
@@ -62,6 +63,8 @@ func (u User) Save() error {
 		return errors.New("Email or Line or Messenger have to be complete")
 	}
 
+	u.CreateTime = time.Now()
+	u.UpdateTime = time.Now()
 	uJSON, err := json.Marshal(u)
 	if err != nil {
 		myutil.LogJSONEncode(err, u)
@@ -95,6 +98,7 @@ func (u User) Update() error {
 		return errors.New("account can not be empty")
 	}
 
+	u.UpdateTime = time.Now()
 	uJSON, err := json.Marshal(u)
 	if err != nil {
 		myutil.LogJSONEncode(err, u)
