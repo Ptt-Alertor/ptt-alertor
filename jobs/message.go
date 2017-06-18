@@ -57,13 +57,10 @@ func (msg Message) Run() {
 }
 
 func deleteNonNewArticleBoard(bds []*board.Board) []*board.Board {
-	for index, bd := range bds {
-		if len(bd.NewArticles) == 0 {
-			if index < len(bds)-1 {
-				bds = append(bds[:index], bds[index+1:]...)
-			} else {
-				bds = bds[:index]
-			}
+	for i := 0; i < len(bds); i++ {
+		if len(bds[i].NewArticles) == 0 {
+			bds = append(bds[:i], bds[i+1:]...)
+			i--
 		}
 	}
 	return bds
