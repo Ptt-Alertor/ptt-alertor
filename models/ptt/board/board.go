@@ -1,8 +1,6 @@
 package board
 
 import (
-	"reflect"
-
 	"github.com/liam-lai/ptt-alertor/models/ptt/article"
 	"github.com/liam-lai/ptt-alertor/rss"
 )
@@ -39,7 +37,7 @@ func NewArticles(bd BoardAction) article.Articles {
 	newArticles := make(article.Articles, 0)
 	for _, onlineArticle := range onlineArticles {
 		for index, savedArticle := range savedArticles {
-			if reflect.DeepEqual(onlineArticle, savedArticle) {
+			if onlineArticle.Link == savedArticle.Link {
 				break
 			}
 			if index == len(savedArticles)-1 {
