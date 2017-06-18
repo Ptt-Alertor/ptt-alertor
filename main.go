@@ -97,5 +97,5 @@ func init() {
 	new(jobs.CleanUpBoards).Run()
 	new(jobs.GenBoards).Run()
 	jobs.NewFetcher().Run()
-	go new(jobs.Message).Run()
+	go new(jobs.Checker).Run()
 }
