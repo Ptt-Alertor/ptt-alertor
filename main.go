@@ -60,6 +60,8 @@ func main() {
 	router.GET("/line", ctrlr.LineIndex)
 	router.GET("/redirect/:sha1", ctrlr.Redirect)
 
+	router.POST("/broadcast", basicAuth(ctrlr.Broadcast))
+
 	// boards apis
 	router.GET("/boards/:boardName/articles", ctrlr.BoardArticleIndex)
 	router.GET("/boards", ctrlr.BoardIndex)
