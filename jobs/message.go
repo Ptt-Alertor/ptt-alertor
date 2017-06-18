@@ -134,6 +134,7 @@ func sendMessage(msg Message) {
 		"account": account,
 		"board":   msg.board,
 		"keyword": msg.keyword,
+		"authro":  msg.author,
 	}).Info("Message Sent")
 }
 
