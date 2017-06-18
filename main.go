@@ -89,9 +89,6 @@ func main() {
 
 func startJobs() {
 	c := cron.New()
-	c.AddFunc("@every 30s", func() {
-		new(jobs.Message).Run()
-	})
 	c.AddJob("@every 1h", new(jobs.GenBoards))
 	c.Start()
 }
@@ -100,4 +97,5 @@ func init() {
 	new(jobs.CleanUpBoards).Run()
 	new(jobs.GenBoards).Run()
 	jobs.NewFetcher().Run()
+	go new(jobs.Message).Run()
 }

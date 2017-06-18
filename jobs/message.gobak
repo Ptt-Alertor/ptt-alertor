@@ -17,8 +17,6 @@ import (
 	user "github.com/liam-lai/ptt-alertor/models/user/redis"
 )
 
-const checkBoardDuration = 10
-
 type Message struct {
 	email      string
 	line       string
@@ -30,55 +28,15 @@ type Message struct {
 	articles   article.Articles
 }
 
-func (msg Message) String() string {
-	subType := "關鍵字"
-	subText := msg.keyword
-	if msg.author != "" {
-		subType = "作者"
-		subText = msg.author
-	}
-	return fmt.Sprintf("\r\n看版：%s；%s：%s%s", msg.board, subType, subText, msg.articles.String())
-}
-
 func (msg Message) Run() {
-	boardCh := make(chan *board.Board)
-	go func() {
-		for {
-			bds := new(board.Board).All()
-			for _, bd := range bds {
-				go checkNewArticle(bd, boardCh)
-			}
-			time.Sleep(checkBoardDuration * time.Second)
-		}
-	}()
-	msgCh := make(chan Message)
-
-	for {
-		select {
-		case bd := <-boardCh:
-			checkSubscriber(bd, msg, msgCh)
-		case m := <-msgCh:
-			sendMessage(m)
-			// case <-time.After(time.Second * 10):
-			// 	log.Info("Message Done")
-			// 	return
-		}
+	bds := new(board.Board).All()
+	for _, bd := range bds {
+		bd.WithNewArticles()
 	}
-}
-
-func checkNewArticle(bd *board.Board, boardCh chan *board.Board) {
-	bd.WithNewArticles()
-	if len(bd.NewArticles) != 0 {
-		bd.Articles = bd.OnlineArticles()
-		log.WithField("board", bd.Name).Info("Updated Articles")
-		bd.Save()
-		boardCh <- bd
-	}
-}
-
-func checkSubscriber(bd *board.Board, msg Message, msgCh chan Message) {
-	log.Info("Check User")
+	bds = deleteNonNewArticleBoard(bds)
+	saveNewArticles(bds)
 	users := new(user.User).All()
+	msgCh := make(chan Message)
 	for _, user := range users {
 		if user.Enable {
 			msg.email = user.Profile.Email
@@ -86,8 +44,42 @@ func checkSubscriber(bd *board.Board, msg Message, msgCh chan Message) {
 			msg.lineNotify = user.Profile.LineAccessToken
 			msg.messenger = user.Profile.Messenger
 			log.WithField("user", user.Profile.Account).Info("Checking User Subscribes")
-			go subscribeChecker(user, bd, msg, msgCh)
+			go userChecker(user, bds, msg, msgCh)
 		}
+	}
+
+	for {
+		select {
+		case m := <-msgCh:
+			sendMessage(m)
+		case <-time.After(time.Second * 10):
+			log.Info("Message Done")
+			return
+		}
+	}
+}
+
+func deleteNonNewArticleBoard(bds []*board.Board) []*board.Board {
+	for i := 0; i < len(bds); i++ {
+		if len(bds[i].NewArticles) == 0 {
+			bds = append(bds[:i], bds[i+1:]...)
+			i--
+		}
+	}
+	return bds
+}
+
+func saveNewArticles(bds []*board.Board) {
+	for _, bd := range bds {
+		bd.Articles = bd.OnlineArticles()
+		bd.Save()
+		log.WithField("board", bd.Name).Info("Updated Articles")
+	}
+}
+
+func userChecker(user *user.User, bds []*board.Board, msg Message, msgCh chan Message) {
+	for _, bd := range bds {
+		go subscribeChecker(user, bd, msg, msgCh)
 	}
 }
 
@@ -178,4 +170,14 @@ func sendLineNotify(msg Message) {
 func sendMessenger(msg Message) {
 	m := messenger.New()
 	m.SendTextMessage(msg.messenger, msg.String())
+}
+
+func (msg Message) String() string {
+	subType := "關鍵字"
+	subText := msg.keyword
+	if msg.author != "" {
+		subType = "作者"
+		subText = msg.author
+	}
+	return fmt.Sprintf("\r\n看版：%s；%s：%s%s", msg.board, subType, subText, msg.articles.String())
 }

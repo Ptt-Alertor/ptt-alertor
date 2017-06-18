@@ -34,6 +34,9 @@ func (bd Board) OnlineArticles() article.Articles {
 func NewArticles(bd BoardAction) article.Articles {
 	savedArticles := bd.GetArticles()
 	onlineArticles := bd.OnlineArticles()
+	if len(savedArticles) == 0 {
+		return onlineArticles
+	}
 	newArticles := make(article.Articles, 0)
 	for _, onlineArticle := range onlineArticles {
 		for index, savedArticle := range savedArticles {
