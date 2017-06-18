@@ -51,7 +51,7 @@ func (msg Message) Run() {
 		select {
 		case m := <-msgCh:
 			sendMessage(m)
-		case <-time.After(time.Second * 3):
+		case <-time.After(time.Second * 10):
 			log.Info("Message Done")
 			return
 		}
