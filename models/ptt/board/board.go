@@ -3,8 +3,8 @@ package board
 import (
 	"reflect"
 
-	"github.com/liam-lai/ptt-alertor/crawler"
 	"github.com/liam-lai/ptt-alertor/models/ptt/article"
+	"github.com/liam-lai/ptt-alertor/rss"
 )
 
 type BoardNotExistError struct {
@@ -29,7 +29,7 @@ type BoardAction interface {
 }
 
 func (bd Board) OnlineArticles() article.Articles {
-	bd.Articles = crawler.BuildArticles(bd.Name)
+	bd.Articles = rss.BuildArticles(bd.Name)
 	return bd.Articles
 }
 

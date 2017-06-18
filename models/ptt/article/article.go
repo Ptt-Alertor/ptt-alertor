@@ -52,8 +52,7 @@ func containKeyword(title string, keyword string) bool {
 }
 
 func (a Article) String() string {
-	link := "https://www.ptt.cc" + a.Link
-	content := a.Title + "\r\n" + link
+	content := a.Title + "\r\n" + a.Link
 	return content
 }
 

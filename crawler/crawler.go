@@ -33,7 +33,7 @@ func BuildArticles(board string) article.Articles {
 
 			for _, anchor := range traverseHTMLNode(titleDiv, findAnchor) {
 				articles[index].Title = anchor.FirstChild.Data
-				articles[index].Link = getAnchorLink(anchor)
+				articles[index].Link = "https://www.ptt.cc" + getAnchorLink(anchor)
 			}
 		}
 		for _, metaDiv := range traverseHTMLNode(articleBlock, findMetaDiv) {
