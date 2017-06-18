@@ -79,7 +79,6 @@ func checkSubscriber(bd *board.Board, cker Checker, ckerCh chan Checker) {
 			cker.line = user.Profile.Line
 			cker.lineNotify = user.Profile.LineAccessToken
 			cker.messenger = user.Profile.Messenger
-			log.WithField("user", user.Profile.Account).Info("Checking Subscriber")
 			go subscribeChecker(user, bd, cker, ckerCh)
 		}
 	}
@@ -131,23 +130,36 @@ func authorChecker(author string, bd *board.Board, cker Checker, ckerCh chan Che
 
 func sendMessage(cker Checker) {
 	var account string
+	var platform string
+	subType := "keyword"
+	word := cker.keyword
+
+	if cker.author != "" {
+		subType = "author"
+		word = cker.author
+	}
+
 	if cker.email != "" {
 		account = cker.email
+		platform = "mail"
 		sendMail(cker)
 	}
 	if cker.lineNotify != "" {
 		account = cker.line
+		platform = "line"
 		sendLineNotify(cker)
 	}
 	if cker.messenger != "" {
 		account = cker.messenger
+		platform = "messenger"
 		sendMessenger(cker)
 	}
 	log.WithFields(log.Fields{
-		"account": account,
-		"board":   cker.board,
-		"keyword": cker.keyword,
-		"author":  cker.author,
+		"account":  account,
+		"platform": platform,
+		"board":    cker.board,
+		"type":     subType,
+		"word":     word,
 	}).Info("Message Sent")
 }
 
