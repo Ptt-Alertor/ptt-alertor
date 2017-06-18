@@ -34,6 +34,7 @@ func (msg Message) Run() {
 		bd.WithNewArticles()
 	}
 	bds = deleteNonNewArticleBoard(bds)
+	saveNewArticles(bds)
 	users := new(user.User).All()
 	msgCh := make(chan Message)
 	for _, user := range users {
@@ -66,6 +67,14 @@ func deleteNonNewArticleBoard(bds []*board.Board) []*board.Board {
 		}
 	}
 	return bds
+}
+
+func saveNewArticles(bds []*board.Board) {
+	for _, bd := range bds {
+		bd.Articles = bd.OnlineArticles()
+		bd.Save()
+		log.WithField("board", bd.Name).Info("Updated Articles")
+	}
 }
 
 func userChecker(user *user.User, bds []*board.Board, msg Message, msgCh chan Message) {
