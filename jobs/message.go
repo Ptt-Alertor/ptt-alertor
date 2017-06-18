@@ -7,6 +7,8 @@ import (
 
 	"strings"
 
+	"fmt"
+
 	"github.com/liam-lai/ptt-alertor/line"
 	"github.com/liam-lai/ptt-alertor/mail"
 	"github.com/liam-lai/ptt-alertor/messenger"
@@ -134,7 +136,7 @@ func sendMessage(msg Message) {
 		"account": account,
 		"board":   msg.board,
 		"keyword": msg.keyword,
-		"authro":  msg.author,
+		"author":  msg.author,
 	}).Info("Message Sent")
 }
 
@@ -149,14 +151,24 @@ func sendMail(msg Message) {
 }
 
 func sendLine(msg Message) {
-	line.PushTextMessage(msg.line, msg.articles.String())
+	line.PushTextMessage(msg.line, msg.String())
 }
 
 func sendLineNotify(msg Message) {
-	line.Notify(msg.lineNotify, msg.articles.String())
+	line.Notify(msg.lineNotify, msg.String())
 }
 
 func sendMessenger(msg Message) {
 	m := messenger.New()
-	m.SendTextMessage(msg.messenger, msg.articles.String())
+	m.SendTextMessage(msg.messenger, msg.String())
+}
+
+func (msg Message) String() string {
+	subType := "關鍵字"
+	subText := msg.keyword
+	if msg.author != "" {
+		subType = "作者"
+		subText = msg.author
+	}
+	return fmt.Sprintf("\r\n看版：%s；%s：%s%s", msg.board, subType, subText, msg.articles.String())
 }

@@ -51,17 +51,18 @@ func containKeyword(title string, keyword string) bool {
 	return strings.Contains(strings.ToLower(title), strings.ToLower(keyword))
 }
 
+func (a Article) String() string {
+	link := "https://www.ptt.cc" + a.Link
+	content := a.Title + "\r\n" + link
+	return content
+}
+
 type Articles []Article
 
 func (as Articles) String() string {
 	var content string
 	for _, article := range as {
-		link := "https://www.ptt.cc" + article.Link
-		content += "\r\n" + article.Title + "\r\n"
-		if article.Author != "" {
-			content += "作者: " + article.Author + "\r\n"
-		}
-		content += link + "\r\n"
+		content += "\r\n\r\n" + article.String()
 	}
 	return content
 }
