@@ -31,13 +31,12 @@ func (bd Board) OnlineArticles() article.Articles {
 	return bd.Articles
 }
 
-func NewArticles(bd BoardAction) article.Articles {
+func NewArticles(bd BoardAction) (newArticles, onlineArticles article.Articles) {
 	savedArticles := bd.GetArticles()
-	onlineArticles := bd.OnlineArticles()
+	onlineArticles = bd.OnlineArticles()
 	if len(savedArticles) == 0 {
-		return onlineArticles
+		return onlineArticles, onlineArticles
 	}
-	newArticles := make(article.Articles, 0)
 	for _, onlineArticle := range onlineArticles {
 		for index, savedArticle := range savedArticles {
 			if onlineArticle.Link == savedArticle.Link {
@@ -48,5 +47,5 @@ func NewArticles(bd BoardAction) article.Articles {
 			}
 		}
 	}
-	return newArticles
+	return newArticles, onlineArticles
 }
