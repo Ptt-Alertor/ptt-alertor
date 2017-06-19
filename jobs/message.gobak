@@ -71,7 +71,7 @@ func deleteNonNewArticleBoard(bds []*board.Board) []*board.Board {
 
 func saveNewArticles(bds []*board.Board) {
 	for _, bd := range bds {
-		bd.Articles = bd.OnlineArticles()
+		bd.Articles = bd.FetchArticles()
 		bd.Save()
 		log.WithField("board", bd.Name).Info("Updated Articles")
 	}

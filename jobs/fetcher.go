@@ -24,7 +24,7 @@ func (f Fetcher) Run() {
 		wg.Add(1)
 		go func(bd board.Board) {
 			defer wg.Done()
-			bd.Articles = bd.OnlineArticles()
+			bd.Articles = bd.FetchArticles()
 			bd.Save()
 			log.WithField("board", bd.Name).Info("Fetched")
 		}(*bd)

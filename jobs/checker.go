@@ -15,7 +15,7 @@ import (
 	user "github.com/liam-lai/ptt-alertor/models/user/redis"
 )
 
-const checkBoardDuration = 30
+const checkBoardDuration = 100
 
 type Checker struct {
 	email      string
@@ -43,14 +43,10 @@ func (cker Checker) Run() {
 	go func() {
 		for {
 			bds := new(board.Board).All()
-			for _, bd := range bds[:len(bds)/2] {
+			for _, bd := range bds {
+				time.Sleep(checkBoardDuration * time.Millisecond)
 				go checkNewArticle(bd, boardCh)
 			}
-			time.Sleep(checkBoardDuration * time.Second)
-			for _, bd := range bds[len(bds)/2:] {
-				go checkNewArticle(bd, boardCh)
-			}
-			time.Sleep(checkBoardDuration * time.Second)
 		}
 	}()
 	ckerCh := make(chan Checker)
@@ -68,7 +64,7 @@ func (cker Checker) Run() {
 func checkNewArticle(bd *board.Board, boardCh chan *board.Board) {
 	bd.WithNewArticles()
 	if len(bd.NewArticles) != 0 {
-		bd.Articles = bd.OnlineArticles()
+		bd.Articles = bd.OnlineArticles
 		log.WithField("board", bd.Name).Info("Updated Articles")
 		bd.Save()
 		boardCh <- bd

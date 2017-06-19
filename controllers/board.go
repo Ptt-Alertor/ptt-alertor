@@ -14,7 +14,7 @@ import (
 func BoardArticleIndex(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	bd := new(board.Board)
 	bd.Name = strings.ToUpper(params.ByName("boardName"))
-	articles := bd.OnlineArticles()
+	articles := bd.FetchArticles()
 	articlesJSON, err := json.Marshal(articles)
 	if err != nil {
 		myutil.LogJSONEncode(err, articles)

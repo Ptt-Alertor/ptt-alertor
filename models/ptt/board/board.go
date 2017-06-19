@@ -14,30 +14,29 @@ func (e BoardNotExistError) Error() string {
 }
 
 type Board struct {
-	Name        string
-	Articles    article.Articles
-	NewArticles article.Articles
+	Name           string
+	Articles       article.Articles
+	OnlineArticles article.Articles
+	NewArticles    article.Articles
 }
 
 type BoardAction interface {
-	OnlineArticles() article.Articles
+	FetchArticles() article.Articles
 	GetArticles() article.Articles
 	WithArticles()
 	Create() error
 }
 
-func (bd Board) OnlineArticles() article.Articles {
-	bd.Articles = rss.BuildArticles(bd.Name)
-	return bd.Articles
+func (bd Board) FetchArticles() article.Articles {
+	return rss.BuildArticles(bd.Name)
 }
 
-func NewArticles(bd BoardAction) article.Articles {
+func NewArticles(bd BoardAction) (newArticles, onlineArticles article.Articles) {
 	savedArticles := bd.GetArticles()
-	onlineArticles := bd.OnlineArticles()
+	onlineArticles = bd.FetchArticles()
 	if len(savedArticles) == 0 {
-		return onlineArticles
+		return onlineArticles, onlineArticles
 	}
-	newArticles := make(article.Articles, 0)
 	for _, onlineArticle := range onlineArticles {
 		for index, savedArticle := range savedArticles {
 			if onlineArticle.Link == savedArticle.Link {
@@ -48,5 +47,5 @@ func NewArticles(bd BoardAction) article.Articles {
 			}
 		}
 	}
-	return newArticles
+	return newArticles, onlineArticles
 }
