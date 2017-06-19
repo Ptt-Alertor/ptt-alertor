@@ -76,7 +76,7 @@ func (bd *Board) WithArticles() {
 }
 
 func (bd *Board) WithNewArticles() {
-	bd.NewArticles = board.NewArticles(bd)
+	bd.NewArticles, bd.Articles = board.NewArticles(bd)
 }
 
 func (bd Board) Create() error {

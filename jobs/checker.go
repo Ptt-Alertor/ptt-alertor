@@ -64,9 +64,8 @@ func (cker Checker) Run() {
 func checkNewArticle(bd *board.Board, boardCh chan *board.Board) {
 	bd.WithNewArticles()
 	if len(bd.NewArticles) != 0 {
-		bd.Articles = bd.OnlineArticles()
-		log.WithField("board", bd.Name).Info("Updated Articles")
 		bd.Save()
+		log.WithField("board", bd.Name).Info("Updated Articles")
 		boardCh <- bd
 	}
 }
