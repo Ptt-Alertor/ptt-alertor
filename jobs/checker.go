@@ -15,7 +15,7 @@ import (
 	user "github.com/liam-lai/ptt-alertor/models/user/redis"
 )
 
-const checkBoardDuration = 5
+const checkBoardDuration = 30
 
 type Checker struct {
 	email      string
