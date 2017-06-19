@@ -11,7 +11,7 @@ func BuildArticles(board string) article.Articles {
 	fp := gofeed.NewParser()
 	feed, err := fp.ParseURL("https://www.ptt.cc/atom/" + board + ".xml")
 	if err != nil {
-		log.WithError(err).Error("RSS Parse Failed, Switch to HTML Crawler")
+		log.WithField("board", board).WithError(err).Error("RSS Parse Failed, Switch to HTML Crawler")
 		return crawler.BuildArticles(board)
 	}
 	articles := make(article.Articles, 0)
