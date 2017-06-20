@@ -52,16 +52,15 @@ func containKeyword(title string, keyword string) bool {
 }
 
 func (a Article) String() string {
-	content := a.Title + "\r\n" + a.Link
-	return content
+	return a.Title + "\r\n" + a.Link
 }
 
 type Articles []Article
 
 func (as Articles) String() string {
 	var content string
-	for _, article := range as {
-		content += "\r\n\r\n" + article.String()
+	for _, a := range as {
+		content += "\r\n\r\n" + a.String()
 	}
 	return content
 }

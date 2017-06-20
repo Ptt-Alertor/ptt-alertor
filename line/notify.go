@@ -18,6 +18,8 @@ import (
 
 	"strconv"
 
+	"net/url"
+
 	user "github.com/liam-lai/ptt-alertor/models/user/redis"
 )
 
@@ -127,18 +129,20 @@ func fetchAccessToken(code string) (string, error) {
 
 func Notify(accessToken string, message string) {
 	uri := "/api/notify"
-	body := "message=" + message
-	pr, err := http.NewRequest("POST", notifyAPIHost+uri, bytes.NewBufferString(body))
+	queryStr := url.Values{}
+	queryStr.Add("message", message)
+	encodeQueryStr := queryStr.Encode()
+	pr, err := http.NewRequest("POST", notifyAPIHost+uri, bytes.NewBufferString(encodeQueryStr))
 	pr.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	pr.Header.Set("Authorization", "Bearer "+accessToken)
 	client := &http.Client{}
 	r, err := client.Do(pr)
 	if err != nil {
-		panic(err)
+		log.WithError(err).Error("Notify Request Failed")
 	}
 	defer r.Body.Close()
 	if r.StatusCode != http.StatusOK {
 		data, _ := ioutil.ReadAll(r.Body)
-		log.Fatal(r.Status, string(data))
+		log.Error(r.Status, string(data))
 	}
 }
