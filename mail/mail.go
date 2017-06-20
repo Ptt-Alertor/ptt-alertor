@@ -55,11 +55,15 @@ func (mail Mail) Send() {
 }
 
 func newMailgun() mailgun.Mailgun {
-	config := myutil.Config("mailgun")
-
 	domain := config["domain"]
 	apiKey := config["apiKey"]
 	publicAPIKey := config["publicAPIKey"]
 
 	return mailgun.NewMailgun(domain, apiKey, publicAPIKey)
+}
+
+var config map[string]string
+
+func init() {
+	config = myutil.Config("mailgun")
 }

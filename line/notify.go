@@ -32,9 +32,8 @@ var clientSecret string
 var redirectURI string
 
 func init() {
-	lineConfig := myutil.Config("line")
-	clientID = lineConfig["clientID"]
-	clientSecret = lineConfig["clientSecret"]
+	clientID = config["clientID"]
+	clientSecret = config["clientSecret"]
 	appConfig := myutil.Config("app")
 	redirectURI = appConfig["host"] + "/line/notify/callback"
 }

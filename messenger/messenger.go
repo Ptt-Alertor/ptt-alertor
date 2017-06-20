@@ -22,11 +22,16 @@ type Messenger struct {
 	AccessToken string
 }
 
+var config map[string]string
+
+func init() {
+	config = myutil.Config("messenger")
+}
+
 func New() Messenger {
-	msgConfig := myutil.Config("messenger")
 	return Messenger{
-		VerifyToken: msgConfig["verifyToken"],
-		AccessToken: msgConfig["accessToken"],
+		VerifyToken: config["verifyToken"],
+		AccessToken: config["accessToken"],
 	}
 }
 

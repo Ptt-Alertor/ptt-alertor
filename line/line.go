@@ -18,9 +18,10 @@ import (
 var bd board.Board
 var bot *linebot.Client
 var err error
+var config map[string]string
 
 func init() {
-	config := myutil.Config("line")
+	config = myutil.Config("line")
 	bot, err = linebot.New(config["channelSecret"], config["channelAccessToken"])
 	if err != nil {
 		log.Fatal(err)
