@@ -35,3 +35,19 @@ func (s *Subscription) CleanUp() {
 	s.Authors.Clean()
 	s.Authors.RemoveStringsSpace()
 }
+
+func (s *Subscription) DeleteKeywords(keywords myutil.StringSlice) {
+	s.Keywords.DeleteSlice(keywords, false)
+}
+
+func (s *Subscription) DeleteAuthors(authors myutil.StringSlice) {
+	s.Authors.DeleteSlice(authors, false)
+}
+
+func (s *Subscription) CleanKeywords() {
+	s.Keywords = nil
+}
+
+func (s *Subscription) CleanAuthors() {
+	s.Authors = nil
+}

@@ -60,8 +60,8 @@ func (ss *Subscriptions) Remove(sub Subscription) error {
 	for i := 0; i < len(*ss); i++ {
 		s := (*ss)[i]
 		if strings.EqualFold(s.Board, sub.Board) {
-			s.Keywords.DeleteSlice(sub.Keywords, false)
-			s.Authors.DeleteSlice(sub.Authors, false)
+			s.DeleteKeywords(sub.Keywords)
+			s.DeleteAuthors(sub.Authors)
 			(*ss)[i] = s
 		}
 		if len((*ss)[i].Keywords) == 0 && len((*ss)[i].Authors) == 0 {
