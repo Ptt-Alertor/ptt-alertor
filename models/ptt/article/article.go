@@ -1,9 +1,14 @@
 package article
 
-import "strings"
-import "regexp"
+import (
+	"log"
+	"regexp"
+	"strconv"
+	"strings"
+)
 
 type Article struct {
+	ID     int
 	Title  string
 	Link   string
 	Date   string
@@ -11,7 +16,19 @@ type Article struct {
 }
 
 type ArticleAction interface {
-	ContainKeyword(keyword string) bool
+	MatchKeyword(keyword string) bool
+}
+
+func (a Article) ParseID(Link string) (id int) {
+	reg, err := regexp.Compile("https?://www.ptt.cc/bbs/.*/M\\.(\\d+)\\..*")
+	if err != nil {
+		log.Fatal(err)
+	}
+	id, err = strconv.Atoi(reg.FindStringSubmatch(Link)[1])
+	if err != nil {
+		id = 0
+	}
+	return id
 }
 
 func (a Article) MatchKeyword(keyword string) bool {

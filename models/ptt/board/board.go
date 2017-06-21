@@ -1,6 +1,8 @@
 package board
 
 import (
+	log "github.com/Sirupsen/logrus"
+	"github.com/liam-lai/ptt-alertor/crawler"
 	"github.com/liam-lai/ptt-alertor/models/ptt/article"
 	"github.com/liam-lai/ptt-alertor/rss"
 )
@@ -27,8 +29,13 @@ type BoardAction interface {
 	Create() error
 }
 
-func (bd Board) FetchArticles() article.Articles {
-	return rss.BuildArticles(bd.Name)
+func (bd Board) FetchArticles() (articles article.Articles) {
+	articles, err := rss.BuildArticles(bd.Name)
+	if err != nil {
+		log.WithField("board", bd.Name).WithError(err).Error("RSS Parse Failed, Switch to HTML Crawler")
+		articles = crawler.BuildArticles(bd.Name)
+	}
+	return articles
 }
 
 func NewArticles(bd BoardAction) (newArticles, onlineArticles article.Articles) {
@@ -39,7 +46,7 @@ func NewArticles(bd BoardAction) (newArticles, onlineArticles article.Articles) 
 	}
 	for _, onlineArticle := range onlineArticles {
 		for index, savedArticle := range savedArticles {
-			if onlineArticle.Link == savedArticle.Link {
+			if onlineArticle.ID <= savedArticle.ID {
 				break
 			}
 			if index == len(savedArticles)-1 {

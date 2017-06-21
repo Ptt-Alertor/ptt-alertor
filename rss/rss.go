@@ -1,18 +1,15 @@
 package rss
 
 import (
-	log "github.com/Sirupsen/logrus"
-	"github.com/liam-lai/ptt-alertor/crawler"
 	"github.com/liam-lai/ptt-alertor/models/ptt/article"
 	"github.com/mmcdole/gofeed"
 )
 
-func BuildArticles(board string) article.Articles {
+func BuildArticles(board string) (article.Articles, error) {
 	fp := gofeed.NewParser()
 	feed, err := fp.ParseURL("https://www.ptt.cc/atom/" + board + ".xml")
 	if err != nil {
-		log.WithField("board", board).WithError(err).Error("RSS Parse Failed, Switch to HTML Crawler")
-		return crawler.BuildArticles(board)
+		return nil, err
 	}
 	articles := make(article.Articles, 0)
 	for _, item := range feed.Items {
@@ -22,7 +19,8 @@ func BuildArticles(board string) article.Articles {
 			Date:   item.Published,
 			Author: item.Author.Name,
 		}
+		article.ID = article.ParseID(item.GUID)
 		articles = append(articles, article)
 	}
-	return articles
+	return articles, nil
 }
