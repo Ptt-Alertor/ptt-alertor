@@ -14,6 +14,8 @@ import (
 	"github.com/liam-lai/ptt-alertor/myutil"
 )
 
+var auth map[string]string
+
 type myRouter struct {
 	httprouter.Router
 }
@@ -35,7 +37,6 @@ func newRouter() *myRouter {
 func basicAuth(handle httprouter.Handle) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 		user, password, hasAuth := r.BasicAuth()
-		auth := myutil.Config("auth")
 		if hasAuth && user == auth["user"] && password == auth["password"] {
 			handle(w, r, params)
 		} else {
@@ -95,6 +96,7 @@ func startJobs() {
 }
 
 func init() {
+	auth = myutil.Config("auth")
 	new(jobs.CleanUpBoards).Run()
 	new(jobs.GenBoards).Run()
 	jobs.NewFetcher().Run()
