@@ -41,7 +41,7 @@ func UserAll(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 		}
 		fmt.Fprintf(w, "%s\n", u.Profile.Account)
 	}
-	fmt.Fprintf(w, "LINE: %d, Messenger: %d, count(Board): %d, count(Keyword): %d, count(Author): %d, IdleUsers", line, messenger, boardCount, keywordCount, authorCount, idleUser)
+	fmt.Fprintf(w, "LINE: %d, Messenger: %d, count(Board): %d, count(Keyword): %d, count(Author): %d, IdleUsers: %d", line, messenger, boardCount, keywordCount, authorCount, idleUser)
 }
 
 func UserCreate(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
