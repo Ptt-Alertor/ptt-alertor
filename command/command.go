@@ -78,7 +78,7 @@ func HandleCommand(text string, userID string) string {
 				err = update(userID, boardNames, inputs, addAuthors)
 			}
 			if bErr, ok := err.(boardproto.BoardNotExistError); ok {
-				return "版名錯誤，請確認拼字。可能版名：\n" + bErr.Suggestion
+				return "板名錯誤，請確認拼字。可能板名：\n" + bErr.Suggestion
 			}
 			if err != nil {
 				return "新增失敗，請等待修復。"
@@ -92,7 +92,7 @@ func HandleCommand(text string, userID string) string {
 				err = update(userID, boardNames, inputs, removeAuthors)
 			}
 			if bErr, ok := err.(boardproto.BoardNotExistError); ok {
-				return "版名錯誤，請確認拼字。可能版名：\n" + bErr.Suggestion
+				return "板名錯誤，請確認拼字。可能板名：\n" + bErr.Suggestion
 			}
 			if err != nil {
 				return "刪除失敗，請等待修復。"

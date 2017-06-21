@@ -179,5 +179,5 @@ func (msg Message) String() string {
 		subType = "作者"
 		subText = msg.author
 	}
-	return fmt.Sprintf("\r\n看版：%s；%s：%s%s", msg.board, subType, subText, msg.articles.String())
+	return fmt.Sprintf("\r\n看板：%s；%s：%s%s", msg.board, subType, subText, msg.articles.String())
 }
