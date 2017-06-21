@@ -5,6 +5,8 @@ import (
 
 	log "github.com/Sirupsen/logrus"
 
+	"time"
+
 	board "github.com/liam-lai/ptt-alertor/models/ptt/board/redis"
 )
 
@@ -28,6 +30,7 @@ func (f Fetcher) Run() {
 			bd.Save()
 			log.WithField("board", bd.Name).Info("Fetched")
 		}(*bd)
+		time.Sleep(100 * time.Millisecond)
 	}
 	wg.Wait()
 	log.Info("All fetcher done")

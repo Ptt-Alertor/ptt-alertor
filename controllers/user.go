@@ -22,7 +22,7 @@ func UserFind(w http.ResponseWriter, r *http.Request, params httprouter.Params) 
 func UserAll(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	us := new(user.User).All()
 	fmt.Fprintf(w, "總人數：%d\n", len(us))
-	var line, messenger, boardCount, keywordCount, authorCount int
+	var line, messenger, subCount, boardCount, keywordCount, authorCount, idleUser int
 	for _, u := range us {
 		if u.Profile.Line != "" {
 			line++
@@ -30,14 +30,18 @@ func UserAll(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 		if u.Profile.Messenger != "" {
 			messenger++
 		}
-		boardCount += len(u.Subscribes)
+		subCount = len(u.Subscribes)
+		if subCount == 0 {
+			idleUser++
+		}
+		boardCount += subCount
 		for _, s := range u.Subscribes {
 			keywordCount += len(s.Keywords)
 			authorCount += len(s.Authors)
 		}
 		fmt.Fprintf(w, "%s\n", u.Profile.Account)
 	}
-	fmt.Fprintf(w, "LINE: %d, Messenger: %d, count(Board): %d, count(Keyword): %d, count(Author): %d", line, messenger, boardCount, keywordCount, authorCount)
+	fmt.Fprintf(w, "LINE: %d, Messenger: %d, count(Board): %d, count(Keyword): %d, count(Author): %d, IdleUsers", line, messenger, boardCount, keywordCount, authorCount, idleUser)
 }
 
 func UserCreate(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
