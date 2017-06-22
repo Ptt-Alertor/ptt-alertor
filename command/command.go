@@ -54,9 +54,9 @@ func HandleCommand(text string, userID string) string {
 		matched := re.MatchString(text)
 		if !matched {
 			if strings.Contains(command, "作者") {
-				return inputErrorTips() + "\n\n正確範例：" + command + " gossiping,lol ffaarr,obov"
+				return inputErrorTips() + "\n\n正確範例：\n" + command + " gossiping,lol ffaarr,obov"
 			}
-			return inputErrorTips() + "\n\n正確範例：" + command + " gossiping,lol 問卦,爆卦"
+			return inputErrorTips() + "\n\n正確範例：\n" + command + " gossiping,lol 問卦,爆卦"
 		}
 		args := re.FindStringSubmatch(text)
 		boardNames := splitParamString(args[2])
