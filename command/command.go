@@ -50,7 +50,7 @@ func HandleCommand(text string, userID string) string {
 	case "指令":
 		return stringCommands()
 	case "新增", "刪除", "新增作者", "刪除作者":
-		re := regexp.MustCompile("^(新增|新增作者|刪除|刪除作者)\\s+([^,，][\\w\\d-_,，]+[^,，:\\s]):?\\s+(.+)")
+		re := regexp.MustCompile("^(新增|新增作者|刪除|刪除作者)\\s+([^,，][\\w\\d-_,，]+[^,，:\\s]):?\\s+(.+[^\\s])")
 		matched := re.MatchString(text)
 		if !matched {
 			if strings.Contains(command, "作者") {

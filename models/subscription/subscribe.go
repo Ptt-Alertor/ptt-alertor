@@ -31,7 +31,6 @@ func (s Subscription) StringAuthor() string {
 
 func (s *Subscription) CleanUp() {
 	s.Keywords.Clean()
-	s.Keywords.RemoveStringsSpace()
 	s.Authors.Clean()
 	s.Authors.RemoveStringsSpace()
 }
