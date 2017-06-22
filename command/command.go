@@ -4,9 +4,12 @@ import (
 	"regexp"
 	"strings"
 
+	"fmt"
+
 	log "github.com/Sirupsen/logrus"
 	boardproto "github.com/liam-lai/ptt-alertor/models/ptt/board"
 	"github.com/liam-lai/ptt-alertor/models/subscription"
+	"github.com/liam-lai/ptt-alertor/models/top"
 	user "github.com/liam-lai/ptt-alertor/models/user/redis"
 )
 
@@ -14,6 +17,7 @@ var Commands = map[string]map[string]string{
 	"一般": {
 		"指令": "可使用的指令清單",
 		"清單": "設定的看板、關鍵字、作者",
+		"排行": "前五名追蹤的關鍵字、作者",
 		"備註": "封鎖此帳號也將收不到新文章通知。",
 	},
 	"關鍵字相關": {
@@ -49,6 +53,8 @@ func HandleCommand(text string, userID string) string {
 		return rspText
 	case "指令":
 		return stringCommands()
+	case "排行":
+		return listTop()
 	case "新增", "刪除", "新增作者", "刪除作者":
 		re := regexp.MustCompile("^(新增|新增作者|刪除|刪除作者)\\s+([^,，][\\w\\d-_,，]+[^,，:\\s]):?\\s+(.+[^\\s])")
 		matched := re.MatchString(text)
@@ -121,6 +127,18 @@ func stringCommands() string {
 		str += "\n"
 	}
 	return str
+}
+
+func listTop() string {
+	content := "關鍵字"
+	for i, keyword := range top.GetKeywordList(4) {
+		content += fmt.Sprintf("\n%d. %s", i+1, keyword)
+	}
+	content += "\n----\n作者"
+	for i, author := range top.GetAuthorList(4) {
+		content += fmt.Sprintf("\n%d. %s", i+1, author)
+	}
+	return content
 }
 
 func checkRegexp(input string) bool {

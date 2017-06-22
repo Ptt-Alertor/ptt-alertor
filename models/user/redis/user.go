@@ -20,8 +20,6 @@ type User struct {
 
 const prefix string = "user:"
 
-var usersDir string = myutil.StoragePath() + "/users/"
-
 func (u User) All() []*User {
 	conn := connections.Redis()
 	userKeys, err := redis.Strings(conn.Do("KEYS", "user:*"))
