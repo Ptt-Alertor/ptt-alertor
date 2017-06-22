@@ -92,7 +92,7 @@ func startJobs() {
 	go new(jobs.Checker).Run()
 	c := cron.New()
 	c.AddJob("@every 1h", new(jobs.GenBoards))
-	c.AddJob("@every 10s", jobs.NewTop())
+	c.AddJob("@every 1h", jobs.NewTop())
 	c.Start()
 }
 

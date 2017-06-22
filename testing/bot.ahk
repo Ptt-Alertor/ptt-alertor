@@ -7,6 +7,9 @@
     Send, 清單{Enter}
     Sleep, 1500
 
+    Send, 排行{Enter}
+    Sleep, 1500
+
     ; 簡單指令反面
     Send, 指{Enter}
     Sleep, 1500

@@ -78,7 +78,7 @@ func (m *Messenger) handlePostback(id string, payload string) {
 		if err != nil {
 			log.WithError(err).Error("Messenger Follow Error")
 		}
-		responseText = "歡迎使用 PTT Alertor\n輸入「指令」查看相關功能。"
+		responseText = "歡迎使用 PTT Alertor\n輸入「指令」查看相關功能。\n\n觀看Demo:\nhttps://media.giphy.com/media/3ohzdF6vidM6I49lQs/giphy.gif"
 	case "COMMANDS_PAYLOAD":
 		// responseText = command.HandleCommand("指令", id)
 		var str string
