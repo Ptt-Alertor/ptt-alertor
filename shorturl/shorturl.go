@@ -25,7 +25,7 @@ func Gen(longURL string) string {
 	data := []byte(longURL)
 	sum := fmt.Sprintf("%x", sha1.Sum(data))
 	conn := connections.Redis()
-	_, err := conn.Do("SET", redisPrefix+sum, longURL, "NX")
+	_, err := conn.Do("SET", redisPrefix+sum, longURL)
 	if err != nil {
 		log.WithField("runtime", myutil.BasicRuntimeInfo()).WithError(err).Error()
 	}
