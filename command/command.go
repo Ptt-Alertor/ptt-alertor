@@ -35,6 +35,13 @@ var Commands = map[string]map[string]string{
 	},
 }
 
+var commandActionMap = map[string]updateAction{
+	"新增":   addKeywords,
+	"刪除":   removeKeywords,
+	"新增作者": addAuthors,
+	"刪除作者": removeAuthors,
+}
+
 func HandleCommand(text string, userID string) string {
 	command := strings.Fields(strings.TrimSpace(text))[0]
 	log.WithFields(log.Fields{
@@ -43,74 +50,25 @@ func HandleCommand(text string, userID string) string {
 	}).Info("Command Request")
 	switch command {
 	case "清單":
-		var rspText string
-		subs := new(user.User).Find(userID).Subscribes
-		if len(subs) == 0 {
-			rspText = "尚未建立清單。請打「指令」查看新增方法。"
-		} else {
-			rspText = new(user.User).Find(userID).Subscribes.String()
-		}
-		return rspText
+		return handleList(userID)
 	case "指令":
 		return stringCommands()
 	case "排行":
 		return listTop()
-	case "新增", "刪除", "新增作者", "刪除作者":
-		re := regexp.MustCompile("^(新增|新增作者|刪除|刪除作者)\\s+([^,，][\\w\\d-_,，]+[^,，:\\s]):?\\s+(.+[^\\s])")
-		matched := re.MatchString(text)
-		if !matched {
-			if strings.Contains(command, "作者") {
-				return inputErrorTips() + "\n\n正確範例：\n" + command + " gossiping,lol ffaarr,obov"
-			}
-			return inputErrorTips() + "\n\n正確範例：\n" + command + " gossiping,lol 問卦,爆卦"
-		}
-		args := re.FindStringSubmatch(text)
-		boardNames := splitParamString(args[2])
-		input := args[3]
-		var inputs []string
-		if strings.HasPrefix(input, "regexp:") {
-			if !checkRegexp(input) {
-				return "正規表示式錯誤，請檢查規則。"
-			}
-			inputs = []string{args[3]}
-		} else {
-			inputs = splitParamString(args[3])
-		}
-		var err error
-		if command == "新增" || command == "新增作者" {
-			if command == "新增" {
-				err = update(userID, boardNames, inputs, addKeywords)
-			} else if command == "新增作者" {
-				err = update(userID, boardNames, inputs, addAuthors)
-			}
-			if bErr, ok := err.(boardproto.BoardNotExistError); ok {
-				return "板名錯誤，請確認拼字。可能板名：\n" + bErr.Suggestion
-			}
-			if err != nil {
-				return "新增失敗，請等待修復。"
-			}
-			return "新增成功"
-		}
-		if command == "刪除" || command == "刪除作者" {
-			if command == "刪除" {
-				err = update(userID, boardNames, inputs, removeKeywords)
-			} else if command == "刪除作者" {
-				err = update(userID, boardNames, inputs, removeAuthors)
-			}
-			if bErr, ok := err.(boardproto.BoardNotExistError); ok {
-				return "板名錯誤，請確認拼字。可能板名：\n" + bErr.Suggestion
-			}
-			if err != nil {
-				return "刪除失敗，請等待修復。"
-			}
-		}
-		return "刪除成功"
+	case "新增", "刪除":
+		return handleKeyword(command, userID, text)
+	case "新增作者", "刪除作者":
+		return handleAuthor(command, userID, text)
 	}
 	return "無此指令，請打「指令」查看指令清單"
 }
 
-func inputErrorTips() string {
-	return "指令格式錯誤。\n1. 需以空白分隔動作、板名、關鍵字或作者\n2.板名欄位開頭與結尾不可有逗號\n3.板名欄位間不允許空白字元。"
+func handleList(userID string) string {
+	subs := new(user.User).Find(userID).Subscribes
+	if len(subs) == 0 {
+		return "尚未建立清單。請打「指令」查看新增方法。"
+	}
+	return new(user.User).Find(userID).Subscribes.String()
 }
 
 func stringCommands() string {
@@ -141,6 +99,66 @@ func listTop() string {
 	return content
 }
 
+func handleKeyword(command, userID, text string) string {
+	re := regexp.MustCompile("^(新增|刪除)\\s+([^,，][\\w\\d-_,，]+[^,，:\\s]):?\\s+(.*[^\\s])")
+	matched := re.MatchString(text)
+	if !matched {
+		return inputErrorTips() + "\n\n正確範例：\n" + command + " gossiping,lol 問卦,爆卦"
+	}
+	args := re.FindStringSubmatch(text)
+	boardNames := splitParamString(args[2])
+	input := args[3]
+	var inputs []string
+	if strings.HasPrefix(input, "regexp:") {
+		if !checkRegexp(input) {
+			return "正規表示式錯誤，請檢查規則。"
+		}
+		inputs = []string{args[3]}
+	} else {
+		inputs = splitParamString(args[3])
+	}
+	err := update(userID, boardNames, inputs, commandActionMap[command])
+	if msg, ok := checkBoardError(err); ok {
+		return msg
+	}
+	if err != nil {
+		return command + "失敗，請等待修復。"
+	}
+	return command + "成功"
+
+}
+
+func handleAuthor(command, userID, text string) string {
+	re := regexp.MustCompile("^(新增作者|刪除作者)\\s+([^,，][\\w\\d-_,，]+[^,，:\\s]):?\\s+([\\s,\\w]+)")
+	matched := re.MatchString(text)
+	if !matched {
+		return inputErrorTips() + "\n4. 作者為半形英文與數字組成。\n\n正確範例：\n" + command + " gossiping,lol ffaarr,obov"
+	}
+	args := re.FindStringSubmatch(text)
+	boardNames := splitParamString(args[2])
+	inputs := splitParamString(args[3])
+	err := update(userID, boardNames, inputs, commandActionMap[command])
+	if msg, ok := checkBoardError(err); ok {
+		return msg
+	}
+	if err != nil {
+		return command + "失敗，請等待修復。"
+	}
+	return command + "成功"
+
+}
+
+func checkBoardError(err error) (string, bool) {
+	if bErr, ok := err.(boardproto.BoardNotExistError); ok {
+		return "板名錯誤，請確認拼字。可能板名：\n" + bErr.Suggestion, true
+	}
+	return "", false
+}
+
+func inputErrorTips() string {
+	return "指令格式錯誤。\n1. 需以空白分隔動作、板名、關鍵字或作者\n2. 板名欄位開頭與結尾不可有逗號\n3. 板名欄位間不允許空白字元。"
+}
+
 func checkRegexp(input string) bool {
 	pattern := strings.Replace(strings.TrimPrefix(input, "regexp:"), "//", "////", -1)
 	_, err := regexp.Compile(pattern)
@@ -151,9 +169,7 @@ func checkRegexp(input string) bool {
 }
 
 func splitParamString(paramString string) (params []string) {
-
 	paramString = strings.Trim(paramString, ",，")
-
 	if !strings.ContainsAny(paramString, ",，") {
 		return []string{paramString}
 	}

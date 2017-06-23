@@ -171,6 +171,9 @@
     Send, 新增作者 gossiping, ffaarr{Enter}
     Sleep, 1500
 
+    Send, 新增作者 stock 抄底王{Enter}
+    Sleep, 1500
+
     Send, 清單{Enter}
     Sleep, 1500
 
@@ -185,6 +188,9 @@
 
     ; 刪除刪除逗號後
     Send, 刪除作者 gossiping, ffaarr{Enter}
+    Sleep, 1500
+
+    Send, 刪除作者 stock 抄底王{Enter}
     Sleep, 1500
 
     Send, 清單{Enter}
