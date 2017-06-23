@@ -39,10 +39,11 @@ func (bd Board) FetchArticles() (articles article.Articles) {
 }
 
 func NewArticles(bd BoardAction) (newArticles, onlineArticles article.Articles) {
+	newArticles = make(article.Articles, 0)
 	savedArticles := bd.GetArticles()
 	onlineArticles = bd.FetchArticles()
 	if len(savedArticles) == 0 {
-		return onlineArticles, onlineArticles
+		return nil, onlineArticles
 	}
 	for _, onlineArticle := range onlineArticles {
 		for index, savedArticle := range savedArticles {
