@@ -131,11 +131,11 @@ func stringCommands() string {
 
 func listTop() string {
 	content := "關鍵字"
-	for i, keyword := range top.GetKeywordList(4) {
+	for i, keyword := range top.ListKeywords(5) {
 		content += fmt.Sprintf("\n%d. %s", i+1, keyword)
 	}
 	content += "\n----\n作者"
-	for i, author := range top.GetAuthorList(4) {
+	for i, author := range top.ListAuthors(5) {
 		content += fmt.Sprintf("\n%d. %s", i+1, author)
 	}
 	return content

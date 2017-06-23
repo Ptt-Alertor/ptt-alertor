@@ -60,6 +60,7 @@ func main() {
 	router.GET("/messenger", ctrlr.MessengerIndex)
 	router.GET("/line", ctrlr.LineIndex)
 	router.GET("/redirect/:sha1", ctrlr.Redirect)
+	router.GET("/top", ctrlr.Top)
 
 	router.POST("/broadcast", basicAuth(ctrlr.Broadcast))
 

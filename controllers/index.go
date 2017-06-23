@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
+	"github.com/liam-lai/ptt-alertor/models/top"
 	"github.com/liam-lai/ptt-alertor/shorturl"
 )
 
@@ -44,4 +45,21 @@ func Redirect(w http.ResponseWriter, r *http.Request, params httprouter.Params) 
 		}
 		t.Execute(w, nil)
 	}
+}
+
+func Top(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	keywords := top.ListKeywordWithScore(100)
+	authors := top.ListAuthorWithScore(100)
+	t, err := template.ParseFiles("public/top.html")
+	if err != nil {
+		panic(err)
+	}
+	data := struct {
+		Keywords top.WordOrders
+		Authors  top.WordOrders
+	}{
+		keywords,
+		authors,
+	}
+	t.Execute(w, data)
 }

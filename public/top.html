@@ -45,79 +45,63 @@
         <div class="header">
             <nav>
                 <ul class="nav nav-pills pull-right">
-                    <li role="presentation"><a href="/top">TOP 100</a></li>
+                    <li role="presentation"><a href="/line">LINE</a></li>
                     <li role="presentation"><a href="/messenger">Messenger</a></li>
                 </ul>
             </nav>
             <h3 class="text-muted">PTT Alertor</h3>
         </div>
         <hr>
-        <h1 class="center-text">訂閱看板關鍵字，即時通知最新文章</h1>
-        <div id="main" class="row bg-success">
-            <div id="command" class="col-sm-4">
-                <div class="panel panel-primary center-block">
-                    <div class="panel-heading">指令</div>
-                    <div class="list-group">
-                        <li class="list-group-item">
-                            <h4 class="list-group-item-heading">一般</h4>
-                            <p class="list-group-item-text">
-                                <ul>
-                                    <li>指令：可使用的指令清單</li>
-                                    <li>清單：設定的看板、關鍵字、作者</li>
-                                </ul>
-                            </p>
-                        </li>
-                        <li class="list-group-item">
-                            <h4 class="list-group-item-heading">關鍵字相關</h4>
-                            <p class="list-group-item-text">
-                                <ul>
-                                    <li>新增 看板 關鍵字：新增看板關鍵字。</li>
-                                    <li>刪除 看板 關鍵字：刪除看板關鍵字。</li>
-                                </ul>
-                            </p>
-                        </li>
-                        <li class="list-group-item">
-                            <h4 class="list-group-item-heading">作者相關</h4>
-                            <p class="list-group-item-text">
-                                <ul>
-                                    <li>新增作者 看板 作者：新增看板作者。</li>
-                                    <li>刪除作者 看板 作者：刪除看板作者。</li>
-                                </ul>
-                            </p>
-                        </li>
-                        <li class="list-group-item">
-                            <h4 class="list-group-item-heading">範例</h4>
-                            <p class="list-group-item-text">
-                                <ul>
-                                    <li>新增：新增 nba,lol 樂透,情報</li>
-                                    <li>刪除：刪除 nba 樂透</li>
-                                    <li>作者：新增作者 gossiping ffaarr,obo</li>
-                                </ul>
-                            </p>
-                        </li>
-                    </div>
-                </div>
+        <ul class="nav nav-tabs" role="tablist">
+            <li role="presentation" class="active">
+                <a href="#keywords" aria-controls="keywords" role="tab" data-toggle="tab">關鍵字</a>
+            </li>
+            <li role="presentation">
+                <a href="#authors" aria-controls="authors" role="tab" data-toggle="tab">作者</a>
+            </li>
+        </ul>
+        <div class="tab-content">
+            <div role="tabpanel" class="tab-pane active" id="keywords">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>板名</th>
+                            <th>關鍵字</th>
+                            <th>數量</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{range .Keywords}}
+                        <tr>
+                            <td>{{.Board}}</td>
+                            <td>{{.Word}}</td>
+                            <td>{{.Count}}</td>
+                        </tr>
+                        {{end}}
+                    </tbody>
+                </table>
             </div>
-
-            <div id="demo" class="col-sm-4">
-                <img id="demo-img" src="https://s3-us-west-2.amazonaws.com/ptt-alertor-bucket/assets/line_intro.gif" alt="introduction"
-                    class="center-block img-rounded img-responsive">
-            </div>
-
-            <div id="add" class="col-sm-4">
-                <div class="center-text">
-                    <p>LINE ID: @vxl5146r</p>
-                </div>
-                <div class="center-text">
-                    <a href="https://line.me/R/ti/p/%40vxl5146r"><img height="36" border="0" alt="加入好友" src="https://scdn.line-apps.com/n/line_add_friends/btn/zh-Hant.png"></a>
-                </div>
-
-                <div>
-                    <img class="img-responsive center-block" src="http://qr-official.line.me/L/LXTG2w48JY.png">
-                </div>
+            <div role="tabpanel" class="tab-pane" id="authors">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>板名</th>
+                            <th>關鍵字</th>
+                            <th>數量</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{range .Authors}}
+                        <tr>
+                            <td>{{.Board}}</td>
+                            <td>{{.Word}}</td>
+                            <td>{{.Count}}</td>
+                        </tr>
+                        {{end}}
+                    </tbody>
+                </table>
             </div>
         </div>
-
         <footer class="footer center-text">
             <p>&copy; 2017 PTT Alertor. Icons made by <a href="http://www.flaticon.com/authors/madebyoliver" title="Madebyoliver">Madebyoliver</a>                from <a href="http://www.flaticon.com" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/"
                     title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a>
