@@ -31,7 +31,6 @@ var Commands = map[string]map[string]string{
 	"範例": {
 		"新增 gossiping,movie 金城武,結衣":  "",
 		"刪除 gossiping 金城武":           "",
-		"刪除 gossiping * (一次刪除全部)":    "",
 		"新增作者 gossiping ffaarr,obov": "",
 	},
 }

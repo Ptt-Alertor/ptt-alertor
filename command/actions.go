@@ -1,6 +1,8 @@
 package command
 
 import (
+	"strings"
+
 	"github.com/liam-lai/ptt-alertor/models/subscription"
 	user "github.com/liam-lai/ptt-alertor/models/user/redis"
 	"github.com/liam-lai/ptt-alertor/myutil"
@@ -22,7 +24,7 @@ func removeKeywords(u *user.User, sub subscription.Subscription, inputs []string
 	sub.Keywords = inputs
 	if inputs[0] == "*" {
 		for _, uSub := range u.Subscribes {
-			if uSub.Board == sub.Board {
+			if strings.EqualFold(uSub.Board, sub.Board) {
 				sub.Keywords = make(myutil.StringSlice, len(uSub.Keywords))
 				copy(sub.Keywords, uSub.Keywords)
 			}
@@ -35,7 +37,7 @@ func removeAuthors(u *user.User, sub subscription.Subscription, inputs []string)
 	sub.Authors = inputs
 	if inputs[0] == "*" {
 		for _, uSub := range u.Subscribes {
-			if uSub.Board == sub.Board {
+			if strings.EqualFold(uSub.Board, sub.Board) {
 				sub.Authors = make(myutil.StringSlice, len(uSub.Authors))
 				copy(sub.Authors, uSub.Authors)
 			}
