@@ -111,6 +111,26 @@ https://media.giphy.com/media/3ohzdF6vidM6I49lQs/giphy.gif
   新增 hardwaresale regexp:\\[賣/(台中|台北)/.\*\\]?\(RAM|ram\)+.*
   (看得懂的.. 就看得懂 Orz)
 
+## 批量刪除
+
+* 刪除特定板所有關鍵字
+  * 刪除 gossiping *
+  * 刪除 gossiping,ezsoft *
+
+* 刪除特定關鍵字在所有設定的看板
+  * 刪除 ** 樂透
+  * 刪除 ** 樂透,閒聊
+
+* 刪除全部關鍵字設定
+  * 刪除 ** *
+
+* 刪除作者亦同
+  * 刪除作者 gossiping *
+  * 刪除作者 gossiping,ezsoft *
+  * 刪除作者 ** chodino
+  * 刪除作者 ** chodino,obov
+  * 刪除作者 ** *
+
 ## 下載連結：
 
 Messenger: http://m.me/pttalertor
@@ -142,6 +162,10 @@ http://facebook.com/pttalertor
   因為若要使用 LINE Bot 內建的推播功能的話，要付一筆不小的月租費。
 
   LINE Notify 是免費的推播服務，嘗試看看行得通就將兩個結合在一起了。
+
+* 加入後沒反應或是發現沒被通知了，怎麼辦？
+
+  可以嘗試封鎖 PTT Alertor 再解封鎖，並按照指示重新與 LINE Notify 連動，應可解決問題。
 
 * 會取得使用者 Facebook or LINE 個人資料嗎？
 
