@@ -15,7 +15,7 @@ import (
 	user "github.com/liam-lai/ptt-alertor/models/user/redis"
 )
 
-const checkBoardDuration = 200
+const checkBoardDuration = 180
 
 type Checker struct {
 	email      string
@@ -55,8 +55,8 @@ func (cker Checker) Run() {
 		select {
 		case bd := <-boardCh:
 			checkSubscriber(bd, cker, ckerCh)
-		case m := <-ckerCh:
-			sendMessage(m)
+		case cker := <-ckerCh:
+			go sendMessage(cker)
 		}
 	}
 }
