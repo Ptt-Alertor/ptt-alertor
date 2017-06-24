@@ -27,6 +27,26 @@ https://media.giphy.com/media/3ohzdF6vidM6I49lQs/giphy.gif
 
 ## 實用範例：
 
+* 省錢：
+
+  新增 lifeismoney,actuary 情報
+
+  新增 give 台中&!便當,全國
+
+  新增 TaichungBun 贈送
+
+  新增 buytogether 吸管&玻璃
+
+  新增 dc_sale 售&台中&15mm&f1.7
+
+  新增 e-coupon 分享&taaze, 分享&讀冊, 分享&博客來
+
+  新增 mobilepay 優惠,情報
+
+  新增 drawing 免費,FB
+
+  新增 car-pool 共乘&南下&台北&台中&6/23
+
 * LINE：
 
   新增 Instant_Mess 抽獎,免費

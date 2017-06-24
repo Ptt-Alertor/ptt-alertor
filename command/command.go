@@ -31,6 +31,7 @@ var Commands = map[string]map[string]string{
 	"範例": {
 		"新增 gossiping,movie 金城武,結衣":  "",
 		"刪除 gossiping 金城武":           "",
+		"刪除 gossiping * (一次刪除全部)":    "",
 		"新增作者 gossiping ffaarr,obov": "",
 	},
 }
@@ -100,7 +101,7 @@ func listTop() string {
 }
 
 func handleKeyword(command, userID, text string) string {
-	re := regexp.MustCompile("^(新增|刪除)\\s+([^,，][\\w\\d-_,，]+[^,，:\\s]):?\\s+(.*[^\\s])")
+	re := regexp.MustCompile("^(新增|刪除)\\s+([^,，][\\w-_,，]*[^,，:\\s]):?\\s+(\\*|.*[^\\s])")
 	matched := re.MatchString(text)
 	if !matched {
 		return inputErrorTips() + "\n\n正確範例：\n" + command + " gossiping,lol 問卦,爆卦"
@@ -129,7 +130,7 @@ func handleKeyword(command, userID, text string) string {
 }
 
 func handleAuthor(command, userID, text string) string {
-	re := regexp.MustCompile("^(新增作者|刪除作者)\\s+([^,，][\\w\\d-_,，]+[^,，:\\s]):?\\s+([\\s,\\w]+)")
+	re := regexp.MustCompile("^(新增作者|刪除作者)\\s+([^,，][\\w-_,，]*[^,，:\\s]):?\\s+(\\*|[\\s,\\w]+)")
 	matched := re.MatchString(text)
 	if !matched {
 		return inputErrorTips() + "\n4. 作者為半形英文與數字組成。\n\n正確範例：\n" + command + " gossiping,lol ffaarr,obov"
@@ -195,8 +196,14 @@ func splitParamString(paramString string) (params []string) {
 }
 
 func update(account string, boardNames []string, inputs []string, action updateAction) error {
+	u := new(user.User).Find(account)
+	if boardNames[0] == "**" {
+		boardNames = nil
+		for _, uSub := range u.Subscribes {
+			boardNames = append(boardNames, uSub.Board)
+		}
+	}
 	for _, boardName := range boardNames {
-		u := new(user.User).Find(account)
 		sub := subscription.Subscription{
 			Board: boardName,
 		}

@@ -5,6 +5,8 @@ import (
 
 	"strings"
 
+	"regexp"
+
 	log "github.com/Sirupsen/logrus"
 	"github.com/julienschmidt/httprouter"
 	"github.com/liam-lai/ptt-alertor/command"
@@ -37,6 +39,8 @@ func HandleRequest(_ http.ResponseWriter, r *http.Request, _ httprouter.Params) 
 		switch event.Type {
 		case linebot.EventTypeMessage:
 			handleMessage(event)
+		case linebot.EventTypePostback:
+			handlePostback(event)
 		case linebot.EventTypeFollow:
 			handleFollow(event)
 		case linebot.EventTypeUnfollow:
@@ -59,13 +63,14 @@ func handleMessage(event *linebot.Event) {
 		if strings.EqualFold(text, "notify") {
 			responseText = shorturl.Gen(getAuthorizeURL(userID))
 		} else {
+			if match, _ := regexp.MatchString("^(刪除|刪除作者)+\\s.*\\*+", text); match {
+				replyMessage(event.ReplyToken, genConfirmMessage(text))
+				return
+			}
 			responseText = command.HandleCommand(text, userID)
 		}
 	}
-	_, err := bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(responseText)).Do()
-	if err != nil {
-		log.WithError(err).Error("Line Reply Message Failed")
-	}
+	replyMessage(event.ReplyToken, linebot.NewTextMessage(responseText))
 }
 
 func handleFollow(event *linebot.Event) {
@@ -113,9 +118,14 @@ func handleJoin() {
 
 }
 
-// useless
-func handlePostback() {
-
+func handlePostback(event *linebot.Event) {
+	data := event.Postback.Data
+	if data == "cancel" {
+		replyMessage(event.ReplyToken, linebot.NewTextMessage("取消"))
+		return
+	}
+	responseText := command.HandleCommand(data, event.Source.UserID)
+	replyMessage(event.ReplyToken, linebot.NewTextMessage(responseText))
 }
 
 // useless
@@ -131,6 +141,22 @@ func PushTextMessage(id string, message string) {
 		log.WithFields(log.Fields{
 			"ID": id,
 		}).Info("Line Push Message")
+	}
+}
+
+func genConfirmMessage(command string) *linebot.TemplateMessage {
+	leftBtn := linebot.NewPostbackTemplateAction("是", command, "")
+	rightBtn := linebot.NewPostbackTemplateAction("否", "cancel", "")
+
+	template := linebot.NewConfirmTemplate("確定"+command+"？", leftBtn, rightBtn)
+	message := linebot.NewTemplateMessage("批次刪除", template)
+	return message
+}
+
+func replyMessage(token string, message linebot.Message) {
+	_, err := bot.ReplyMessage(token, message).Do()
+	if err != nil {
+		log.WithError(err).Error("Line Reply Message Failed")
 	}
 }
 

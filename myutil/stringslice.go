@@ -14,11 +14,11 @@ func ToStringSlice(strs []string) StringSlice {
 	return ss
 }
 
-// Clean Removes "" in Slice
+// Clean Removes "" and "*" in Slice
 func (ss *StringSlice) Clean() {
 	if *ss != nil {
 		for i := 0; i < len(*ss); i++ {
-			if (*ss)[i] == "" {
+			if (*ss)[i] == "" || (*ss)[i] == "*" {
 				*ss = append((*ss)[:i], (*ss)[i+1:]...)
 			}
 		}

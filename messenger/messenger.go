@@ -3,6 +3,7 @@ package messenger
 import (
 	"fmt"
 	"net/http"
+	"regexp"
 
 	"encoding/json"
 
@@ -56,10 +57,13 @@ func (m *Messenger) Received(w http.ResponseWriter, r *http.Request, _ httproute
 				if messaging.Message != nil {
 					text := messaging.Message.Text
 					if text != "" {
+						if match, _ := regexp.MatchString("^(刪除|刪除作者)+\\s.*\\*+", text); match {
+							m.SendConfirmation(id, text)
+							return
+						}
 						responseText := command.HandleCommand(text, id)
 						m.SendTextMessage(id, responseText)
 					}
-
 				} else if messaging.Postback != nil {
 					payload := messaging.Postback.Payload
 					log.WithField("payload", payload).Info("Messenger Postback")
@@ -93,6 +97,10 @@ func (m *Messenger) handlePostback(id string, payload string) {
 		m.SendListMessage(id, commands)
 	case "SUBSCRIPTIONS_PAYLOAD":
 		responseText = command.HandleCommand("清單", id)
+	case "CANCEL":
+		responseText = "取消"
+	default:
+		responseText = command.HandleCommand(payload, id)
 	}
 	m.SendTextMessage(id, responseText)
 }
@@ -106,6 +114,37 @@ func (m *Messenger) SendTextMessage(id string, message string) {
 	m.callSendAPI(body)
 }
 
+func (m *Messenger) SendConfirmation(id string, cmd string) {
+	attachment := Attachment{
+		Type: "template",
+		Payload: ButtonPayload{
+			TemplateType: "button",
+			Text:         "確認" + cmd,
+			Buttons: Buttons{
+				Button{"postback", "是", cmd},
+				Button{"postback", "否", "CANCEL"},
+			},
+		},
+	}
+	body := Request{}
+	body.Recipient.ID = id
+	body.Message.Attachment = &attachment
+	m.callSendAPI(body)
+}
+
+func (m *Messenger) SendQuickReplies(id string, payload string) {
+	qrs := QuickReplies{
+		QuickReply{"text", "是", payload},
+		QuickReply{"text", "否", "CANCEL"},
+	}
+	body := Request{
+		Recipient{id},
+		Message{Text: "確定" + payload, QuickReplies: &qrs},
+	}
+	log.WithField("ID", id).Info("Messenger Confirmation Sent")
+	m.callSendAPI(body)
+}
+
 func (m *Messenger) SendListMessage(id string, StringMap map[string]string) {
 	elements := []Element{}
 	for key, str := range StringMap {
@@ -116,7 +155,7 @@ func (m *Messenger) SendListMessage(id string, StringMap map[string]string) {
 	}
 	attachment := Attachment{
 		Type: "template",
-		Payload: Payload{
+		Payload: ListPayload{
 			TemplateType:    "list",
 			TopElementStyle: "compact",
 			Elements:        elements,

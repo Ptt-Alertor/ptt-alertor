@@ -28,6 +28,10 @@
     Send, 新增 gossiping 問卦{Enter}
     Sleep, 1500
 
+    ; 新增內含*符號
+    Send, 新增 gossiping 內含,*,星號{Enter}
+    Sleep, 1500
+
     ; 新增混合有空白
     Send, 新增 gossiping 問卦,爆卦, ＦＢ{Enter}
     Sleep, 1500
@@ -213,3 +217,19 @@
 Escape::
 ExitApp
 Return
+
+; Manual Testing
+
+Send, 新增 lol,nba,tennis,baseball,gossiping 樂透，閒聊,戰況,姆斯,炸裂{Enter}
+Send, 刪除 ** 樂透{Enter}
+Send, 刪除 ** 閒聊,戰況{Enter}
+Send, 刪除 lol *{Enter}
+Send, 刪除 nba,gossping *{Enter}
+Send, 刪除 ** *{Enter}
+
+Send, 新增作者 lol,nba,tennis,baseball,gossiping chodino,obov,ffaarr,sumade,boyo{Enter}
+Send, 刪除作者 ** chodino{Enter}
+Send, 刪除作者 ** obov,ffaarr{Enter}
+Send, 刪除作者 lol *{Enter}
+Send, 刪除作者 nba,gossping *{Enter}
+Send, 刪除作者 ** *{Enter}

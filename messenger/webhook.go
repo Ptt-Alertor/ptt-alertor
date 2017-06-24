@@ -24,14 +24,19 @@ type Sender struct {
 }
 
 type Message struct {
-	Mid         string `json:"mid,omitempty"`
-	Text        string `json:"text,omitempty"`
-	*QuickReply `json:"quick_reply,omitempty"`
-	*Attachment `json:"attachment,omitempty"`
+	Mid           string `json:"mid,omitempty"`
+	Text          string `json:"text,omitempty"`
+	*QuickReply   `json:"quick_reply,omitempty"`
+	*Attachment   `json:"attachment,omitempty"`
+	*QuickReplies `json:"quick_replies,omitempty"`
 }
 
+type QuickReplies []QuickReply
+
 type QuickReply struct {
-	Payload string `json:"payload,omitempty"`
+	ContentType string `json:"content_type,omitempty"`
+	Title       string `json:"title,omitempty"`
+	Payload     string `json:"payload,omitempty"`
 }
 
 type Postback struct {
