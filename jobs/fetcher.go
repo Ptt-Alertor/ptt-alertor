@@ -3,7 +3,7 @@ package jobs
 import (
 	"sync"
 
-	log "github.com/Sirupsen/logrus"
+	log "github.com/meifamily/logrus"
 
 	"time"
 

@@ -3,7 +3,7 @@ package mail
 import (
 	"strconv"
 
-	log "github.com/Sirupsen/logrus"
+	log "github.com/meifamily/logrus"
 
 	"github.com/liam-lai/ptt-alertor/models/ptt/article"
 	"github.com/liam-lai/ptt-alertor/myutil"

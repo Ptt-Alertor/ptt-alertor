@@ -8,7 +8,7 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	log "github.com/Sirupsen/logrus"
+	log "github.com/meifamily/logrus"
 	"github.com/julienschmidt/httprouter"
 	"github.com/liam-lai/ptt-alertor/myutil"
 

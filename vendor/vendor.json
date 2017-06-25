@@ -9,12 +9,6 @@
 			"revisionTime": "2017-05-20T19:45:20Z"
 		},
 		{
-			"checksumSHA1": "Iqsh6VibFdj9DR8jakgVTF5c0GI=",
-			"path": "github.com/Sirupsen/logrus",
-			"revision": "1deb2db2a6fff8a35532079061b903c3a25eed52",
-			"revisionTime": "2017-03-08T20:36:35Z"
-		},
-		{
 			"checksumSHA1": "Bgs5fKx4V8jxL/m/krOLmhS4az4=",
 			"path": "github.com/andybalholm/cascadia",
 			"revision": "349dd0209470eabd9514242c688c403c0926d266",
@@ -31,6 +25,12 @@
 			"path": "github.com/line/line-bot-sdk-go/linebot",
 			"revision": "ec620b9af9b5ebdba700370820c0b6f657f37a3d",
 			"revisionTime": "2017-04-26T04:47:58Z"
+		},
+		{
+			"checksumSHA1": "5O5yZu3pTWkY2+B1TDJseh25sQ4=",
+			"path": "github.com/meifamily/logrus",
+			"revision": "a4db038e018cbc857caa1b860c53ea4d051201ce",
+			"revisionTime": "2017-06-25T19:13:54Z"
 		},
 		{
 			"checksumSHA1": "42n13G7mnRxDMNI/Q7aTOt4rVK0=",

@@ -6,7 +6,7 @@ import (
 
 	"errors"
 
-	log "github.com/Sirupsen/logrus"
+	log "github.com/meifamily/logrus"
 
 	"github.com/garyburd/redigo/redis"
 	"github.com/liam-lai/ptt-alertor/connections"

@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 
-	log "github.com/Sirupsen/logrus"
+	log "github.com/meifamily/logrus"
 
 	"github.com/liam-lai/ptt-alertor/models/ptt/article"
 	"github.com/liam-lai/ptt-alertor/models/ptt/board"

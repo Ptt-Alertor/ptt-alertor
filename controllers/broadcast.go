@@ -6,7 +6,7 @@ import (
 
 	"encoding/json"
 
-	log "github.com/Sirupsen/logrus"
+	log "github.com/meifamily/logrus"
 	"github.com/julienschmidt/httprouter"
 	"github.com/liam-lai/ptt-alertor/line"
 	"github.com/liam-lai/ptt-alertor/messenger"

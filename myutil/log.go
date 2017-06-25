@@ -7,7 +7,7 @@ import (
 	"io"
 	"io/ioutil"
 
-	log "github.com/Sirupsen/logrus"
+	log "github.com/meifamily/logrus"
 )
 
 func LogJSONEncode(err error, obj interface{}) {

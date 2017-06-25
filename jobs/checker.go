@@ -5,7 +5,7 @@ import (
 	"strings"
 	"time"
 
-	log "github.com/Sirupsen/logrus"
+	log "github.com/meifamily/logrus"
 
 	"github.com/liam-lai/ptt-alertor/line"
 	"github.com/liam-lai/ptt-alertor/mail"

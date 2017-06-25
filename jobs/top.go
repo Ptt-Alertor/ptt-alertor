@@ -3,7 +3,7 @@ package jobs
 import (
 	"sort"
 
-	log "github.com/Sirupsen/logrus"
+	log "github.com/meifamily/logrus"
 
 	"github.com/liam-lai/ptt-alertor/models/top"
 	user "github.com/liam-lai/ptt-alertor/models/user/redis"

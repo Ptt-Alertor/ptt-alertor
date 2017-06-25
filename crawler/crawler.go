@@ -4,7 +4,7 @@ import (
 	"errors"
 	"net/http"
 
-	log "github.com/Sirupsen/logrus"
+	log "github.com/meifamily/logrus"
 
 	"github.com/liam-lai/ptt-alertor/models/ptt/article"
 

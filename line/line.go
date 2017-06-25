@@ -7,7 +7,7 @@ import (
 
 	"regexp"
 
-	log "github.com/Sirupsen/logrus"
+	log "github.com/meifamily/logrus"
 	"github.com/julienschmidt/httprouter"
 	"github.com/liam-lai/ptt-alertor/command"
 	board "github.com/liam-lai/ptt-alertor/models/ptt/board/redis"

@@ -6,7 +6,7 @@ import (
 
 	"fmt"
 
-	log "github.com/Sirupsen/logrus"
+	log "github.com/meifamily/logrus"
 	boardproto "github.com/liam-lai/ptt-alertor/models/ptt/board"
 	"github.com/liam-lai/ptt-alertor/models/subscription"
 	"github.com/liam-lai/ptt-alertor/models/top"

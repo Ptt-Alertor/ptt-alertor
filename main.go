@@ -3,7 +3,7 @@ package main
 import (
 	"net/http"
 
-	log "github.com/Sirupsen/logrus"
+	log "github.com/meifamily/logrus"
 	"github.com/julienschmidt/httprouter"
 	"github.com/robfig/cron"
 
