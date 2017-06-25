@@ -110,7 +110,6 @@ func (m *Messenger) SendTextMessage(id string, message string) {
 		Recipient{id},
 		Message{Text: message},
 	}
-	log.WithField("ID", id).Info("Messenger Sent")
 	m.callSendAPI(body)
 }
 
