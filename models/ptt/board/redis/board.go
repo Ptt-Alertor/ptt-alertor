@@ -2,6 +2,7 @@ package redis
 
 import (
 	"encoding/json"
+	"math"
 	"strings"
 
 	log "github.com/Sirupsen/logrus"
@@ -117,15 +118,17 @@ func (bd Board) Delete() error {
 }
 
 func (bd Board) SuggestBoardName() string {
-	strs := bd.listName()
-	shortlist := map[string]int{}
+	names := bd.listName()
+	boardWeight := map[string]int{}
 	chars := strings.Split(strings.ToLower(bd.Name), "")
-	for _, char := range chars {
-		for _, str := range strs {
-			if strings.Contains(str, char) {
-				shortlist[str]++
+	var count int
+	for _, name := range names {
+		for _, char := range chars {
+			if strings.Contains(name, char) {
+				count++
 			}
 		}
+		boardWeight[name] = count / (1 + int(math.Abs(float64(len(bd.Name)-len(name)))))
 	}
-	return maputil.FirstByValueInt(shortlist)
+	return maputil.FirstByValueInt(boardWeight)
 }
