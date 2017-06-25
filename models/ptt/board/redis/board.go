@@ -57,7 +57,7 @@ func (bd Board) GetArticles() article.Articles {
 
 	key := prefix + bd.Name
 	articlesJSON, err := redis.Bytes(conn.Do("GET", key))
-	if err != nil {
+	if err != nil && err != redis.ErrNil {
 		log.WithField("runtime", myutil.BasicRuntimeInfo()).WithError(err).Error()
 	}
 

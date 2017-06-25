@@ -119,7 +119,7 @@ func (u User) Find(account string) User {
 	key := prefix + account
 	uJSON, err := redis.Bytes(conn.Do("GET", key))
 
-	if err != nil {
+	if err != nil && err != redis.ErrNil {
 		log.WithField("runtime", myutil.BasicRuntimeInfo()).WithError(err).Error()
 	}
 
