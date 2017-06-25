@@ -35,7 +35,7 @@ func (cker Checker) String() string {
 		subType = "作者"
 		subText = cker.author
 	}
-	return fmt.Sprintf("\r\n看板：%s；%s：%s%s", cker.board, subType, subText, cker.articles.String())
+	return fmt.Sprintf("%s@%s\r\n看板：%s；%s：%s%s", subText, cker.board, cker.board, subType, subText, cker.articles.String())
 }
 
 func (cker Checker) Run() {
