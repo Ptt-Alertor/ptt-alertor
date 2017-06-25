@@ -2,12 +2,10 @@ package myutil
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 )
 
 func Config(name string) map[string]string {
-	fmt.Println("Reading Config: " + name)
 	projectRoot := ProjectRootPath()
 	filePath := projectRoot + "/config/" + name + ".json"
 	configJSON, err := ioutil.ReadFile(filePath)
