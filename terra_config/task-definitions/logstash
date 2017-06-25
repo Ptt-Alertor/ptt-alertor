@@ -1,0 +1,9 @@
+[
+{
+      "name": "first",
+      "image": "registry.hub.docker.com/library/logstash",
+      "cpu": 100,
+      "memory": 300,
+      "essential": true
+}
+]
