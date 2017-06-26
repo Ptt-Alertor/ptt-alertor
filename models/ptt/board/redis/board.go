@@ -5,8 +5,8 @@ import (
 	"math"
 	"strings"
 
-	log "github.com/meifamily/logrus"
 	"github.com/garyburd/redigo/redis"
+	log "github.com/meifamily/logrus"
 
 	"github.com/liam-lai/ptt-alertor/connections"
 	"github.com/liam-lai/ptt-alertor/models/ptt/article"
@@ -121,8 +121,8 @@ func (bd Board) SuggestBoardName() string {
 	names := bd.listName()
 	boardWeight := map[string]int{}
 	chars := strings.Split(strings.ToLower(bd.Name), "")
-	var count int
 	for _, name := range names {
+		count := 0
 		for _, char := range chars {
 			if strings.Contains(name, char) {
 				count++
