@@ -6,11 +6,11 @@ import (
 
 	"fmt"
 
-	log "github.com/meifamily/logrus"
 	boardproto "github.com/liam-lai/ptt-alertor/models/ptt/board"
 	"github.com/liam-lai/ptt-alertor/models/subscription"
 	"github.com/liam-lai/ptt-alertor/models/top"
 	user "github.com/liam-lai/ptt-alertor/models/user/redis"
+	log "github.com/meifamily/logrus"
 )
 
 var Commands = map[string]map[string]string{
@@ -117,6 +117,12 @@ func handleKeyword(command, userID, text string) string {
 	} else {
 		inputs = splitParamString(args[3])
 	}
+	log.WithFields(log.Fields{
+		"id":      userID,
+		"command": command,
+		"boards":  boardNames,
+		"words":   inputs,
+	}).Info("Keyword Command")
 	err := update(userID, boardNames, inputs, commandActionMap[command])
 	if msg, ok := checkBoardError(err); ok {
 		return msg
@@ -137,6 +143,12 @@ func handleAuthor(command, userID, text string) string {
 	args := re.FindStringSubmatch(text)
 	boardNames := splitParamString(args[2])
 	inputs := splitParamString(args[3])
+	log.WithFields(log.Fields{
+		"id":      userID,
+		"command": command,
+		"boards":  boardNames,
+		"words":   inputs,
+	}).Info("Author Command")
 	err := update(userID, boardNames, inputs, commandActionMap[command])
 	if msg, ok := checkBoardError(err); ok {
 		return msg
@@ -222,12 +234,20 @@ func update(account string, boardNames []string, inputs []string, action updateA
 func HandleLineFollow(id string) error {
 	u := new(user.User).Find(id)
 	u.Profile.Line = id
+	log.WithFields(log.Fields{
+		"id":       id,
+		"platform": "line",
+	}).Info("User Join")
 	return handleFollow(u)
 }
 
 func HandleMessengerFollow(id string) error {
 	u := new(user.User).Find(id)
 	u.Profile.Messenger = id
+	log.WithFields(log.Fields{
+		"id":       id,
+		"platform": "messenger",
+	}).Info("User Join")
 	return handleFollow(u)
 }
 

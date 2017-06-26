@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/liam-lai/ptt-alertor/crawler"
+	log "github.com/liam-lai/ptt-alertor/log"
 	boardProto "github.com/liam-lai/ptt-alertor/models/ptt/board"
 	board "github.com/liam-lai/ptt-alertor/models/ptt/board/redis"
 )
@@ -83,5 +84,10 @@ func checkBoardExist(boardName string) (bool, string) {
 		return true, ""
 	}
 
-	return false, bd.SuggestBoardName()
+	suggestBoard := bd.SuggestBoardName()
+	log.WithFields(log.Field{
+		"inputBoard":   boardName,
+		"suggestBoard": suggestBoard,
+	}).Warning("Board Not Exist")
+	return false, suggestBoard
 }

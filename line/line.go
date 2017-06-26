@@ -7,7 +7,6 @@ import (
 
 	"regexp"
 
-	log "github.com/meifamily/logrus"
 	"github.com/julienschmidt/httprouter"
 	"github.com/liam-lai/ptt-alertor/command"
 	board "github.com/liam-lai/ptt-alertor/models/ptt/board/redis"
@@ -15,6 +14,7 @@ import (
 	"github.com/liam-lai/ptt-alertor/myutil"
 	"github.com/liam-lai/ptt-alertor/shorturl"
 	"github.com/line/line-bot-sdk-go/linebot"
+	log "github.com/meifamily/logrus"
 )
 
 var bd board.Board
@@ -79,13 +79,7 @@ func handleFollow(event *linebot.Event) {
 	if err != nil {
 		log.WithError(err).Error("")
 	}
-
 	id := profile.UserID
-
-	log.WithFields(log.Fields{
-		"ID": id,
-	}).Info("Line Follow")
-
 	err = command.HandleLineFollow(id)
 	if err != nil {
 		log.WithError(err).Error("Line Follow Error")
