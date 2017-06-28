@@ -4,10 +4,8 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/liam-lai/ptt-alertor/crawler"
 	boardProto "github.com/liam-lai/ptt-alertor/models/ptt/board"
 	board "github.com/liam-lai/ptt-alertor/models/ptt/board/redis"
-	log "github.com/meifamily/logrus"
 )
 
 type Subscriptions []Subscription
@@ -30,12 +28,19 @@ func (ss Subscriptions) String() string {
 			str += sub.StringAuthor() + "\n"
 		}
 	}
+	str += "----\n推文\n"
+	for _, sub := range ss {
+		if sub.StringArticle() != "" {
+			str += sub.StringArticle() + "\n"
+		}
+	}
+
 	return str
 }
 
 func (ss *Subscriptions) Add(sub Subscription) error {
 	sub.Board = strings.ToLower(sub.Board)
-	if ok, suggestion := checkBoardExist(sub.Board); !ok {
+	if ok, suggestion := board.CheckBoardExist(sub.Board); !ok {
 		return boardProto.BoardNotExistError{suggestion}
 	}
 	sub.CleanUp()
@@ -43,6 +48,7 @@ func (ss *Subscriptions) Add(sub Subscription) error {
 		if strings.EqualFold(s.Board, sub.Board) {
 			s.Keywords.AppendNonRepeat(sub.Keywords, false)
 			s.Authors.AppendNonRepeat(sub.Authors, false)
+			s.Articles.AppendNonRepeat(sub.Articles, false)
 			(*ss)[i] = s
 			return nil
 		}
@@ -54,7 +60,7 @@ func (ss *Subscriptions) Add(sub Subscription) error {
 
 func (ss *Subscriptions) Remove(sub Subscription) error {
 	sub.Board = strings.ToLower(sub.Board)
-	if ok, suggestion := checkBoardExist(sub.Board); !ok {
+	if ok, suggestion := board.CheckBoardExist(sub.Board); !ok {
 		return boardProto.BoardNotExistError{suggestion}
 	}
 	sub.CleanUp()
@@ -63,9 +69,10 @@ func (ss *Subscriptions) Remove(sub Subscription) error {
 		if strings.EqualFold(s.Board, sub.Board) {
 			s.DeleteKeywords(sub.Keywords)
 			s.DeleteAuthors(sub.Authors)
+			s.DeleteArticles(sub.Articles)
 			(*ss)[i] = s
 		}
-		if len((*ss)[i].Keywords) == 0 && len((*ss)[i].Authors) == 0 {
+		if isSubEmpty((*ss)[i]) {
 			*ss = append((*ss)[:i], (*ss)[i+1:]...)
 			i--
 		}
@@ -73,21 +80,6 @@ func (ss *Subscriptions) Remove(sub Subscription) error {
 	return nil
 }
 
-func checkBoardExist(boardName string) (bool, string) {
-	bd := new(board.Board)
-	bd.Name = boardName
-	if bd.Exist() {
-		return true, ""
-	}
-	if crawler.CheckBoardExist(boardName) {
-		bd.Create()
-		return true, ""
-	}
-
-	suggestBoard := bd.SuggestBoardName()
-	log.WithFields(log.Fields{
-		"inputBoard":   boardName,
-		"suggestBoard": suggestBoard,
-	}).Warning("Board Not Exist")
-	return false, suggestBoard
+func isSubEmpty(sub Subscription) bool {
+	return len(sub.Keywords) == 0 && len(sub.Authors) == 0 && len(sub.Articles) == 0
 }

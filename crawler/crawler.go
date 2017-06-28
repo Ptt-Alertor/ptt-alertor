@@ -11,10 +11,13 @@ import (
 	"golang.org/x/net/html"
 )
 
+const pttHostURL = "https://www.ptt.cc"
+
 // BuildArticles makes board's index articles to a article slice
 func BuildArticles(board string) article.Articles {
 
-	htmlNodes := parseHTML(fetchHTML(board))
+	reqURL := makeBoardURL(board)
+	htmlNodes := parseHTML(fetchHTML(reqURL))
 
 	articleBlocks := traverseHTMLNode(htmlNodes, findArticleBlocks)
 	targetNodes = make([]*html.Node, 0)
@@ -52,16 +55,65 @@ func BuildArticles(board string) article.Articles {
 	return articles
 }
 
+// BuildArticle build article object from html
+func BuildArticle(board, articleCode string) article.Article {
+
+	reqURL := makeArticleURL(board, articleCode)
+	htmlNodes := parseHTML(fetchHTML(reqURL))
+	atcl := article.Article{
+		Title: getTitle(traverseHTMLNode(htmlNodes, findTitle)[0]),
+		Link:  reqURL,
+	}
+	atcl.ID = atcl.ParseID(reqURL)
+	pushBlocks := traverseHTMLNode(htmlNodes, findPushBlocks)
+	pushes := make([]article.Push, len(pushBlocks))
+	for index, pushBlock := range pushBlocks {
+		for _, pushTag := range traverseHTMLNode(pushBlock, findPushTag) {
+			pushes[index].Tag = pushTag.FirstChild.Data
+		}
+		for _, pushUserID := range traverseHTMLNode(pushBlock, findPushUserID) {
+			pushes[index].UserID = pushUserID.FirstChild.Data
+		}
+		for _, pushContent := range traverseHTMLNode(pushBlock, findPushContent) {
+			pushes[index].Content = pushContent.FirstChild.Data
+		}
+		for _, pushIPDateTime := range traverseHTMLNode(pushBlock, findPushIPDateTime) {
+			pushes[index].IPDateTime = pushIPDateTime.FirstChild.Data
+		}
+	}
+	atcl.PushList = pushes
+	return atcl
+}
+
 // CheckBoardExist use for checking board exist or not
 func CheckBoardExist(board string) bool {
-	response := fetchHTML(board)
+	reqURL := makeBoardURL(board)
+	response := fetchHTML(reqURL)
 	if response.StatusCode == http.StatusNotFound {
 		return false
 	}
 	return true
 }
 
-func fetchHTML(board string) (response *http.Response) {
+// CheckArticleExist user for checking article exist or not
+func CheckArticleExist(board, articleCode string) bool {
+	reqURL := makeArticleURL(board, articleCode)
+	response := fetchHTML(reqURL)
+	if response.StatusCode == http.StatusNotFound {
+		return false
+	}
+	return true
+}
+
+func makeBoardURL(board string) string {
+	return pttHostURL + "/bbs/" + board + "/index.html"
+}
+
+func makeArticleURL(board, articleCode string) string {
+	return pttHostURL + "/bbs/" + board + "/" + articleCode + ".html"
+}
+
+func fetchHTML(reqURL string) (response *http.Response) {
 
 	client := &http.Client{
 		CheckRedirect: func(req *http.Request, via []*http.Request) error {
@@ -69,7 +121,6 @@ func fetchHTML(board string) (response *http.Response) {
 		},
 	}
 
-	reqURL := "https://www.ptt.cc/bbs/" + board + "/index.html"
 	response, err := client.Get(reqURL)
 
 	if response.StatusCode == http.StatusNotFound {

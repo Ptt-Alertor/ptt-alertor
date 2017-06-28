@@ -9,6 +9,7 @@ import (
 	log "github.com/meifamily/logrus"
 
 	"github.com/liam-lai/ptt-alertor/connections"
+	"github.com/liam-lai/ptt-alertor/crawler"
 	"github.com/liam-lai/ptt-alertor/models/ptt/article"
 	"github.com/liam-lai/ptt-alertor/models/ptt/board"
 	"github.com/liam-lai/ptt-alertor/myutil"
@@ -131,4 +132,23 @@ func (bd Board) SuggestBoardName() string {
 		boardWeight[name] = count / (1 + int(math.Abs(float64(len(bd.Name)-len(name)))))
 	}
 	return maputil.FirstByValueInt(boardWeight)
+}
+
+func CheckBoardExist(boardName string) (bool, string) {
+	bd := new(Board)
+	bd.Name = boardName
+	if bd.Exist() {
+		return true, ""
+	}
+	if crawler.CheckBoardExist(boardName) {
+		bd.Create()
+		return true, ""
+	}
+
+	suggestBoard := bd.SuggestBoardName()
+	log.WithFields(log.Fields{
+		"inputBoard":   boardName,
+		"suggestBoard": suggestBoard,
+	}).Warning("Board Not Exist")
+	return false, suggestBoard
 }

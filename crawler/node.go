@@ -1,14 +1,16 @@
 package crawler
 
-import "golang.org/x/net/html"
+import (
+	"golang.org/x/net/html"
+)
 
 type findInHTML func(node *html.Node) *html.Node
 
 var targetNodes []*html.Node
 
-func traverseHTMLNode(node *html.Node, find findInHTML) []*html.Node {
+func traverseHTMLNode(nodes *html.Node, find findInHTML) []*html.Node {
 
-	for child := node.FirstChild; child != nil; child = child.NextSibling {
+	for child := nodes.FirstChild; child != nil; child = child.NextSibling {
 		targetNode := find(child)
 		if targetNode != nil {
 			targetNodes = append(targetNodes, targetNode)
@@ -19,14 +21,6 @@ func traverseHTMLNode(node *html.Node, find findInHTML) []*html.Node {
 	return targetNodes
 }
 
-func findArticleBlocks(node *html.Node) *html.Node {
-	return findDivByClassName(node, "r-ent")
-}
-
-func findTitleDiv(node *html.Node) *html.Node {
-	return findDivByClassName(node, "title")
-}
-
 func findAnchor(node *html.Node) *html.Node {
 	if node.Type == html.ElementNode && node.Data == "a" {
 		return node
@@ -34,24 +28,19 @@ func findAnchor(node *html.Node) *html.Node {
 	return nil
 }
 
-func findMetaDiv(node *html.Node) *html.Node {
-	return findDivByClassName(node, "meta")
-}
-
-func findDateDiv(node *html.Node) *html.Node {
-	return findDivByClassName(node, "date")
-}
-
-func findAuthorDiv(node *html.Node) *html.Node {
-	return findDivByClassName(node, "author")
-}
-
-func findDividerDiv(node *html.Node) *html.Node {
-	return findDivByClassName(node, "r-list-sep")
-}
-
 func findDivByClassName(node *html.Node, className string) *html.Node {
 	if node.Type == html.ElementNode && node.Data == "div" {
+		for _, tagAttr := range node.Attr {
+			if tagAttr.Key == "class" && tagAttr.Val == className {
+				return node
+			}
+		}
+	}
+	return nil
+}
+
+func findSpanByClassName(node *html.Node, className string) *html.Node {
+	if node.Type == html.ElementNode && node.Data == "span" {
 		for _, tagAttr := range node.Attr {
 			if tagAttr.Key == "class" && tagAttr.Val == className {
 				return node
@@ -68,4 +57,15 @@ func getAnchorLink(anchor *html.Node) string {
 		}
 	}
 	return ""
+}
+
+func getTitle(title *html.Node) string {
+	return title.FirstChild.Data
+}
+
+func findTitle(node *html.Node) *html.Node {
+	if node.Type == html.ElementNode && node.Data == "title" {
+		return node
+	}
+	return nil
 }

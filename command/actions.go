@@ -45,3 +45,13 @@ func removeAuthors(u *user.User, sub subscription.Subscription, inputs []string)
 	}
 	return u.Subscribes.Remove(sub)
 }
+
+func addArticles(u *user.User, sub subscription.Subscription, inputs []string) error {
+	sub.Articles = inputs
+	return u.Subscribes.Add(sub)
+}
+
+func removeArticles(u *user.User, sub subscription.Subscription, inputs []string) error {
+	sub.Articles = inputs
+	return u.Subscribes.Remove(sub)
+}

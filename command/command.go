@@ -6,6 +6,7 @@ import (
 
 	"fmt"
 
+	"github.com/liam-lai/ptt-alertor/crawler"
 	boardproto "github.com/liam-lai/ptt-alertor/models/ptt/board"
 	"github.com/liam-lai/ptt-alertor/models/subscription"
 	"github.com/liam-lai/ptt-alertor/models/top"
@@ -40,6 +41,8 @@ var commandActionMap = map[string]updateAction{
 	"刪除":   removeKeywords,
 	"新增作者": addAuthors,
 	"刪除作者": removeAuthors,
+	"新增推文": addArticles,
+	"刪除推文": removeArticles,
 }
 
 func HandleCommand(text string, userID string) string {
@@ -59,6 +62,8 @@ func HandleCommand(text string, userID string) string {
 		return handleKeyword(command, userID, text)
 	case "新增作者", "刪除作者":
 		return handleAuthor(command, userID, text)
+	case "新增推文", "刪除推文":
+		return handlePush(command, userID, text)
 	}
 	return "無此指令，請打「指令」查看指令清單"
 }
@@ -157,7 +162,31 @@ func handleAuthor(command, userID, text string) string {
 		return command + "失敗，請等待修復。"
 	}
 	return command + "成功"
+}
 
+func handlePush(command, userID, text string) string {
+	re := regexp.MustCompile("^(新增推文|刪除推文)\\s+https?://www.ptt.cc/bbs/([\\w-_]*)/(M\\.\\d+.A.\\w*)\\.html")
+	matched := re.MatchString(text)
+	if !matched {
+		return "指令格式錯誤。\n1. 網址與指令需至少一個空白。\n2. 網址錯誤格式。\n正確範例：\n" + command + " https://www.ptt.cc/bbs/EZsoft/M.1497363598.A.74E.html"
+	}
+	args := re.FindStringSubmatch(text)
+	boardName := args[2]
+	articleCode := args[3]
+	log.WithFields(log.Fields{
+		"id":      userID,
+		"command": command,
+		"boards":  boardName,
+		"words":   articleCode,
+	}).Info("Push Command")
+	if !crawler.CheckArticleExist(boardName, articleCode) {
+		return "文章不存在"
+	}
+	err := update(userID, []string{boardName}, []string{articleCode}, commandActionMap[command])
+	if err != nil {
+		return command + "失敗，請等待修復。"
+	}
+	return command + "成功"
 }
 
 func checkBoardError(err error) (string, bool) {

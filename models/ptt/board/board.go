@@ -1,10 +1,10 @@
 package board
 
 import (
-	log "github.com/meifamily/logrus"
 	"github.com/liam-lai/ptt-alertor/crawler"
 	"github.com/liam-lai/ptt-alertor/models/ptt/article"
 	"github.com/liam-lai/ptt-alertor/rss"
+	log "github.com/meifamily/logrus"
 )
 
 type BoardNotExistError struct {

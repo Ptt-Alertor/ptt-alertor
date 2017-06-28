@@ -1,18 +1,33 @@
 package article
 
 import (
-	"log"
+	"encoding/json"
 	"regexp"
 	"strconv"
 	"strings"
+
+	"github.com/liam-lai/ptt-alertor/connections"
+	"github.com/liam-lai/ptt-alertor/myutil"
+	log "github.com/meifamily/logrus"
 )
 
+const prefix = "article:"
+
 type Article struct {
-	ID     int
-	Title  string
-	Link   string
-	Date   string
-	Author string
+	ID       int
+	Code     string `json:"code,omitempty"`
+	Title    string
+	Link     string
+	Date     string `json:"Date,omitempty"`
+	Author   string `json:"Author,omitempty"`
+	PushList []Push `json:"PushList,omitempty"`
+}
+
+type Push struct {
+	Tag        string
+	UserID     string
+	Content    string
+	IPDateTime string
 }
 
 type ArticleAction interface {
@@ -47,6 +62,32 @@ func (a Article) MatchKeyword(keyword string) bool {
 	return matchKeyword(a.Title, keyword)
 }
 
+func (a Article) Create() error {
+	conn := connections.Redis()
+	defer conn.Close()
+	_, err := conn.Do("SADD", "articles", a.Code)
+	if err != nil {
+		log.WithField("runtime", myutil.BasicRuntimeInfo()).WithError(err).Error()
+	}
+	return err
+}
+
+func (a Article) Save() error {
+	conn := connections.Redis()
+	defer conn.Close()
+
+	articleJSON, err := json.Marshal(a)
+	if err != nil {
+		myutil.LogJSONEncode(err, a)
+		return err
+	}
+	_, err = conn.Do("SET", prefix+a.Code, articleJSON)
+	if err != nil {
+		log.WithField("runtime", myutil.BasicRuntimeInfo()).WithError(err).Error()
+	}
+	return err
+}
+
 func matchRegex(title string, regex string) bool {
 	pattern := strings.TrimPrefix(regex, "regexp:")
 	b, err := regexp.MatchString(pattern, title)
@@ -70,14 +111,4 @@ func containKeyword(title string, keyword string) bool {
 
 func (a Article) String() string {
 	return a.Title + "\r\n" + a.Link
-}
-
-type Articles []Article
-
-func (as Articles) String() string {
-	var content string
-	for _, a := range as {
-		content += "\r\n\r\n" + a.String()
-	}
-	return content
 }
