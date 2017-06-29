@@ -64,10 +64,15 @@ func BuildArticle(board, articleCode string) article.Article {
 	reqURL := makeArticleURL(board, articleCode)
 	htmlNodes := parseHTML(fetchHTML(reqURL))
 	atcl := article.Article{
-		Title: getMetaContent(traverseHTMLNode(htmlNodes, findOgTitleMeta)[0]),
 		Link:  reqURL,
 		Code:  articleCode,
 		Board: board,
+	}
+	nodes := traverseHTMLNode(htmlNodes, findOgTitleMeta)
+	if len(nodes) > 0 {
+		atcl.Title = getMetaContent(nodes[0])
+	} else {
+		atcl.Title = "[內文標題已被刪除]"
 	}
 	atcl.ID = atcl.ParseID(reqURL)
 	pushBlocks := traverseHTMLNode(htmlNodes, findPushBlocks)

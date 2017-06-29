@@ -36,11 +36,15 @@ func (pc PushChecker) Run() {
 	ach := make(chan article.Article)
 	pch := make(chan PushChecker)
 
-	codes := new(article.Articles).List()
-	for _, code := range codes {
-		go checkPushList(code, ach)
-		time.Sleep(checkBoardDuration * time.Second)
-	}
+	go func() {
+		for {
+			codes := new(article.Articles).List()
+			for _, code := range codes {
+				go checkPushList(code, ach)
+				time.Sleep(checkBoardDuration * time.Second)
+			}
+		}
+	}()
 
 	for {
 		select {
@@ -65,8 +69,12 @@ func checkPushList(code string, c chan article.Article) {
 			}
 		}
 		a.LastPushDateTime = new.LastPushDateTime
-		a.Save()
 		a.PushList = newPushList
+		a.Save()
+		log.WithFields(log.Fields{
+			"board": a.Board,
+			"code":  a.Code,
+		}).Info("Updated PushList")
 		c <- a
 	}
 }
