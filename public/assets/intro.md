@@ -1,6 +1,6 @@
 # \[推薦\][自製] PTT Alertor PTT新文章即時通知
 
-[#1PF_IETE@EZsoft](!https://www.ptt.cc/bbs/EZsoft/M.1497363598.A.74E.html)
+[#1PF_IETE (EZsoft)](!https://www.ptt.cc/bbs/EZsoft/M.1497363598.A.74E.html)
 
 ## 軟體名稱：
 
