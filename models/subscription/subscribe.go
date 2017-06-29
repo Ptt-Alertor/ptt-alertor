@@ -1,6 +1,7 @@
 package subscription
 
 import (
+	"fmt"
 	"sort"
 	"strings"
 
@@ -35,7 +36,15 @@ func (s Subscription) StringArticle() string {
 		return ""
 	}
 	sort.Strings(s.Articles)
-	return s.Board + ": " + strings.Join(s.Articles, ", ")
+	aURLs := make([]string, 0)
+	for _, a := range s.Articles {
+		aURLs = append(aURLs, buildArticleURL(s.Board, a))
+	}
+	return s.Board + ":\n" + strings.Join(aURLs, "\n")
+}
+
+func buildArticleURL(board, code string) string {
+	return fmt.Sprintf("https://www.ptt.cc/bbs/%s/%s.html", board, code)
 }
 
 func (s *Subscription) CleanUp() {

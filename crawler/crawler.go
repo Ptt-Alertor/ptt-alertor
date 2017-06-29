@@ -39,7 +39,7 @@ func BuildArticles(board string) article.Articles {
 
 			for _, anchor := range traverseHTMLNode(titleDiv, findAnchor) {
 				articles[index].Title = anchor.FirstChild.Data
-				link := "https://www.ptt.cc" + getAnchorLink(anchor)
+				link := pttHostURL + getAnchorLink(anchor)
 				articles[index].Link = link
 				articles[index].ID = articles[index].ParseID(link)
 			}

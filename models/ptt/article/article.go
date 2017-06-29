@@ -163,7 +163,7 @@ func (a Article) RemoveSubscriber(sub string) error {
 	conn := connections.Redis()
 	defer conn.Close()
 
-	_, err := redis.Strings(conn.Do("SREM", prefix+a.Code+subsSuffix, sub))
+	_, err := conn.Do("SREM", prefix+a.Code+subsSuffix, sub)
 	if err != nil {
 		log.WithField("runtime", myutil.BasicRuntimeInfo()).WithError(err).Error()
 	}
