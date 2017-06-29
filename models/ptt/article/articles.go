@@ -1,6 +1,8 @@
 package article
 
 import (
+	"strings"
+
 	"github.com/garyburd/redigo/redis"
 	"github.com/liam-lai/ptt-alertor/connections"
 	"github.com/liam-lai/ptt-alertor/myutil"
@@ -9,25 +11,19 @@ import (
 
 type Articles []Article
 
-func (as Articles) All() []*Article {
-	codes := as.list()
-	aps := make([]*Article, 0)
-	for _, code := range codes {
-		a := new(Article)
-		a.Code = code
-		aps = append(aps, a)
-	}
-	return aps
-}
-
-func (as Articles) list() []string {
+func (as Articles) List() []string {
 	conn := connections.Redis()
 	defer conn.Close()
-	articleCodes, err := redis.Strings(conn.Do("SMEMBERS", "articles"))
+	keys, err := redis.Strings(conn.Do("KEYS", prefix+"*"+detailSuffix))
 	if err != nil {
 		log.WithField("runtime", myutil.BasicRuntimeInfo()).WithError(err).Error()
 	}
-	return articleCodes
+	codes := make([]string, 0)
+	for _, key := range keys {
+		code := strings.TrimSuffix(strings.TrimPrefix(key, prefix), detailSuffix)
+		codes = append(codes, code)
+	}
+	return codes
 }
 
 func (as Articles) String() string {
