@@ -1,22 +1,57 @@
 package article
 
 import (
-	"log"
+	"encoding/json"
 	"regexp"
 	"strconv"
 	"strings"
+
+	"time"
+
+	"fmt"
+
+	"github.com/garyburd/redigo/redis"
+	"github.com/liam-lai/ptt-alertor/connections"
+	"github.com/liam-lai/ptt-alertor/myutil"
+	log "github.com/meifamily/logrus"
 )
 
+const prefix = "article:"
+const detailSuffix = ":detail"
+const subsSuffix = ":subs"
+
 type Article struct {
-	ID     int
-	Title  string
-	Link   string
-	Date   string
-	Author string
+	ID               int    `json:"ID,omitempty"`
+	Code             string `json:"code,omitempty"`
+	Title            string
+	Link             string
+	Date             string    `json:"Date,omitempty"`
+	Author           string    `json:"Author,omitempty"`
+	PushList         PushList  `json:"pushList,omitempty"`
+	LastPushDateTime time.Time `json:"lastPushDateTime,omitempty"`
+	Board            string    `json:"board,omitempty"`
 }
 
-type ArticleAction interface {
-	MatchKeyword(keyword string) bool
+type Push struct {
+	Tag      string
+	UserID   string
+	Content  string
+	DateTime time.Time
+}
+
+func (p Push) String() string {
+	// 推 ChoDino: 推文推文
+	return fmt.Sprintf("%s %s%s", p.Tag, p.UserID, p.Content)
+}
+
+type PushList []Push
+
+func (pl PushList) String() string {
+	var content string
+	for _, p := range pl {
+		content += "\n" + p.String()
+	}
+	return content
 }
 
 func (a Article) ParseID(Link string) (id int) {
@@ -47,6 +82,98 @@ func (a Article) MatchKeyword(keyword string) bool {
 	return matchKeyword(a.Title, keyword)
 }
 
+// Exist check article exist or not
+func (a Article) Exist() (bool, error) {
+	conn := connections.Redis()
+	defer conn.Close()
+
+	bl, err := redis.Bool(conn.Do("HEXISTS", prefix+a.Code+detailSuffix, "board"))
+	if err != nil {
+		log.WithField("runtime", myutil.BasicRuntimeInfo()).WithError(err).Error()
+	}
+	return bl, err
+}
+
+func (a Article) Find(code string) Article {
+	conn := connections.Redis()
+	defer conn.Close()
+
+	aMap, err := redis.StringMap(conn.Do("HGETALL", prefix+code+detailSuffix))
+	if err != nil {
+		log.WithField("runtime", myutil.BasicRuntimeInfo()).WithError(err).Error()
+	}
+	a.Board = aMap["board"]
+	err = json.Unmarshal([]byte(aMap["content"]), &a)
+	if err != nil {
+		myutil.LogJSONDecode(err, aMap["content"])
+	}
+	return a
+}
+
+func (a Article) Save() error {
+	conn := connections.Redis()
+	defer conn.Close()
+
+	articleJSON, err := json.Marshal(a)
+	if err != nil {
+		myutil.LogJSONEncode(err, a)
+		return err
+	}
+	_, err = conn.Do("HMSET", prefix+a.Code+detailSuffix, "board", a.Board, "content", articleJSON)
+	if err != nil {
+		log.WithField("runtime", myutil.BasicRuntimeInfo()).WithError(err).Error()
+	}
+	return err
+}
+
+func (a Article) Destroy() error {
+	conn := connections.Redis()
+	defer conn.Close()
+
+	_, err := conn.Do("DEL", prefix+a.Code+detailSuffix, prefix+a.Code+subsSuffix)
+	if err != nil {
+		log.WithField("runtime", myutil.BasicRuntimeInfo()).WithError(err).Error()
+	}
+	return err
+}
+
+func (a Article) AddSubscriber(account string) error {
+	conn := connections.Redis()
+	defer conn.Close()
+
+	_, err := conn.Do("SADD", prefix+a.Code+subsSuffix, account)
+	if err != nil {
+		log.WithField("runtime", myutil.BasicRuntimeInfo()).WithError(err).Error()
+	}
+	return err
+}
+
+func (a Article) Subscribers() ([]string, error) {
+	conn := connections.Redis()
+	defer conn.Close()
+
+	accounts, err := redis.Strings(conn.Do("SMEMBERS", prefix+a.Code+subsSuffix))
+	if err != nil {
+		log.WithField("runtime", myutil.BasicRuntimeInfo()).WithError(err).Error()
+	}
+	return accounts, err
+}
+
+func (a Article) RemoveSubscriber(sub string) error {
+	conn := connections.Redis()
+	defer conn.Close()
+
+	_, err := redis.Strings(conn.Do("SREM", prefix+a.Code+subsSuffix, sub))
+	if err != nil {
+		log.WithField("runtime", myutil.BasicRuntimeInfo()).WithError(err).Error()
+	}
+	return err
+}
+
+func (a Article) String() string {
+	return a.Title + "\r\n" + a.Link
+}
+
 func matchRegex(title string, regex string) bool {
 	pattern := strings.TrimPrefix(regex, "regexp:")
 	b, err := regexp.MatchString(pattern, title)
@@ -66,18 +193,4 @@ func matchKeyword(title string, keyword string) bool {
 
 func containKeyword(title string, keyword string) bool {
 	return strings.Contains(strings.ToLower(title), strings.ToLower(keyword))
-}
-
-func (a Article) String() string {
-	return a.Title + "\r\n" + a.Link
-}
-
-type Articles []Article
-
-func (as Articles) String() string {
-	var content string
-	for _, a := range as {
-		content += "\r\n\r\n" + a.String()
-	}
-	return content
 }

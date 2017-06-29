@@ -7,9 +7,6 @@ import (
 
 	log "github.com/meifamily/logrus"
 
-	"github.com/liam-lai/ptt-alertor/line"
-	"github.com/liam-lai/ptt-alertor/mail"
-	"github.com/liam-lai/ptt-alertor/messenger"
 	"github.com/liam-lai/ptt-alertor/models/ptt/article"
 	board "github.com/liam-lai/ptt-alertor/models/ptt/board/redis"
 	user "github.com/liam-lai/ptt-alertor/models/user/redis"
@@ -26,16 +23,20 @@ type Checker struct {
 	keyword    string
 	author     string
 	articles   article.Articles
+	subType    string
+	word       string
 }
 
 func (cker Checker) String() string {
 	subType := "關鍵字"
-	subText := cker.keyword
 	if cker.author != "" {
 		subType = "作者"
-		subText = cker.author
 	}
-	return fmt.Sprintf("%s@%s\r\n看板：%s；%s：%s%s", subText, cker.board, cker.board, subType, subText, cker.articles.String())
+	return fmt.Sprintf("%s@%s\r\n看板：%s；%s：%s%s", cker.word, cker.board, cker.board, subType, cker.word, cker.articles.String())
+}
+
+func (cker Checker) Self() Checker {
+	return cker
 }
 
 func (cker Checker) Run() {
@@ -56,6 +57,12 @@ func (cker Checker) Run() {
 		case bd := <-boardCh:
 			checkSubscriber(bd, cker, ckerCh)
 		case cker := <-ckerCh:
+			cker.subType = "keyword"
+			cker.word = cker.keyword
+			if cker.author != "" {
+				cker.subType = "author"
+				cker.word = cker.author
+			}
 			go sendMessage(cker)
 		}
 	}
@@ -131,62 +138,4 @@ func authorChecker(author string, bd *board.Board, cker Checker, ckerCh chan Che
 		ckerCh <- cker
 	}
 
-}
-
-func sendMessage(cker Checker) {
-	var account string
-	var platform string
-	subType := "keyword"
-	word := cker.keyword
-
-	if cker.author != "" {
-		subType = "author"
-		word = cker.author
-	}
-
-	if cker.email != "" {
-		account = cker.email
-		platform = "mail"
-		sendMail(cker)
-	}
-	if cker.lineNotify != "" {
-		account = cker.line
-		platform = "line"
-		sendLineNotify(cker)
-	}
-	if cker.messenger != "" {
-		account = cker.messenger
-		platform = "messenger"
-		sendMessenger(cker)
-	}
-	log.WithFields(log.Fields{
-		"account":  account,
-		"platform": platform,
-		"board":    cker.board,
-		"type":     subType,
-		"word":     word,
-	}).Info("Message Sent")
-}
-
-func sendMail(cker Checker) {
-	m := new(mail.Mail)
-	m.Title.BoardName = cker.board
-	m.Title.Keyword = cker.keyword
-	m.Body.Articles = cker.articles
-	m.Receiver = cker.email
-
-	m.Send()
-}
-
-func sendLine(cker Checker) {
-	line.PushTextMessage(cker.line, cker.String())
-}
-
-func sendLineNotify(cker Checker) {
-	line.Notify(cker.lineNotify, cker.String())
-}
-
-func sendMessenger(cker Checker) {
-	m := messenger.New()
-	m.SendTextMessage(cker.messenger, cker.String())
 }

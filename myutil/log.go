@@ -7,6 +7,8 @@ import (
 	"io"
 	"io/ioutil"
 
+	"strconv"
+
 	log "github.com/meifamily/logrus"
 )
 
@@ -34,7 +36,7 @@ func BasicRuntimeInfo() map[string]string {
 	info := map[string]string{
 		"file":     fn,
 		"function": runtime.FuncForPC(pc).Name(),
-		"line":     string(line),
+		"line":     strconv.Itoa(line),
 	}
 	return info
 }
