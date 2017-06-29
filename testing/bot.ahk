@@ -214,6 +214,28 @@
     Send, 清單{Enter}
     Sleep, 1500
 
+    ; 推文
+    ; 新增推文
+    Send, 新增推文 https://www.ptt.cc/bbs/EZsoft/M.1497363598.A.74E.html{Enter}
+    Sleep, 1500
+
+    ; 新增反面
+    Send, 新增推文 www.ptt.cc/bbs/EZsoft/M.1497363598.A.74E.html{Enter}
+    Sleep, 1500
+
+    Send, 新增推文 https://www.ptt.cc/bbs/EZsoft/M.1497363598.A.74E.html 賣，買{Enter}
+    Sleep, 1500
+
+    Send, 清單{Enter}
+    Sleep, 1500
+
+    ; 刪除推文
+    Send, 刪除推文 https://www.ptt.cc/bbs/EZsoft/M.1497363598.A.74E.html{Enter}
+    Sleep, 1500
+
+    Send, 清單{Enter}
+    Sleep, 1500
+
 Escape::
 ExitApp
 Return

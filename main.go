@@ -3,8 +3,8 @@ package main
 import (
 	"net/http"
 
-	log "github.com/meifamily/logrus"
 	"github.com/julienschmidt/httprouter"
+	log "github.com/meifamily/logrus"
 	"github.com/robfig/cron"
 
 	ctrlr "github.com/liam-lai/ptt-alertor/controllers"
@@ -91,8 +91,10 @@ func main() {
 
 func startJobs() {
 	go new(jobs.Checker).Run()
+	go jobs.NewPushChecker().Run()
 	c := cron.New()
-	c.AddJob("@every 1h", new(jobs.GenBoards))
+	// c.AddJob("@every 5s", jobs.NewPushChecker())
+	c.AddJob("@every 1h", jobs.NewGenerator())
 	c.AddJob("@every 1h", jobs.NewTop())
 	c.Start()
 }
@@ -100,7 +102,7 @@ func startJobs() {
 func init() {
 	auth = myutil.Config("auth")
 	new(jobs.CleanUpBoards).Run()
-	new(jobs.GenBoards).Run()
+	jobs.NewGenerator().Run()
 	jobs.NewFetcher().Run()
 	jobs.NewTop().Run()
 }
