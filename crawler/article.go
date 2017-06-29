@@ -25,3 +25,7 @@ func findAuthorDiv(node *html.Node) *html.Node {
 func findDividerDiv(node *html.Node) *html.Node {
 	return findDivByClassName(node, "r-list-sep")
 }
+
+func findOgTitleMeta(node *html.Node) *html.Node {
+	return findMeta(node, "og:title")
+}
