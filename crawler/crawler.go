@@ -3,10 +3,13 @@ package crawler
 import (
 	"errors"
 	"net/http"
+	"time"
 
 	log "github.com/meifamily/logrus"
 
 	"github.com/liam-lai/ptt-alertor/models/ptt/article"
+
+	"regexp"
 
 	"golang.org/x/net/html"
 )
@@ -20,11 +23,11 @@ func BuildArticles(board string) article.Articles {
 	htmlNodes := parseHTML(fetchHTML(reqURL))
 
 	articleBlocks := traverseHTMLNode(htmlNodes, findArticleBlocks)
-	targetNodes = make([]*html.Node, 0)
+	initialTargetNodes()
 	articles := make(article.Articles, len(articleBlocks))
 	for index, articleBlock := range articleBlocks {
 		for _, titleDiv := range traverseHTMLNode(articleBlock, findTitleDiv) {
-			targetNodes = make([]*html.Node, 0)
+			initialTargetNodes()
 
 			anchors := traverseHTMLNode(titleDiv, findAnchor)
 
@@ -42,7 +45,7 @@ func BuildArticles(board string) article.Articles {
 			}
 		}
 		for _, metaDiv := range traverseHTMLNode(articleBlock, findMetaDiv) {
-			targetNodes = make([]*html.Node, 0)
+			initialTargetNodes()
 
 			for _, date := range traverseHTMLNode(metaDiv, findDateDiv) {
 				articles[index].Date = date.FirstChild.Data
@@ -61,28 +64,59 @@ func BuildArticle(board, articleCode string) article.Article {
 	reqURL := makeArticleURL(board, articleCode)
 	htmlNodes := parseHTML(fetchHTML(reqURL))
 	atcl := article.Article{
-		Title: getTitle(traverseHTMLNode(htmlNodes, findTitle)[0]),
+		Title: getMetaContent(traverseHTMLNode(htmlNodes, findOgTitleMeta)[0]),
 		Link:  reqURL,
+		Code:  articleCode,
+		Board: board,
 	}
 	atcl.ID = atcl.ParseID(reqURL)
 	pushBlocks := traverseHTMLNode(htmlNodes, findPushBlocks)
+	initialTargetNodes()
 	pushes := make([]article.Push, len(pushBlocks))
 	for index, pushBlock := range pushBlocks {
 		for _, pushTag := range traverseHTMLNode(pushBlock, findPushTag) {
+			initialTargetNodes()
 			pushes[index].Tag = pushTag.FirstChild.Data
 		}
 		for _, pushUserID := range traverseHTMLNode(pushBlock, findPushUserID) {
+			initialTargetNodes()
 			pushes[index].UserID = pushUserID.FirstChild.Data
 		}
 		for _, pushContent := range traverseHTMLNode(pushBlock, findPushContent) {
+			initialTargetNodes()
 			pushes[index].Content = pushContent.FirstChild.Data
 		}
 		for _, pushIPDateTime := range traverseHTMLNode(pushBlock, findPushIPDateTime) {
-			pushes[index].IPDateTime = pushIPDateTime.FirstChild.Data
+			initialTargetNodes()
+			pushes[index].DateTime = fetchDateTime(pushIPDateTime.FirstChild.Data)
+			if index == len(pushBlocks)-1 {
+				atcl.LastPushDateTime = pushes[index].DateTime
+			}
 		}
 	}
 	atcl.PushList = pushes
 	return atcl
+}
+
+func fetchDateTime(ipdatetime string) time.Time {
+	re, _ := regexp.Compile("(\\d+\\.\\d+\\.\\d+\\.\\d+)?\\s(.*)")
+	subMatches := re.FindStringSubmatch(ipdatetime)
+	dateTime := subMatches[len(subMatches)-1]
+	loc, _ := time.LoadLocation("Asia/Taipei")
+	t, err := time.ParseInLocation("01/02 15:04", dateTime, loc)
+	t = t.AddDate(getYear(t), 0, 0)
+	if err != nil {
+		log.WithError(err).Error("Parse DateTime Error")
+	}
+	return t
+}
+
+func getYear(pushTime time.Time) int {
+	t := time.Now()
+	if t.Month() == 1 && pushTime.Month() == 12 {
+		return t.Year() - 1
+	}
+	return t.Year()
 }
 
 // CheckBoardExist use for checking board exist or not
