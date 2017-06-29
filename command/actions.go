@@ -3,24 +3,25 @@ package command
 import (
 	"strings"
 
+	"github.com/liam-lai/ptt-alertor/models/ptt/article"
 	"github.com/liam-lai/ptt-alertor/models/subscription"
 	user "github.com/liam-lai/ptt-alertor/models/user/redis"
 	"github.com/liam-lai/ptt-alertor/myutil"
 )
 
-type updateAction func(u *user.User, sub subscription.Subscription, inputs []string) error
+type updateAction func(u *user.User, sub subscription.Subscription, inputs ...string) error
 
-func addKeywords(u *user.User, sub subscription.Subscription, inputs []string) error {
+func addKeywords(u *user.User, sub subscription.Subscription, inputs ...string) error {
 	sub.Keywords = inputs
 	return u.Subscribes.Add(sub)
 }
 
-func addAuthors(u *user.User, sub subscription.Subscription, inputs []string) error {
+func addAuthors(u *user.User, sub subscription.Subscription, inputs ...string) error {
 	sub.Authors = inputs
 	return u.Subscribes.Add(sub)
 }
 
-func removeKeywords(u *user.User, sub subscription.Subscription, inputs []string) error {
+func removeKeywords(u *user.User, sub subscription.Subscription, inputs ...string) error {
 	sub.Keywords = inputs
 	if inputs[0] == "*" {
 		for _, uSub := range u.Subscribes {
@@ -33,7 +34,7 @@ func removeKeywords(u *user.User, sub subscription.Subscription, inputs []string
 	return u.Subscribes.Remove(sub)
 }
 
-func removeAuthors(u *user.User, sub subscription.Subscription, inputs []string) error {
+func removeAuthors(u *user.User, sub subscription.Subscription, inputs ...string) error {
 	sub.Authors = inputs
 	if inputs[0] == "*" {
 		for _, uSub := range u.Subscribes {
@@ -46,12 +47,20 @@ func removeAuthors(u *user.User, sub subscription.Subscription, inputs []string)
 	return u.Subscribes.Remove(sub)
 }
 
-func addArticles(u *user.User, sub subscription.Subscription, inputs []string) error {
+func addArticles(u *user.User, sub subscription.Subscription, inputs ...string) error {
 	sub.Articles = inputs
+	a := article.Article{
+		Code: inputs[0],
+	}
+	a.AddSubscriber(u.Profile.Account)
 	return u.Subscribes.Add(sub)
 }
 
-func removeArticles(u *user.User, sub subscription.Subscription, inputs []string) error {
+func removeArticles(u *user.User, sub subscription.Subscription, inputs ...string) error {
 	sub.Articles = inputs
+	a := article.Article{
+		Code: inputs[0],
+	}
+	a.RemoveSubscriber(u.Profile.Account)
 	return u.Subscribes.Remove(sub)
 }

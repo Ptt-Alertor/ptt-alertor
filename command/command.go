@@ -7,6 +7,7 @@ import (
 	"fmt"
 
 	"github.com/liam-lai/ptt-alertor/crawler"
+	"github.com/liam-lai/ptt-alertor/models/ptt/article"
 	boardproto "github.com/liam-lai/ptt-alertor/models/ptt/board"
 	"github.com/liam-lai/ptt-alertor/models/subscription"
 	"github.com/liam-lai/ptt-alertor/models/top"
@@ -128,12 +129,12 @@ func handleKeyword(command, userID, text string) string {
 		"boards":  boardNames,
 		"words":   inputs,
 	}).Info("Keyword Command")
-	err := update(userID, boardNames, inputs, commandActionMap[command])
+	err := update(commandActionMap[command], userID, boardNames, inputs...)
 	if msg, ok := checkBoardError(err); ok {
 		return msg
 	}
 	if err != nil {
-		return command + "失敗，請等待修復。"
+		return command + "失敗，請嘗試封鎖再解封鎖，並重新執行註冊步驟。\n若問題未解決，請至粉絲團或 LINE 首頁留言。"
 	}
 	return command + "成功"
 
@@ -154,18 +155,18 @@ func handleAuthor(command, userID, text string) string {
 		"boards":  boardNames,
 		"words":   inputs,
 	}).Info("Author Command")
-	err := update(userID, boardNames, inputs, commandActionMap[command])
+	err := update(commandActionMap[command], userID, boardNames, inputs...)
 	if msg, ok := checkBoardError(err); ok {
 		return msg
 	}
 	if err != nil {
-		return command + "失敗，請等待修復。"
+		return command + "失敗，請嘗試封鎖再解封鎖，並重新執行註冊步驟。\n若問題未解決，請至粉絲團或 LINE 首頁留言。"
 	}
 	return command + "成功"
 }
 
 func handlePush(command, userID, text string) string {
-	re := regexp.MustCompile("^(新增推文|刪除推文)\\s+https?://www.ptt.cc/bbs/([\\w-_]*)/(M\\.\\d+.A.\\w*)\\.html")
+	re := regexp.MustCompile("^(新增推文|刪除推文)\\s+https?://www.ptt.cc/bbs/([\\w-_]*)/(M\\.\\d+.A.\\w*)\\.html$")
 	matched := re.MatchString(text)
 	if !matched {
 		return "指令格式錯誤。\n1. 網址與指令需至少一個空白。\n2. 網址錯誤格式。\n正確範例：\n" + command + " https://www.ptt.cc/bbs/EZsoft/M.1497363598.A.74E.html"
@@ -179,14 +180,34 @@ func handlePush(command, userID, text string) string {
 		"boards":  boardName,
 		"words":   articleCode,
 	}).Info("Push Command")
-	if !crawler.CheckArticleExist(boardName, articleCode) {
+	if !checkArticleExist(boardName, articleCode) {
 		return "文章不存在"
 	}
-	err := update(userID, []string{boardName}, []string{articleCode}, commandActionMap[command])
+	err := update(commandActionMap[command], userID, []string{boardName}, articleCode)
 	if err != nil {
-		return command + "失敗，請等待修復。"
+		return command + "失敗，請嘗試封鎖再解封鎖，並重新執行註冊步驟。\n若問題未解決，請至粉絲團或 LINE 首頁留言。"
 	}
 	return command + "成功"
+}
+
+func checkArticleExist(boardName, articleCode string) bool {
+	a := new(article.Article)
+	a.Code = articleCode
+	if bl, _ := a.Exist(); bl {
+		return true
+	}
+	if crawler.CheckArticleExist(boardName, articleCode) {
+		a.Board = boardName
+		initialArticle(*a)
+		return true
+	}
+	return false
+}
+
+func initialArticle(a article.Article) error {
+	a = crawler.BuildArticle(a.Board, a.Code)
+	err := a.Save()
+	return err
 }
 
 func checkBoardError(err error) (string, bool) {
@@ -235,7 +256,7 @@ func splitParamString(paramString string) (params []string) {
 	return params
 }
 
-func update(account string, boardNames []string, inputs []string, action updateAction) error {
+func update(action updateAction, account string, boardNames []string, inputs ...string) error {
 	u := new(user.User).Find(account)
 	if boardNames[0] == "**" {
 		boardNames = nil
@@ -247,7 +268,7 @@ func update(account string, boardNames []string, inputs []string, action updateA
 		sub := subscription.Subscription{
 			Board: boardName,
 		}
-		err := action(&u, sub, inputs)
+		err := action(&u, sub, inputs...)
 		if err != nil {
 			return err
 		}
