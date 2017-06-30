@@ -101,8 +101,8 @@ func startJobs() {
 
 func init() {
 	auth = myutil.Config("auth")
-	new(jobs.CleanUpBoards).Run()
-	jobs.NewGenerator().Run()
-	jobs.NewFetcher().Run()
+	// new(jobs.CleanUpBoards).Run()
+	// jobs.NewGenerator().Run()
+	// jobs.NewFetcher().Run()
 	jobs.NewTop().Run()
 }

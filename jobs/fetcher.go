@@ -30,7 +30,7 @@ func (f Fetcher) Run() {
 			bd.Save()
 			log.WithField("board", bd.Name).Info("Fetched")
 		}(*bd)
-		time.Sleep(100 * time.Millisecond)
+		time.Sleep(50 * time.Millisecond)
 	}
 	wg.Wait()
 	log.Info("All fetcher done")
