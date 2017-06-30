@@ -7,10 +7,10 @@ import (
 
 	"encoding/json"
 
-	log "github.com/meifamily/logrus"
 	"github.com/julienschmidt/httprouter"
 	"github.com/liam-lai/ptt-alertor/command"
 	"github.com/liam-lai/ptt-alertor/myutil"
+	log "github.com/meifamily/logrus"
 )
 
 const (
@@ -89,7 +89,11 @@ func (m *Messenger) handlePostback(id string, payload string) {
 		commands := make(map[string]string)
 		for cat, cmds := range command.Commands {
 			for cmd, doc := range cmds {
-				str += cmd + "：" + doc + "\n"
+				str += cmd
+				if doc != "" {
+					str += "：" + doc
+				}
+				str += "\n"
 			}
 			commands[cat] = str
 			str = ""
