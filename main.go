@@ -69,6 +69,9 @@ func main() {
 	router.GET("/boards/:boardName/articles", ctrlr.BoardArticleIndex)
 	router.GET("/boards", ctrlr.BoardIndex)
 
+	// articles apis
+	router.GET("/articles", ctrlr.ArticleIndex)
+
 	// users apis
 	router.GET("/users/:account", basicAuth(ctrlr.UserFind))
 	router.GET("/users", basicAuth(ctrlr.UserAll))
