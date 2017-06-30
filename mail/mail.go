@@ -27,11 +27,11 @@ type Body struct {
 }
 
 func (title Title) String() string {
-	return "[PTTAlertor] 在 " + title.BoardName + " 板有 " + strconv.Itoa(title.articleQuantity) + " 篇關於「" + title.Keyword + "」的文章發表"
+	return "[PttAlertor] 在 " + title.BoardName + " 板有 " + strconv.Itoa(title.articleQuantity) + " 篇關於「" + title.Keyword + "」的文章發表"
 }
 
 func (body Body) String() string {
-	return body.Articles.String() + "Send From PTT Alertor"
+	return body.Articles.String() + "Send From Ptt Alertor"
 }
 
 func (mail Mail) Send() {

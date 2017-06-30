@@ -1,4 +1,4 @@
-最近做的聊天機器人：PTT Alertor 訂閱看板作者關鍵字，即時通知最新文章
+最近做的聊天機器人：Ptt Alertor 訂閱看板作者關鍵字，即時通知最新文章
 
 可以選擇要用 LINE 或是 Facebook Messenger
 
