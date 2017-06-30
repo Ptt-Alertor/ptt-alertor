@@ -91,7 +91,16 @@ func BuildArticle(board, articleCode string) article.Article {
 		}
 		for _, pushContent := range traverseHTMLNode(pushBlock, findPushContent) {
 			initialTargetNodes()
-			pushes[index].Content = pushContent.FirstChild.Data
+			content := pushContent.FirstChild.Data
+			for n := pushContent.FirstChild.NextSibling; n != nil; n = n.NextSibling {
+				if n.FirstChild != nil {
+					content += n.FirstChild.Data
+				}
+				if n.NextSibling != nil {
+					content += n.NextSibling.Data
+				}
+			}
+			pushes[index].Content = content
 		}
 		for _, pushIPDateTime := range traverseHTMLNode(pushBlock, findPushIPDateTime) {
 			initialTargetNodes()
