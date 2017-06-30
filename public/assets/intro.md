@@ -131,7 +131,7 @@ https://media.giphy.com/media/3ohzdF6vidM6I49lQs/giphy.gif
   * 刪除作者 ** chodino,obov
   * 刪除作者 ** *
 
-## 追蹤推文
+## 推文追蹤
 
 **Ptt 站方網頁版更新推文速度約 5-10 分鐘**
 
