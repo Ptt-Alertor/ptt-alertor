@@ -1,10 +1,10 @@
-# \[推薦\][自製] PTT Alertor PTT新文章即時通知
+# \[推薦\][自製] Ptt Alertor Ptt新文章即時通知
 
 [#1PF_IETE (EZsoft)](!https://www.ptt.cc/bbs/EZsoft/M.1497363598.A.74E.html)
 
 ## 軟體名稱：
 
-PTT Alertor
+Ptt Alertor
 
 ## 軟體資訊：
 
@@ -131,6 +131,13 @@ https://media.giphy.com/media/3ohzdF6vidM6I49lQs/giphy.gif
   * 刪除作者 ** chodino,obov
   * 刪除作者 ** *
 
+## 推文追蹤
+
+**Ptt 站方網頁版更新推文速度約 5-10 分鐘**
+
+* 新增推文 https://www.ptt.cc/bbs/EZsoft/M.1497363598.A.74E.html
+* 刪除推文 https://www.ptt.cc/bbs/EZsoft/M.1497363598.A.74E.html
+
 ## 下載連結：
 
 Messenger: http://m.me/pttalertor
@@ -165,7 +172,7 @@ http://facebook.com/pttalertor
 
 * 加入後沒反應或是發現沒被通知了，怎麼辦？
 
-  可以嘗試封鎖 PTT Alertor 再解封鎖，並按照指示重新與 LINE Notify 連動，應可解決問題。
+  可以嘗試封鎖 Ptt Alertor 再解封鎖，並按照指示重新與 LINE Notify 連動，應可解決問題。
 
 * 會取得使用者 Facebook or LINE 個人資料嗎？
 
@@ -175,6 +182,6 @@ http://facebook.com/pttalertor
 
 * 若不想再收到通知怎麼做？
   1. 可以刪除所有追蹤清單
-  1. 封鎖 PTT Alertor 帳號。LINE Notify 也將取消推播。
+  1. 封鎖 Ptt Alertor 帳號。LINE Notify 也將取消推播。
 
 若有問題與建議麻煩推文、粉絲團或LINE首頁留言，希望大家使用愉快，謝謝。

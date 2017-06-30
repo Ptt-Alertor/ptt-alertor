@@ -11,6 +11,8 @@ import (
 
 	"regexp"
 
+	"strings"
+
 	"golang.org/x/net/html"
 )
 
@@ -104,9 +106,10 @@ func BuildArticle(board, articleCode string) article.Article {
 }
 
 func fetchDateTime(ipdatetime string) time.Time {
-	re, _ := regexp.Compile("(\\d+\\.\\d+\\.\\d+\\.\\d+)?\\s(.*)")
+	re, _ := regexp.Compile("(\\d+\\.\\d+\\.\\d+\\.\\d+)?\\s*(.*)")
+	ipdatetime = strings.TrimSpace(ipdatetime)
 	subMatches := re.FindStringSubmatch(ipdatetime)
-	dateTime := subMatches[len(subMatches)-1]
+	dateTime := strings.TrimSpace(subMatches[len(subMatches)-1])
 	loc, _ := time.LoadLocation("Asia/Taipei")
 	t, err := time.ParseInLocation("01/02 15:04", dateTime, loc)
 	t = t.AddDate(getYear(t), 0, 0)

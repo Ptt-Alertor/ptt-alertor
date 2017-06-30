@@ -65,6 +65,7 @@ func main() {
 	router.POST("/broadcast", basicAuth(ctrlr.Broadcast))
 
 	// boards apis
+	router.GET("/boards/:boardName/articles/:code", ctrlr.BoardArticle)
 	router.GET("/boards/:boardName/articles", ctrlr.BoardArticleIndex)
 	router.GET("/boards", ctrlr.BoardIndex)
 

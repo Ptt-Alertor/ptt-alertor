@@ -1,4 +1,4 @@
-# PTT-Alertor
+# Ptt-Alertor
 
 <img align="right" src="https://raw.githubusercontent.com/liam-lai/ptt-alertor/master/logo.jpg">
 
@@ -55,6 +55,6 @@
 
 ## Credits
 
-### PTT
+### Ptt
 
 DMM, oas, bestpika, Zero0910, lucky0509, wbreeze, chang0206, lindo0130, hungys, gyman7788, tooilxui

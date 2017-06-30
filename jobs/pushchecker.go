@@ -1,6 +1,8 @@
 package jobs
 
 import (
+	"time"
+
 	log "github.com/meifamily/logrus"
 
 	"fmt"
@@ -8,12 +10,10 @@ import (
 	"github.com/liam-lai/ptt-alertor/crawler"
 	"github.com/liam-lai/ptt-alertor/models/ptt/article"
 
-	"time"
-
 	user "github.com/liam-lai/ptt-alertor/models/user/redis"
 )
 
-const checkPushDuration = 5
+const checkPushDuration = 3
 
 // PushChecker embedding Checker for checking pushlist
 type PushChecker struct {
@@ -27,10 +27,10 @@ func NewPushChecker() *PushChecker {
 }
 
 func (pc PushChecker) String() string {
-	return fmt.Sprintf("推文@%s\n%s\n%s\n%s", pc.Article.Board, pc.Article.Title, pc.Article.Link, pc.Article.PushList.String())
+	return fmt.Sprintf("推文@%s\n\n%s\n%s\n%s", pc.Article.Board, pc.Article.Title, pc.Article.Link, pc.Article.PushList.String())
 }
 
-// Run start run job
+// Run start job
 func (pc PushChecker) Run() {
 
 	ach := make(chan article.Article)
@@ -40,8 +40,8 @@ func (pc PushChecker) Run() {
 		for {
 			codes := new(article.Articles).List()
 			for _, code := range codes {
+				time.Sleep(checkPushDuration * time.Second)
 				go checkPushList(code, ach)
-				time.Sleep(checkBoardDuration * time.Second)
 			}
 		}
 	}()
@@ -76,6 +76,13 @@ func checkPushList(code string, c chan article.Article) {
 			"code":  a.Code,
 		}).Info("Updated PushList")
 		c <- a
+	}
+	if subs, _ := a.Subscribers(); len(subs) == 0 {
+		a.Destroy()
+		log.WithFields(log.Fields{
+			"board": a.Board,
+			"code":  a.Code,
+		}).Info("Destroy PushList")
 	}
 }
 
