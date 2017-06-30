@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"github.com/julienschmidt/httprouter"
-	"github.com/liam-lai/ptt-alertor/models/ptt/article"
 	board "github.com/liam-lai/ptt-alertor/models/ptt/board/redis"
 	"github.com/liam-lai/ptt-alertor/myutil"
 )
@@ -21,16 +20,6 @@ func BoardArticleIndex(w http.ResponseWriter, r *http.Request, params httprouter
 		myutil.LogJSONEncode(err, articles)
 	}
 	fmt.Fprintf(w, "%s", articlesJSON)
-}
-
-func BoardArticle(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-	code := params.ByName("code")
-	a := new(article.Article).Find(code)
-	aJSON, err := json.Marshal(a)
-	if err != nil {
-		myutil.LogJSONEncode(err, a)
-	}
-	fmt.Fprintf(w, "%s", aJSON)
 }
 
 func BoardIndex(w http.ResponseWriter, r *http.Request, params httprouter.Params) {

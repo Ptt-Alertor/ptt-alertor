@@ -65,7 +65,6 @@ func main() {
 	router.POST("/broadcast", basicAuth(ctrlr.Broadcast))
 
 	// boards apis
-	router.GET("/boards/:boardName/articles/:code", ctrlr.BoardArticle)
 	router.GET("/boards/:boardName/articles", ctrlr.BoardArticleIndex)
 	router.GET("/boards", ctrlr.BoardIndex)
 
@@ -92,7 +91,7 @@ func main() {
 
 func startJobs() {
 	go new(jobs.Checker).Run()
-	// go jobs.NewPushChecker().Run()
+	go jobs.NewPushChecker().Run()
 	c := cron.New()
 	c.AddJob("@every 1h", jobs.NewGenerator())
 	c.AddJob("@every 1h", jobs.NewTop())

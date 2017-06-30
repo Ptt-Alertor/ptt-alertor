@@ -7,10 +7,10 @@ import (
 
 	"encoding/json"
 
+	log "github.com/meifamily/logrus"
 	"github.com/julienschmidt/httprouter"
 	"github.com/liam-lai/ptt-alertor/command"
 	"github.com/liam-lai/ptt-alertor/myutil"
-	log "github.com/meifamily/logrus"
 )
 
 const (
@@ -82,18 +82,14 @@ func (m *Messenger) handlePostback(id string, payload string) {
 		if err != nil {
 			log.WithError(err).Error("Messenger Follow Error")
 		}
-		responseText = "歡迎使用 Ptt Alertor\n輸入「指令」查看相關功能。\n\n觀看Demo:\nhttps://media.giphy.com/media/3ohzdF6vidM6I49lQs/giphy.gif"
+		responseText = "歡迎使用 PTT Alertor\n輸入「指令」查看相關功能。\n\n觀看Demo:\nhttps://media.giphy.com/media/3ohzdF6vidM6I49lQs/giphy.gif"
 	case "COMMANDS_PAYLOAD":
 		// responseText = command.HandleCommand("指令", id)
 		var str string
 		commands := make(map[string]string)
 		for cat, cmds := range command.Commands {
 			for cmd, doc := range cmds {
-				str += cmd
-				if doc != "" {
-					str += "：" + doc
-				}
-				str += "\n"
+				str += cmd + "：" + doc + "\n"
 			}
 			commands[cat] = str
 			str = ""
