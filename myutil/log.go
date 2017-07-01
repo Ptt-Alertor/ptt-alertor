@@ -24,7 +24,7 @@ func LogJSONDecode(err error, data interface{}) {
 	if d, ok := data.(io.ReadCloser); ok {
 		bytes, _ = ioutil.ReadAll(d)
 	} else {
-		bytes, ok = data.([]byte)
+		bytes, _ = data.([]byte)
 	}
 
 	str := string(bytes)

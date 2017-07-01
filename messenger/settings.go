@@ -7,7 +7,7 @@ type GetStartedObject struct {
 }
 
 type GetStarted struct {
-	Payload string `"json:"payload"`
+	Payload string `json:"payload"`
 }
 
 // SetGetStartedButton setting messenger started button

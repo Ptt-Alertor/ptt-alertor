@@ -5,8 +5,8 @@ import (
 
 	"fmt"
 
-	log "github.com/meifamily/logrus"
 	"github.com/garyburd/redigo/redis"
+	log "github.com/meifamily/logrus"
 
 	"github.com/meifamily/ptt-alertor/connections"
 	"github.com/meifamily/ptt-alertor/myutil"
