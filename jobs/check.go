@@ -3,9 +3,9 @@ package jobs
 import (
 	log "github.com/meifamily/logrus"
 
-	"github.com/liam-lai/ptt-alertor/line"
-	"github.com/liam-lai/ptt-alertor/mail"
-	"github.com/liam-lai/ptt-alertor/messenger"
+	"github.com/meifamily/ptt-alertor/line"
+	"github.com/meifamily/ptt-alertor/mail"
+	"github.com/meifamily/ptt-alertor/messenger"
 )
 
 type check interface {

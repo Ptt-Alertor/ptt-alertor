@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
-	"github.com/liam-lai/ptt-alertor/models/ptt/article"
+	"github.com/meifamily/ptt-alertor/models/ptt/article"
 )
 
 // ArticleIndex show all subscribed article codes

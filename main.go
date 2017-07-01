@@ -7,11 +7,11 @@ import (
 	log "github.com/meifamily/logrus"
 	"github.com/robfig/cron"
 
-	ctrlr "github.com/liam-lai/ptt-alertor/controllers"
-	"github.com/liam-lai/ptt-alertor/jobs"
-	"github.com/liam-lai/ptt-alertor/line"
-	"github.com/liam-lai/ptt-alertor/messenger"
-	"github.com/liam-lai/ptt-alertor/myutil"
+	ctrlr "github.com/meifamily/ptt-alertor/controllers"
+	"github.com/meifamily/ptt-alertor/jobs"
+	"github.com/meifamily/ptt-alertor/line"
+	"github.com/meifamily/ptt-alertor/messenger"
+	"github.com/meifamily/ptt-alertor/myutil"
 )
 
 var auth map[string]string

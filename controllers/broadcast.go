@@ -8,9 +8,9 @@ import (
 
 	log "github.com/meifamily/logrus"
 	"github.com/julienschmidt/httprouter"
-	"github.com/liam-lai/ptt-alertor/line"
-	"github.com/liam-lai/ptt-alertor/messenger"
-	user "github.com/liam-lai/ptt-alertor/models/user/redis"
+	"github.com/meifamily/ptt-alertor/line"
+	"github.com/meifamily/ptt-alertor/messenger"
+	user "github.com/meifamily/ptt-alertor/models/user/redis"
 )
 
 type platformFunc map[string]func([]*user.User, string)

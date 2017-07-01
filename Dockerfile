@@ -19,7 +19,7 @@ RUN curl -kfsSL "$GOLANG_DOWNLOAD_URL" -o golang.tar.gz \
 	&& rm golang.tar.gz
 
 ENV GOPATH /go/
-ENV GO_WORKDIR $GOPATH/src/github.com/liam-lai/ptt-alertor/
+ENV GO_WORKDIR $GOPATH/src/github.com/meifamily/ptt-alertor/
 ENV PATH $GOPATH/bin:/usr/local/go/bin:$PATH
 
 RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH"

@@ -7,9 +7,9 @@ import (
 	"strings"
 
 	"github.com/julienschmidt/httprouter"
-	"github.com/liam-lai/ptt-alertor/models/ptt/article"
-	board "github.com/liam-lai/ptt-alertor/models/ptt/board/redis"
-	"github.com/liam-lai/ptt-alertor/myutil"
+	"github.com/meifamily/ptt-alertor/models/ptt/article"
+	board "github.com/meifamily/ptt-alertor/models/ptt/board/redis"
+	"github.com/meifamily/ptt-alertor/myutil"
 )
 
 func BoardArticleIndex(w http.ResponseWriter, r *http.Request, params httprouter.Params) {

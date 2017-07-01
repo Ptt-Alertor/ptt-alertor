@@ -8,8 +8,8 @@ import (
 	"encoding/json"
 
 	"github.com/julienschmidt/httprouter"
-	"github.com/liam-lai/ptt-alertor/command"
-	"github.com/liam-lai/ptt-alertor/myutil"
+	"github.com/meifamily/ptt-alertor/command"
+	"github.com/meifamily/ptt-alertor/myutil"
 	log "github.com/meifamily/logrus"
 )
 

@@ -3,9 +3,9 @@ package jobs
 import (
 	log "github.com/meifamily/logrus"
 
-	board "github.com/liam-lai/ptt-alertor/models/ptt/board/redis"
-	"github.com/liam-lai/ptt-alertor/models/subscription"
-	user "github.com/liam-lai/ptt-alertor/models/user/redis"
+	board "github.com/meifamily/ptt-alertor/models/ptt/board/redis"
+	"github.com/meifamily/ptt-alertor/models/subscription"
+	user "github.com/meifamily/ptt-alertor/models/user/redis"
 )
 
 type Generator struct {

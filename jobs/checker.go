@@ -7,9 +7,9 @@ import (
 
 	log "github.com/meifamily/logrus"
 
-	"github.com/liam-lai/ptt-alertor/models/ptt/article"
-	board "github.com/liam-lai/ptt-alertor/models/ptt/board/redis"
-	user "github.com/liam-lai/ptt-alertor/models/user/redis"
+	"github.com/meifamily/ptt-alertor/models/ptt/article"
+	board "github.com/meifamily/ptt-alertor/models/ptt/board/redis"
+	user "github.com/meifamily/ptt-alertor/models/user/redis"
 )
 
 const checkBoardDuration = 150

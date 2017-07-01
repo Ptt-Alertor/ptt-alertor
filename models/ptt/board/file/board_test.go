@@ -5,7 +5,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/liam-lai/ptt-alertor/models/ptt/board"
+	"github.com/meifamily/ptt-alertor/models/ptt/board"
 )
 
 func TestBoard_GetArticles(t *testing.T) {

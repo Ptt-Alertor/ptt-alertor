@@ -6,12 +6,12 @@ import (
 
 	"fmt"
 
-	"github.com/liam-lai/ptt-alertor/crawler"
-	"github.com/liam-lai/ptt-alertor/models/ptt/article"
-	boardproto "github.com/liam-lai/ptt-alertor/models/ptt/board"
-	"github.com/liam-lai/ptt-alertor/models/subscription"
-	"github.com/liam-lai/ptt-alertor/models/top"
-	user "github.com/liam-lai/ptt-alertor/models/user/redis"
+	"github.com/meifamily/ptt-alertor/crawler"
+	"github.com/meifamily/ptt-alertor/models/ptt/article"
+	boardproto "github.com/meifamily/ptt-alertor/models/ptt/board"
+	"github.com/meifamily/ptt-alertor/models/subscription"
+	"github.com/meifamily/ptt-alertor/models/top"
+	user "github.com/meifamily/ptt-alertor/models/user/redis"
 	log "github.com/meifamily/logrus"
 )
 

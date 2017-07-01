@@ -3,10 +3,10 @@ package command
 import (
 	"strings"
 
-	"github.com/liam-lai/ptt-alertor/models/ptt/article"
-	"github.com/liam-lai/ptt-alertor/models/subscription"
-	user "github.com/liam-lai/ptt-alertor/models/user/redis"
-	"github.com/liam-lai/ptt-alertor/myutil"
+	"github.com/meifamily/ptt-alertor/models/ptt/article"
+	"github.com/meifamily/ptt-alertor/models/subscription"
+	user "github.com/meifamily/ptt-alertor/models/user/redis"
+	"github.com/meifamily/ptt-alertor/myutil"
 )
 
 type updateAction func(u *user.User, sub subscription.Subscription, inputs ...string) error
