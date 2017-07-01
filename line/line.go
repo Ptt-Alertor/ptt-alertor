@@ -8,11 +8,11 @@ import (
 	"regexp"
 
 	"github.com/julienschmidt/httprouter"
-	"github.com/liam-lai/ptt-alertor/command"
-	board "github.com/liam-lai/ptt-alertor/models/ptt/board/redis"
-	user "github.com/liam-lai/ptt-alertor/models/user/redis"
-	"github.com/liam-lai/ptt-alertor/myutil"
-	"github.com/liam-lai/ptt-alertor/shorturl"
+	"github.com/meifamily/ptt-alertor/command"
+	board "github.com/meifamily/ptt-alertor/models/ptt/board/redis"
+	user "github.com/meifamily/ptt-alertor/models/user/redis"
+	"github.com/meifamily/ptt-alertor/myutil"
+	"github.com/meifamily/ptt-alertor/shorturl"
 	"github.com/line/line-bot-sdk-go/linebot"
 	log "github.com/meifamily/logrus"
 )

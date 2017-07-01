@@ -3,7 +3,7 @@ package user
 import (
 	"time"
 
-	"github.com/liam-lai/ptt-alertor/models/subscription"
+	"github.com/meifamily/ptt-alertor/models/subscription"
 )
 
 type User struct {

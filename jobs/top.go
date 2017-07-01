@@ -5,8 +5,8 @@ import (
 
 	log "github.com/meifamily/logrus"
 
-	"github.com/liam-lai/ptt-alertor/models/top"
-	user "github.com/liam-lai/ptt-alertor/models/user/redis"
+	"github.com/meifamily/ptt-alertor/models/top"
+	user "github.com/meifamily/ptt-alertor/models/user/redis"
 )
 
 type Top struct{}

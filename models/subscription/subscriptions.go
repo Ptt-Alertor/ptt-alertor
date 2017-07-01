@@ -4,8 +4,8 @@ import (
 	"sort"
 	"strings"
 
-	boardProto "github.com/liam-lai/ptt-alertor/models/ptt/board"
-	board "github.com/liam-lai/ptt-alertor/models/ptt/board/redis"
+	boardProto "github.com/meifamily/ptt-alertor/models/ptt/board"
+	board "github.com/meifamily/ptt-alertor/models/ptt/board/redis"
 )
 
 type Subscriptions []Subscription

@@ -1,7 +1,7 @@
 package rss
 
 import (
-	"github.com/liam-lai/ptt-alertor/models/ptt/article"
+	"github.com/meifamily/ptt-alertor/models/ptt/article"
 	"github.com/mmcdole/gofeed"
 )
 

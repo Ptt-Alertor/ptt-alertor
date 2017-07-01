@@ -10,7 +10,7 @@ import (
 
 	log "github.com/meifamily/logrus"
 	"github.com/julienschmidt/httprouter"
-	"github.com/liam-lai/ptt-alertor/myutil"
+	"github.com/meifamily/ptt-alertor/myutil"
 
 	"encoding/json"
 
@@ -20,7 +20,7 @@ import (
 
 	"net/url"
 
-	user "github.com/liam-lai/ptt-alertor/models/user/redis"
+	user "github.com/meifamily/ptt-alertor/models/user/redis"
 )
 
 const notifyBotHost string = "https://notify-bot.line.me"

@@ -6,8 +6,8 @@ import (
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
-	user "github.com/liam-lai/ptt-alertor/models/user/redis"
-	"github.com/liam-lai/ptt-alertor/myutil"
+	user "github.com/meifamily/ptt-alertor/models/user/redis"
+	"github.com/meifamily/ptt-alertor/myutil"
 )
 
 func UserFind(w http.ResponseWriter, r *http.Request, params httprouter.Params) {

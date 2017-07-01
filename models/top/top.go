@@ -7,8 +7,8 @@ import (
 
 	log "github.com/meifamily/logrus"
 	"github.com/garyburd/redigo/redis"
-	"github.com/liam-lai/ptt-alertor/connections"
-	"github.com/liam-lai/ptt-alertor/myutil"
+	"github.com/meifamily/ptt-alertor/connections"
+	"github.com/meifamily/ptt-alertor/myutil"
 )
 
 const prefix string = "top:"

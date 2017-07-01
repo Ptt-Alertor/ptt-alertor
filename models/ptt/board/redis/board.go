@@ -8,12 +8,12 @@ import (
 	"github.com/garyburd/redigo/redis"
 	log "github.com/meifamily/logrus"
 
-	"github.com/liam-lai/ptt-alertor/connections"
-	"github.com/liam-lai/ptt-alertor/crawler"
-	"github.com/liam-lai/ptt-alertor/models/ptt/article"
-	"github.com/liam-lai/ptt-alertor/models/ptt/board"
-	"github.com/liam-lai/ptt-alertor/myutil"
-	"github.com/liam-lai/ptt-alertor/myutil/maputil"
+	"github.com/meifamily/ptt-alertor/connections"
+	"github.com/meifamily/ptt-alertor/crawler"
+	"github.com/meifamily/ptt-alertor/models/ptt/article"
+	"github.com/meifamily/ptt-alertor/models/ptt/board"
+	"github.com/meifamily/ptt-alertor/myutil"
+	"github.com/meifamily/ptt-alertor/myutil/maputil"
 )
 
 const prefix string = "board:"

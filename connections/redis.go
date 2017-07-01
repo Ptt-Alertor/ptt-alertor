@@ -3,7 +3,7 @@ package connections
 import (
 	log "github.com/meifamily/logrus"
 	"github.com/garyburd/redigo/redis"
-	"github.com/liam-lai/ptt-alertor/myutil"
+	"github.com/meifamily/ptt-alertor/myutil"
 )
 
 var config map[string]string

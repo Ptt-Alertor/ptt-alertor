@@ -5,8 +5,8 @@ import (
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
-	"github.com/liam-lai/ptt-alertor/models/top"
-	"github.com/liam-lai/ptt-alertor/shorturl"
+	"github.com/meifamily/ptt-alertor/models/top"
+	"github.com/meifamily/ptt-alertor/shorturl"
 )
 
 func Index(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {

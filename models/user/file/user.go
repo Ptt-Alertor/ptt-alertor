@@ -10,8 +10,8 @@ import (
 
 	"reflect"
 
-	"github.com/liam-lai/ptt-alertor/models/user"
-	"github.com/liam-lai/ptt-alertor/myutil"
+	"github.com/meifamily/ptt-alertor/models/user"
+	"github.com/meifamily/ptt-alertor/myutil"
 )
 
 type User struct {

@@ -7,10 +7,10 @@ import (
 
 	"fmt"
 
-	"github.com/liam-lai/ptt-alertor/crawler"
-	"github.com/liam-lai/ptt-alertor/models/ptt/article"
+	"github.com/meifamily/ptt-alertor/crawler"
+	"github.com/meifamily/ptt-alertor/models/ptt/article"
 
-	user "github.com/liam-lai/ptt-alertor/models/user/redis"
+	user "github.com/meifamily/ptt-alertor/models/user/redis"
 )
 
 const checkPushDuration = 3

@@ -5,7 +5,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/liam-lai/ptt-alertor/myutil"
+	"github.com/meifamily/ptt-alertor/myutil"
 )
 
 type Subscription struct {
