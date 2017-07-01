@@ -121,10 +121,10 @@ func fetchDateTime(ipdatetime string) time.Time {
 	dateTime := strings.TrimSpace(subMatches[len(subMatches)-1])
 	loc, _ := time.LoadLocation("Asia/Taipei")
 	t, err := time.ParseInLocation("01/02 15:04", dateTime, loc)
-	t = t.AddDate(getYear(t), 0, 0)
 	if err != nil {
 		log.WithError(err).Error("Parse DateTime Error")
 	}
+	// t = t.AddDate(getYear(t), 0, 0)
 	return t
 }
 
