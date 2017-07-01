@@ -18,8 +18,8 @@ before_script:
 - ls -al config/
 script:
 - docker build -t meifamily/ptt-alertor-src -f DockerfileSrc .
-- docker ps -a
 - docker run -d -p 9090:9090 meifamily/ptt-alertor-src
+- docker ps -a
 - docker cp $(docker create meifamily/ptt-alertor-src):/go/bin/ptt-alertor ./
 - docker build -t meifamily/ptt-alertor -f DockerfileBin .
 before_deploy:
