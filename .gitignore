@@ -39,6 +39,9 @@ coverage.txt
 debug
 example/*
 
-# terraform tempfile 
+# terraform tempfile
 terra_config/terraform*
 terra_config/provider.tf
+
+# bin
+ptt-alertor
