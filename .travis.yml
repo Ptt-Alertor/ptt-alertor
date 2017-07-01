@@ -17,12 +17,14 @@ before_script:
 - aws s3 cp s3://ptt-alertor-bucket/config/app.json config/
 - ls -al config/
 script:
-- docker build -t liam-lai/ptt-alertor .
+- docker build -t meifamily/ptt-alertor-src -f DockerfileSrc .
 - docker ps -a
-- docker run -d -p 9090:9090 liam-lai/ptt-alertor
+- docker run -d -p 9090:9090 meifamily/ptt-alertor-src
+- docker cp $(docker create meifamily/ptt-alertor-src):/go/bin/ptt-alertor ./
+- docker build -t meifamily/ptt-alertor -f DockerfileBin .
 before_deploy:
 - eval $(aws ecr get-login --region us-west-2)
-- docker tag liam-lai/ptt-alertor:latest $AWS_Docker_Repo:latest
+- docker tag meifamily/ptt-alertor:latest $AWS_Docker_Repo:latest
 - docker push $AWS_Docker_Repo:latest
 
 deploy:

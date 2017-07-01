@@ -1,0 +1,25 @@
+# Start from a Debian image with the latest version of Go installed
+# and a workspace (GOPATH) configured at /go.
+FROM golang:alpine
+
+RUN set -eux; \
+	apk add --no-cache --virtual git
+
+# Copy the local package files to the container's workspace.
+ADD . /go/src/github.com/meifamily/ptt-alertor
+
+# ENV GOPATH /go/
+ENV GO_WORKDIR $GOPATH/src/github.com/meifamily/ptt-alertor
+
+WORKDIR $GO_WORKDIR
+
+# Build the outyet command inside the container.
+# (You may fetch or manage dependencies here,
+# either manually or with a tool like "godep".)
+RUN go install
+
+# Run the outyet command by default when the container starts.
+ENTRYPOINT /go/bin/ptt-alertor
+
+# Host command: docker cp $(docker create golang-leetcode):/go/bin/golang-leetcode ./
+# Host command: docker build -t golang-leetcode-bin -f DockerfileBin .
