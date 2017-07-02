@@ -104,7 +104,15 @@ func BuildArticle(board, articleCode string) article.Article {
 		}
 		for _, pushIPDateTime := range traverseHTMLNode(pushBlock, findPushIPDateTime) {
 			initialTargetNodes()
-			pushes[index].DateTime = fetchDateTime(pushIPDateTime.FirstChild.Data)
+			dateTime, err := parseDateTime(pushIPDateTime.FirstChild.Data)
+			if err != nil {
+				log.WithFields(log.Fields{
+					"datetime": dateTime,
+					"board":    board,
+					"code":     articleCode,
+				}).WithError(err).Error("Parse DateTime Error")
+			}
+			pushes[index].DateTime = dateTime
 			if index == len(pushBlocks)-1 {
 				atcl.LastPushDateTime = pushes[index].DateTime
 			}
@@ -114,18 +122,21 @@ func BuildArticle(board, articleCode string) article.Article {
 	return atcl
 }
 
-func fetchDateTime(ipdatetime string) time.Time {
+func parseDateTime(ipdatetime string) (time.Time, error) {
 	re, _ := regexp.Compile("(\\d+\\.\\d+\\.\\d+\\.\\d+)?\\s*(.*)")
 	ipdatetime = strings.TrimSpace(ipdatetime)
 	subMatches := re.FindStringSubmatch(ipdatetime)
 	dateTime := strings.TrimSpace(subMatches[len(subMatches)-1])
-	loc, _ := time.LoadLocation("UTC")
+	loc, err := time.LoadLocation("UTC")
+	if err != nil {
+		return time.Time{}, err
+	}
 	t, err := time.ParseInLocation("01/02 15:04", dateTime, loc)
 	if err != nil {
-		log.WithField("datetime", dateTime).WithError(err).Error("Parse DateTime Error")
+		return t, err
 	}
 	t = t.AddDate(getYear(t), 0, 0)
-	return t
+	return t, nil
 }
 
 func getYear(pushTime time.Time) int {
