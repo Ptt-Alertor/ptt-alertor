@@ -1,6 +1,9 @@
 language: go
 go:
 - 1.8.x
+cache:
+  directories:
+    - $HOME/.local
 services:
 - docker
 before_install:
