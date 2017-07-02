@@ -107,9 +107,9 @@ func BuildArticle(board, articleCode string) article.Article {
 			dateTime, err := parseDateTime(pushIPDateTime.FirstChild.Data)
 			if err != nil {
 				log.WithFields(log.Fields{
-					"datetime": dateTime,
-					"board":    board,
-					"code":     articleCode,
+					"ipdatetime": pushIPDateTime.FirstChild.Data,
+					"board":      board,
+					"code":       articleCode,
 				}).WithError(err).Error("Parse DateTime Error")
 			}
 			pushes[index].DateTime = dateTime
@@ -133,7 +133,7 @@ func parseDateTime(ipdatetime string) (time.Time, error) {
 	}
 	t, err := time.ParseInLocation("01/02 15:04", dateTime, loc)
 	if err != nil {
-		return t, err
+		return time.Time{}, err
 	}
 	t = t.AddDate(getYear(t), 0, 0)
 	return t, nil
