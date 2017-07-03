@@ -54,6 +54,8 @@ func HandleCommand(text string, userID string) string {
 		"command": command,
 	}).Info("Command Request")
 	switch command {
+	case "debug":
+		return handleDebug(userID)
 	case "清單":
 		return handleList(userID)
 	case "指令":
@@ -70,12 +72,17 @@ func HandleCommand(text string, userID string) string {
 	return "無此指令，請打「指令」查看指令清單"
 }
 
+func handleDebug(userID string) string {
+	profile := new(user.User).Find(userID).Profile
+	return profile.Account
+}
+
 func handleList(userID string) string {
 	subs := new(user.User).Find(userID).Subscribes
 	if len(subs) == 0 {
 		return "尚未建立清單。請打「指令」查看新增方法。"
 	}
-	return new(user.User).Find(userID).Subscribes.String()
+	return subs.String()
 }
 
 func stringCommands() string {
