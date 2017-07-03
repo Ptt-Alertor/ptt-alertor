@@ -114,7 +114,7 @@ func listTop() string {
 }
 
 func handleKeyword(command, userID, text string) string {
-	re := regexp.MustCompile("^(新增|刪除)\\s+([^,，][\\w-_,，]*[^,，:\\s]):?\\s+(\\*|.*[^\\s])")
+	re := regexp.MustCompile("^(新增|刪除)\\s+([^,，][\\w-_,，\\.]*[^,，:\\s]):?\\s+(\\*|.*[^\\s])")
 	matched := re.MatchString(text)
 	if !matched {
 		return inputErrorTips() + "\n\n正確範例：\n" + command + " gossiping,lol 問卦,爆卦"
@@ -149,7 +149,7 @@ func handleKeyword(command, userID, text string) string {
 }
 
 func handleAuthor(command, userID, text string) string {
-	re := regexp.MustCompile("^(新增作者|刪除作者)\\s+([^,，][\\w-_,，]*[^,，:\\s]):?\\s+(\\*|[\\s,\\w]+)")
+	re := regexp.MustCompile("^(新增作者|刪除作者)\\s+([^,，][\\w-_,，\\.]*[^,，:\\s]):?\\s+(\\*|[\\s,\\w]+)")
 	matched := re.MatchString(text)
 	if !matched {
 		return inputErrorTips() + "\n4. 作者為半形英文與數字組成。\n\n正確範例：\n" + command + " gossiping,lol ffaarr,obov"
