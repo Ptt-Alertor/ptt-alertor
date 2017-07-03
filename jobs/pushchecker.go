@@ -60,7 +60,13 @@ func (pc PushChecker) Run() {
 
 func checkPushList(code string, c chan article.Article) {
 	a := new(article.Article).Find(code)
-	new := crawler.BuildArticle(a.Board, a.Code)
+	new, err := crawler.BuildArticle(a.Board, a.Code)
+	if _, ok := err.(crawler.URLNotFoundError); ok {
+		destroyPushList(a)
+	}
+	if subs, _ := a.Subscribers(); len(subs) == 0 {
+		destroyPushList(a)
+	}
 	newPushList := make([]article.Push, 0)
 	if new.LastPushDateTime.After(a.LastPushDateTime) {
 		for _, push := range new.PushList {
@@ -77,13 +83,14 @@ func checkPushList(code string, c chan article.Article) {
 		}).Info("Updated PushList")
 		c <- a
 	}
-	if subs, _ := a.Subscribers(); len(subs) == 0 {
-		a.Destroy()
-		log.WithFields(log.Fields{
-			"board": a.Board,
-			"code":  a.Code,
-		}).Info("Destroy PushList")
-	}
+}
+
+func destroyPushList(a article.Article) {
+	a.Destroy()
+	log.WithFields(log.Fields{
+		"board": a.Board,
+		"code":  a.Code,
+	}).Info("Destroy PushList")
 }
 
 func (pc PushChecker) checkSubscribers(pch chan PushChecker) {

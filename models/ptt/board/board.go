@@ -1,10 +1,10 @@
 package board
 
 import (
+	log "github.com/meifamily/logrus"
 	"github.com/meifamily/ptt-alertor/crawler"
 	"github.com/meifamily/ptt-alertor/models/ptt/article"
 	"github.com/meifamily/ptt-alertor/rss"
-	log "github.com/meifamily/logrus"
 )
 
 type BoardNotExistError struct {
@@ -33,7 +33,10 @@ func (bd Board) FetchArticles() (articles article.Articles) {
 	articles, err := rss.BuildArticles(bd.Name)
 	if err != nil {
 		log.WithField("board", bd.Name).WithError(err).Error("RSS Parse Failed, Switch to HTML Crawler")
-		articles = crawler.BuildArticles(bd.Name)
+		articles, err = crawler.BuildArticles(bd.Name)
+		if err != nil {
+			log.WithField("board", bd.Name).WithError(err).Error("HTML Parse Failed")
+		}
 	}
 	return articles
 }

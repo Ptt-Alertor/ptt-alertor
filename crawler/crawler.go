@@ -19,10 +19,14 @@ import (
 const pttHostURL = "https://www.ptt.cc"
 
 // BuildArticles makes board's index articles to a article slice
-func BuildArticles(board string) article.Articles {
+func BuildArticles(board string) (article.Articles, error) {
 
 	reqURL := makeBoardURL(board)
-	htmlNodes := parseHTML(fetchHTML(reqURL))
+	rsp, err := fetchHTML(reqURL)
+	if err != nil {
+		return article.Articles{}, err
+	}
+	htmlNodes := parseHTML(rsp)
 
 	articleBlocks := traverseHTMLNode(htmlNodes, findArticleBlocks)
 	initialTargetNodes()
@@ -57,14 +61,18 @@ func BuildArticles(board string) article.Articles {
 			}
 		}
 	}
-	return articles
+	return articles, nil
 }
 
 // BuildArticle build article object from html
-func BuildArticle(board, articleCode string) article.Article {
+func BuildArticle(board, articleCode string) (article.Article, error) {
 
 	reqURL := makeArticleURL(board, articleCode)
-	htmlNodes := parseHTML(fetchHTML(reqURL))
+	rsp, err := fetchHTML(reqURL)
+	if err != nil {
+		return article.Article{}, err
+	}
+	htmlNodes := parseHTML(rsp)
 	atcl := article.Article{
 		Link:  reqURL,
 		Code:  articleCode,
@@ -119,7 +127,7 @@ func BuildArticle(board, articleCode string) article.Article {
 		}
 	}
 	atcl.PushList = pushes
-	return atcl
+	return atcl, nil
 }
 
 func parseDateTime(ipdatetime string) (time.Time, error) {
@@ -150,8 +158,8 @@ func getYear(pushTime time.Time) int {
 // CheckBoardExist use for checking board exist or not
 func CheckBoardExist(board string) bool {
 	reqURL := makeBoardURL(board)
-	response := fetchHTML(reqURL)
-	if response.StatusCode == http.StatusNotFound {
+	_, err := fetchHTML(reqURL)
+	if _, ok := err.(URLNotFoundError); ok {
 		return false
 	}
 	return true
@@ -160,8 +168,8 @@ func CheckBoardExist(board string) bool {
 // CheckArticleExist user for checking article exist or not
 func CheckArticleExist(board, articleCode string) bool {
 	reqURL := makeArticleURL(board, articleCode)
-	response := fetchHTML(reqURL)
-	if response.StatusCode == http.StatusNotFound {
+	_, err := fetchHTML(reqURL)
+	if _, ok := err.(URLNotFoundError); ok {
 		return false
 	}
 	return true
@@ -175,7 +183,15 @@ func makeArticleURL(board, articleCode string) string {
 	return pttHostURL + "/bbs/" + board + "/" + articleCode + ".html"
 }
 
-func fetchHTML(reqURL string) (response *http.Response) {
+type URLNotFoundError struct {
+	URL string
+}
+
+func (u URLNotFoundError) Error() string {
+	return "Fetched URL Not Found"
+}
+
+func fetchHTML(reqURL string) (response *http.Response, err error) {
 
 	client := &http.Client{
 		CheckRedirect: func(req *http.Request, via []*http.Request) error {
@@ -183,10 +199,10 @@ func fetchHTML(reqURL string) (response *http.Response) {
 		},
 	}
 
-	response, err := client.Get(reqURL)
+	response, err = client.Get(reqURL)
 
 	if response.StatusCode == http.StatusNotFound {
-		log.WithField("url", reqURL).Warn("Fetched URL Not Found")
+		err = URLNotFoundError{reqURL}
 	}
 
 	if err != nil && response.StatusCode == http.StatusFound {
@@ -195,10 +211,10 @@ func fetchHTML(reqURL string) (response *http.Response) {
 	}
 
 	if err != nil {
-		log.WithField("url", reqURL).Error("Fetch URL Failed")
+		log.WithField("url", reqURL).WithError(err).Error("Fetch URL Failed")
 	}
 
-	return response
+	return response, err
 }
 
 func passR18(reqURL string) (req *http.Request) {

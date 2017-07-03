@@ -6,13 +6,13 @@ import (
 
 	"fmt"
 
+	log "github.com/meifamily/logrus"
 	"github.com/meifamily/ptt-alertor/crawler"
 	"github.com/meifamily/ptt-alertor/models/ptt/article"
 	boardproto "github.com/meifamily/ptt-alertor/models/ptt/board"
 	"github.com/meifamily/ptt-alertor/models/subscription"
 	"github.com/meifamily/ptt-alertor/models/top"
 	user "github.com/meifamily/ptt-alertor/models/user/redis"
-	log "github.com/meifamily/logrus"
 )
 
 var Commands = map[string]map[string]string{
@@ -206,8 +206,11 @@ func checkArticleExist(boardName, articleCode string) bool {
 }
 
 func initialArticle(a article.Article) error {
-	a = crawler.BuildArticle(a.Board, a.Code)
-	err := a.Save()
+	a, err := crawler.BuildArticle(a.Board, a.Code)
+	if err != nil {
+		return err
+	}
+	err = a.Save()
 	return err
 }
 
