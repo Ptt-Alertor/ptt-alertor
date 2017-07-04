@@ -112,7 +112,7 @@ func BuildArticle(board, articleCode string) (article.Article, error) {
 		}
 		for _, pushIPDateTime := range traverseHTMLNode(pushBlock, findPushIPDateTime) {
 			initialTargetNodes()
-			ipdatetime := pushIPDateTime.FirstChild.Data
+			ipdatetime := strings.TrimSpace(pushIPDateTime.FirstChild.Data)
 			if ipdatetime == "" {
 				break
 			}
@@ -136,7 +136,6 @@ func BuildArticle(board, articleCode string) (article.Article, error) {
 
 func parseDateTime(ipdatetime string) (time.Time, error) {
 	re, _ := regexp.Compile("(\\d+\\.\\d+\\.\\d+\\.\\d+)?\\s*(.*)")
-	ipdatetime = strings.TrimSpace(ipdatetime)
 	subMatches := re.FindStringSubmatch(ipdatetime)
 	dateTime := strings.TrimSpace(subMatches[len(subMatches)-1])
 	loc, err := time.LoadLocation("UTC")
