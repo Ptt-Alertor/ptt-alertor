@@ -57,7 +57,7 @@ func (bd *Board) WithArticles() {
 }
 
 func (bd *Board) WithNewArticles() {
-	bd.NewArticles = board.NewArticles(bd)
+	bd.NewArticles, _ = board.NewArticles(bd)
 }
 
 func (bd Board) Create() error {
