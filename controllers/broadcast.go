@@ -6,8 +6,10 @@ import (
 
 	"encoding/json"
 
-	log "github.com/meifamily/logrus"
+	"time"
+
 	"github.com/julienschmidt/httprouter"
+	log "github.com/meifamily/logrus"
 	"github.com/meifamily/ptt-alertor/line"
 	"github.com/meifamily/ptt-alertor/messenger"
 	user "github.com/meifamily/ptt-alertor/models/user/redis"
@@ -43,18 +45,24 @@ func Broadcast(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 }
 
 func broadcastLine(users []*user.User, text string) {
-	for _, user := range users {
+	for i, user := range users {
 		if user.Profile.LineAccessToken != "" {
 			go line.Notify(user.Profile.LineAccessToken, text)
+		}
+		if i%500 == 0 {
+			time.Sleep(500 * time.Millisecond)
 		}
 	}
 }
 
 func broadcastMessenger(users []*user.User, text string) {
 	m := messenger.New()
-	for _, user := range users {
+	for i, user := range users {
 		if user.Profile.Messenger != "" {
 			go m.SendTextMessage(user.Profile.Messenger, text)
+		}
+		if i%500 == 0 {
+			time.Sleep(500 * time.Millisecond)
 		}
 	}
 }
