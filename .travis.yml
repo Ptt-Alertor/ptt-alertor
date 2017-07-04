@@ -21,8 +21,7 @@ before_script:
 - ls -al config/
 script:
 - docker build -t meifamily/ptt-alertor-src -f DockerfileSrc .
-- docker run --name ptt-alertor-src -d -p 9090:9090 meifamily/ptt-alertor-src
-- docker exec -it ptt-alertor-src go test ./myutil -race -coverprofile=coverage.txt -covermode=atomic
+- docker run --name ptt-alertor-src meifamily/ptt-alertor-src go test ./myutil -race -coverprofile=coverage.txt -covermode=atomic
 - docker ps -a
 - docker cp ptt-alertor-src:/go/bin/ptt-alertor ./
 - docker build -t meifamily/ptt-alertor -f DockerfileBin .
