@@ -28,13 +28,18 @@ func (ss Subscriptions) String() string {
 			str += sub.StringAuthor() + "\n"
 		}
 	}
-	str += "----\n推文\n"
+	str += "----\n推文\n請輸入「推文清單」查看推文追蹤列表。"
+
+	return str
+}
+
+func (ss Subscriptions) StringPushList() string {
+	var str string
 	for _, sub := range ss {
 		if sub.StringArticle() != "" {
 			str += sub.StringArticle() + "\n"
 		}
 	}
-
 	return str
 }
 

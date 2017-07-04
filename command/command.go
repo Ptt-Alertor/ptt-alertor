@@ -68,6 +68,8 @@ func HandleCommand(text string, userID string) string {
 		return handleAuthor(command, userID, text)
 	case "新增推文", "刪除推文":
 		return handlePush(command, userID, text)
+	case "推文清單":
+		return handlePushList(userID)
 	}
 	return "無此指令，請打「指令」查看指令清單"
 }
@@ -83,6 +85,14 @@ func handleList(userID string) string {
 		return "尚未建立清單。請打「指令」查看新增方法。"
 	}
 	return subs.String()
+}
+
+func handlePushList(userID string) string {
+	subs := new(user.User).Find(userID).Subscribes
+	if len(subs) == 0 {
+		return "尚未建立清單。請打「指令」查看新增方法。"
+	}
+	return subs.StringPushList()
 }
 
 func stringCommands() string {
