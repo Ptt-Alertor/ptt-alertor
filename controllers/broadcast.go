@@ -6,8 +6,6 @@ import (
 
 	"encoding/json"
 
-	"time"
-
 	"github.com/julienschmidt/httprouter"
 	log "github.com/meifamily/logrus"
 	"github.com/meifamily/ptt-alertor/line"
@@ -45,24 +43,18 @@ func Broadcast(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 }
 
 func broadcastLine(users []*user.User, text string) {
-	for i, user := range users {
+	for _, user := range users {
 		if user.Profile.LineAccessToken != "" {
 			go line.Notify(user.Profile.LineAccessToken, text)
-		}
-		if i%500 == 0 {
-			time.Sleep(500 * time.Millisecond)
 		}
 	}
 }
 
 func broadcastMessenger(users []*user.User, text string) {
 	m := messenger.New()
-	for i, user := range users {
+	for _, user := range users {
 		if user.Profile.Messenger != "" {
 			go m.SendTextMessage(user.Profile.Messenger, text)
-		}
-		if i%500 == 0 {
-			time.Sleep(500 * time.Millisecond)
 		}
 	}
 }
