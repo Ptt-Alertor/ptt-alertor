@@ -8,8 +8,8 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	log "github.com/meifamily/logrus"
 	"github.com/julienschmidt/httprouter"
+	log "github.com/meifamily/logrus"
 	"github.com/meifamily/ptt-alertor/myutil"
 
 	"encoding/json"

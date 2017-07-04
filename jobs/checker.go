@@ -13,6 +13,7 @@ import (
 )
 
 const checkBoardDuration = 150
+const workers = 250
 
 type Checker struct {
 	email      string
@@ -52,19 +53,28 @@ func (cker Checker) Run() {
 	}()
 	ckerCh := make(chan Checker)
 
+	for i := 0; i < workers; i++ {
+		go messageWorker(ckerCh)
+	}
+
 	for {
 		select {
 		case bd := <-boardCh:
 			checkSubscriber(bd, cker, ckerCh)
-		case cker := <-ckerCh:
-			cker.subType = "keyword"
-			cker.word = cker.keyword
-			if cker.author != "" {
-				cker.subType = "author"
-				cker.word = cker.author
-			}
-			go sendMessage(cker)
 		}
+	}
+}
+
+func messageWorker(ckerCh chan Checker) {
+	for {
+		cker := <-ckerCh
+		cker.subType = "keyword"
+		cker.word = cker.keyword
+		if cker.author != "" {
+			cker.subType = "author"
+			cker.word = cker.author
+		}
+		sendMessage(cker)
 	}
 }
 
@@ -72,7 +82,7 @@ func checkNewArticle(bd *board.Board, boardCh chan *board.Board) {
 	bd.WithNewArticles()
 	if bd.NewArticles == nil {
 		bd.Articles = bd.OnlineArticles
-		log.WithField("board", bd.Name).Info("Created Articles")
+		// log.WithField("board", bd.Name).Info("Created Articles")
 		bd.Save()
 	}
 	if len(bd.NewArticles) != 0 {
