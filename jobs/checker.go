@@ -82,7 +82,7 @@ func checkNewArticle(bd *board.Board, boardCh chan *board.Board) {
 	bd.WithNewArticles()
 	if bd.NewArticles == nil {
 		bd.Articles = bd.OnlineArticles
-		// log.WithField("board", bd.Name).Info("Created Articles")
+		log.WithField("board", bd.Name).Info("Created Articles")
 		bd.Save()
 	}
 	if len(bd.NewArticles) != 0 {

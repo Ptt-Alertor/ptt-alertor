@@ -112,10 +112,14 @@ func BuildArticle(board, articleCode string) (article.Article, error) {
 		}
 		for _, pushIPDateTime := range traverseHTMLNode(pushBlock, findPushIPDateTime) {
 			initialTargetNodes()
-			dateTime, err := parseDateTime(pushIPDateTime.FirstChild.Data)
+			ipdatetime := pushIPDateTime.FirstChild.Data
+			if ipdatetime == "" {
+				break
+			}
+			dateTime, err := parseDateTime(ipdatetime)
 			if err != nil {
 				log.WithFields(log.Fields{
-					"ipdatetime": pushIPDateTime.FirstChild.Data,
+					"ipdatetime": ipdatetime,
 					"board":      board,
 					"code":       articleCode,
 				}).WithError(err).Error("Parse DateTime Error")
