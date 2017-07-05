@@ -8,9 +8,9 @@ import (
 	"encoding/json"
 
 	"github.com/julienschmidt/httprouter"
+	log "github.com/meifamily/logrus"
 	"github.com/meifamily/ptt-alertor/command"
 	"github.com/meifamily/ptt-alertor/myutil"
-	log "github.com/meifamily/logrus"
 )
 
 const (
@@ -101,6 +101,10 @@ func (m *Messenger) handlePostback(id string, payload string) {
 		m.SendListMessage(id, commands)
 	case "SUBSCRIPTIONS_PAYLOAD":
 		responseText = command.HandleCommand("清單", id)
+	case "TOP_PAYLOAD":
+		responseText = command.HandleCommand("排行", id)
+	case "PUSHLIST_PAYLOAD":
+		responseText = command.HandleCommand("推文清單", id)
 	case "CANCEL":
 		responseText = "取消"
 	default:
