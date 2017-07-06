@@ -10,10 +10,15 @@ import (
 	"github.com/meifamily/ptt-alertor/models/ptt/article"
 	board "github.com/meifamily/ptt-alertor/models/ptt/board/redis"
 	user "github.com/meifamily/ptt-alertor/models/user/redis"
+	"github.com/meifamily/ptt-alertor/myutil"
 )
 
-const checkBoardDuration = 150
+const checkBoardDuration = 150 * time.Millisecond
+const checkHighBoardDuration = 1 * time.Second
 const workers = 250
+
+var highBoards []*board.Board
+var boardCh = make(chan *board.Board)
 
 type Checker struct {
 	email      string
@@ -36,19 +41,22 @@ func (cker Checker) String() string {
 	return fmt.Sprintf("%s@%s\r\n看板：%s；%s：%s%s", cker.word, cker.board, cker.board, subType, cker.word, cker.articles.String())
 }
 
+// Self return Checker itself
 func (cker Checker) Self() Checker {
 	return cker
 }
 
+// Run is main in Job
 func (cker Checker) Run() {
-	boardCh := make(chan *board.Board)
+	initHighBoards()
 	go func() {
 		for {
-			bds := new(board.Board).All()
-			for _, bd := range bds {
-				time.Sleep(checkBoardDuration * time.Millisecond)
-				go checkNewArticle(bd, boardCh)
-			}
+			checkBoards(highBoards, checkHighBoardDuration)
+		}
+	}()
+	go func() {
+		for {
+			checkBoards(new(board.Board).All(), checkBoardDuration)
 		}
 	}()
 	ckerCh := make(chan Checker)
@@ -62,6 +70,23 @@ func (cker Checker) Run() {
 		case bd := <-boardCh:
 			checkSubscriber(bd, cker, ckerCh)
 		}
+	}
+}
+
+func initHighBoards() {
+	boardcfg := myutil.Config("board")
+	highBoardNames := strings.Split(boardcfg["high"], ",")
+	for _, name := range highBoardNames {
+		bd := new(board.Board)
+		bd.Name = name
+		highBoards = append(highBoards, bd)
+	}
+}
+
+func checkBoards(bds []*board.Board, duration time.Duration) {
+	for _, bd := range bds {
+		time.Sleep(duration)
+		go checkNewArticle(bd, boardCh)
 	}
 }
 
@@ -88,8 +113,10 @@ func checkNewArticle(bd *board.Board, boardCh chan *board.Board) {
 	if len(bd.NewArticles) != 0 {
 		bd.Articles = bd.OnlineArticles
 		log.WithField("board", bd.Name).Info("Updated Articles")
-		bd.Save()
-		boardCh <- bd
+		err := bd.Save()
+		if err == nil {
+			boardCh <- bd
+		}
 	}
 }
 
@@ -147,5 +174,4 @@ func authorChecker(author string, bd *board.Board, cker Checker, ckerCh chan Che
 		cker.articles = authorArticles
 		ckerCh <- cker
 	}
-
 }

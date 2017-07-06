@@ -100,7 +100,10 @@ func (bd Board) Save() error {
 		myutil.LogJSONEncode(err, bd.Articles)
 		return err
 	}
-	_, err = conn.Do("SET", prefix+bd.Name, articlesJSON)
+	conn.Send("WATCH", prefix+bd.Name)
+	conn.Send("MULTI")
+	conn.Send("SET", prefix+bd.Name, articlesJSON)
+	_, err = conn.Do("EXEC")
 	if err != nil {
 		log.WithField("runtime", myutil.BasicRuntimeInfo()).WithError(err).Error()
 	}

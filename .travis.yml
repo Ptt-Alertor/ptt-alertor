@@ -18,6 +18,7 @@ before_script:
 - aws s3 cp s3://ptt-alertor-bucket/config/line.json config/
 - aws s3 cp s3://ptt-alertor-bucket/config/messenger.json config/
 - aws s3 cp s3://ptt-alertor-bucket/config/app.json config/
+- aws s3 cp s3://ptt-alertor-bucket/config/board.json config/
 - ls -al config/
 script:
 - docker build -t meifamily/ptt-alertor-src -f DockerfileSrc .
