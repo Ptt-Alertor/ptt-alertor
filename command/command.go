@@ -70,31 +70,54 @@ func HandleCommand(text string, userID string) string {
 		return handleAuthor(command, userID, text)
 	case "新增推文", "刪除推文":
 		return handlePush(command, userID, text)
+	case "清理推文":
+		return cleanPushList(userID)
 	case "推文清單":
 		return handlePushList(userID)
 	}
 	return "無此指令，請打「指令」查看指令清單"
 }
 
-func handleDebug(userID string) string {
-	profile := new(user.User).Find(userID).Profile
+func handleDebug(account string) string {
+	profile := new(user.User).Find(account).Profile
 	return profile.Account
 }
 
-func handleList(userID string) string {
-	subs := new(user.User).Find(userID).Subscribes
+func handleList(account string) string {
+	subs := new(user.User).Find(account).Subscribes
 	if len(subs) == 0 {
 		return "尚未建立清單。請打「指令」查看新增方法。"
 	}
 	return subs.String()
 }
 
-func handlePushList(userID string) string {
-	subs := new(user.User).Find(userID).Subscribes
+func cleanPushList(account string) string {
+	subs := new(user.User).Find(account).Subscribes
+	var i int
+	for _, sub := range subs {
+		for _, code := range sub.Articles {
+			a := article.Article{
+				Code: code,
+			}
+			bl, err := a.Exist()
+			if err != nil {
+				return "清理推文失敗，請洽至粉絲團或 LINE 首頁留言。"
+			}
+			if !bl {
+				update(removeArticles, account, []string{sub.Board}, code)
+				i++
+			}
+		}
+	}
+	return fmt.Sprintf("清理%d則推文", i)
+}
+
+func handlePushList(account string) string {
+	subs := new(user.User).Find(account).Subscribes
 	if len(subs) == 0 {
 		return "尚未建立清單。請打「指令」查看新增方法。"
 	}
-	return "推文追蹤清單，上限 25 篇：\n" + subs.StringPushList()
+	return "推文追蹤清單，上限 25 篇：\n" + subs.StringPushList() + "\n輸入「清理推文」，可刪除無效連結。"
 }
 
 func stringCommands() string {
