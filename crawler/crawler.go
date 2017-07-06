@@ -101,6 +101,9 @@ func BuildArticle(board, articleCode string) (article.Article, error) {
 			initialTargetNodes()
 			content := pushContent.FirstChild.Data
 			for n := pushContent.FirstChild.NextSibling; n != nil; n = n.NextSibling {
+				if findEmailProtected(n) != nil {
+					break
+				}
 				if n.FirstChild != nil {
 					content += n.FirstChild.Data
 				}

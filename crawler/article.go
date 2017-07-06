@@ -29,3 +29,15 @@ func findDividerDiv(node *html.Node) *html.Node {
 func findOgTitleMeta(node *html.Node) *html.Node {
 	return findMeta(node, "og:title")
 }
+
+func findEmailProtected(node *html.Node) *html.Node {
+	n := findAnchor(node)
+	if n != nil {
+		for _, attr := range n.Attr {
+			if attr.Key == "class" && attr.Val == "__cf_email__" {
+				return n
+			}
+		}
+	}
+	return nil
+}
