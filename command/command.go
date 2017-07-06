@@ -15,6 +15,8 @@ import (
 	user "github.com/meifamily/ptt-alertor/models/user/redis"
 )
 
+const subArticlesLimit int = 25
+
 var Commands = map[string]map[string]string{
 	"一般": {
 		"指令": "可使用的指令清單",
@@ -92,7 +94,7 @@ func handlePushList(userID string) string {
 	if len(subs) == 0 {
 		return "尚未建立清單。請打「指令」查看新增方法。"
 	}
-	return subs.StringPushList()
+	return "推文追蹤清單，上限 25 篇：\n" + subs.StringPushList()
 }
 
 func stringCommands() string {
@@ -201,11 +203,22 @@ func handlePush(command, userID, text string) string {
 	if !checkArticleExist(boardName, articleCode) {
 		return "文章不存在"
 	}
+	if countUserArticles(userID) > subArticlesLimit {
+		return "推文追蹤最多 25 篇，輸入「推文清單」，整理追蹤列表。"
+	}
 	err := update(commandActionMap[command], userID, []string{boardName}, articleCode)
 	if err != nil {
 		return command + "失敗，請嘗試封鎖再解封鎖，並重新執行註冊步驟。\n若問題未解決，請至粉絲團或 LINE 首頁留言。"
 	}
 	return command + "成功"
+}
+
+func countUserArticles(account string) (cnt int) {
+	u := new(user.User).Find(account)
+	for _, sub := range u.Subscribes {
+		cnt += len(sub.Articles)
+	}
+	return cnt
 }
 
 func checkArticleExist(boardName, articleCode string) bool {
