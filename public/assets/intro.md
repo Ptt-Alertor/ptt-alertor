@@ -89,6 +89,8 @@ https://media.giphy.com/media/3ohzdF6vidM6I49lQs/giphy.gif
 
   新增作者 gossiping ffaarr, mayaman
 
+  新增作者 stock aaalalalu,comemail,chengwaye,IanLi,phcebus,stasis,test520
+
 ## 進階比對
 
 * 同時出現: '&'

@@ -57,7 +57,7 @@
 
 ### Real Life
 
-* Rose Li, Aries Huang, Scott Kao, Amy Li
+Rose Li, Aries Huang, Scott Kao, Amy Li
 
 ### Ptt
 
