@@ -64,8 +64,8 @@ func Top(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	t.Execute(w, data)
 }
 
-func Doc(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	t, err := template.ParseFiles("public/doc.html")
+func Docs(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	t, err := template.ParseFiles("public/docs.html")
 	if err != nil {
 		panic(err)
 	}
