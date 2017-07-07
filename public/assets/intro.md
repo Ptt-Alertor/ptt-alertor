@@ -87,9 +87,11 @@ https://media.giphy.com/media/3ohzdF6vidM6I49lQs/giphy.gif
 
 * 追蹤作者：
 
-  新增作者 gossiping ffaarr, mayaman
+  新增作者 gossiping ffaarr, mayaman, gaiaesque
 
   新增作者 stock aaalalalu,comemail,chengwaye,IanLi,phcebus,stasis,test520
+
+  新增作者 boy-girl mrp, iphone8ss
 
 ## 進階比對
 
