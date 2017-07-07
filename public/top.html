@@ -1,58 +1,11 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Ptt Alertor - Ptt 即時文章通知</title>
-    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <meta name="description" content="訂閱看板作者關鍵字，即時通知最新文章">
-    <meta name="keywords" content="Ptt, Ptt Alarm, Ptt Alert, FB Bot, Messenger Bot, Ptt Notification, Ptt 通知器, Ptt 追蹤">
-    <meta name="author" content="Dino Lai, Liam Lai">
-    <meta name="google-site-verification" content="oj4eRvcsK1aK3rqqBxn6piDte5-2sG9neQqcAnd8gTo" />
-    <!-- Facebook Open Graph -->
-    <meta property="og:url" content="https://pttalertor.dinolai.com/top" />
-    <meta property="og:type" content="product" />
-    <meta property="og:title" content="Ptt Alertor - Ptt 即時文章通知" />
-    <meta property="og:description" content="訂閱看板作者關鍵字，即時通知最新文章" />
-    <meta property="og:image" content="https://s3-us-west-2.amazonaws.com/ptt-alertor-bucket/assets/alarmP.png" />
-
-    <link rel="icon" type="image/png" href="https://s3-us-west-2.amazonaws.com/ptt-alertor-bucket/assets/alarmP32x32.png">
-    <link rel="alternate" href="https://pttalertor.dinolai.com" hreflang="zh-hant" />
-
-    <!-- Bootstrap -->
-    <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
-        crossorigin="anonymous">
-
-    <!-- Optional theme -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp"
-        crossorigin="anonymous">
-
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
-    <link rel="stylesheet" href="assets/css/index.css">
-    <script src="assets/js/google-analytics.js"></script>
-
-</head>
+{{template "head" .}}
 
 <body>
     <div class="container">
-        <div class="header">
-            <nav>
-                <ul class="nav nav-pills pull-right">
-                    <li role="presentation"><a href="/line">LINE</a></li>
-                    <li role="presentation"><a href="/messenger">Messenger</a></li>
-                </ul>
-            </nav>
-            <h3 class="text-muted">Ptt Alertor</h3>
-        </div>
-        <hr>
+        {{template "header" .}}
         <ul class="nav nav-tabs" role="tablist">
             <li role="presentation" class="active">
                 <a href="#keywords" aria-controls="keywords" role="tab" data-toggle="tab">關鍵字</a>
@@ -103,18 +56,9 @@
                 </table>
             </div>
         </div>
-        <footer class="footer center-text">
-            <p>&copy; 2017 Ptt Alertor. Icons made by <a href="http://www.flaticon.com/authors/madebyoliver" title="Madebyoliver">Madebyoliver</a>                from <a href="http://www.flaticon.com" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/"
-                    title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a>
-            </p>
-        </footer>
+        {{template "footer"}}
     </div>
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <!-- Latest compiled and minified JavaScript -->
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
-        crossorigin="anonymous"></script>
+    {{template "script"}}
 </body>
 
 </html>

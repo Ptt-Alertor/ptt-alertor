@@ -17,3 +17,6 @@
 dl {
     -webkit-margin-after: 0px;
 }
+a.fa-icon {
+    color:inherit;
+}
