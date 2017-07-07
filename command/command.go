@@ -38,6 +38,9 @@ var Commands = map[string]map[string]string{
 		"刪除推文 網址": "刪除推文追蹤",
 		"範例":      "新增推文 https://www.ptt.cc/bbs/EZsoft/M.1497363598.A.74E.html",
 	},
+	"進階應用": {
+		"參考連結": "https://pttalertor.dinolai.com/docs",
+	},
 }
 
 var commandActionMap = map[string]updateAction{

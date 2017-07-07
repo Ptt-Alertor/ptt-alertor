@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"regexp"
+	"strings"
 
 	"encoding/json"
 
@@ -88,6 +89,9 @@ func (m *Messenger) handlePostback(id string, payload string) {
 		var str string
 		commands := make(map[string]string)
 		for cat, cmds := range command.Commands {
+			if strings.EqualFold(cat, "進階應用") {
+				continue
+			}
 			for cmd, doc := range cmds {
 				str += cmd
 				if doc != "" {
