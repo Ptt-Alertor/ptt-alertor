@@ -26,10 +26,6 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
         crossorigin="anonymous">
 
-    <!-- Optional theme -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp"
-        crossorigin="anonymous">
-
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -55,7 +51,25 @@
         <hr>
         <h1 class="center-text">訂閱看板關鍵字，即時通知最新文章</h1>
         <div id="main" class="row bg-success">
-            <div id="command" class="col-sm-4">
+            <div id="demo" class="col-sm-4 col-sm-push-4">
+                <img id="demo-img" src="https://s3-us-west-2.amazonaws.com/ptt-alertor-bucket/assets/messenger_intro.gif" alt="introduction"
+                    class="center-block img-rounded img-responsive">
+            </div>
+
+            <div id="add" class="col-sm-4 col-sm-push-4">
+                <div class="center-text">
+                    <a href="https://m.me/pttalertor">https://m.me/pttalertor</a>
+                </div>
+                <div class="center-text">
+                    <div class="fb-messengermessageus" messenger_app_id="138626206701047" page_id="151419948734270" color="blue" size="xlarge"></div>
+                </div>
+
+                <div>
+                    <img class="img-responsive center-block" src="https://s3-us-west-2.amazonaws.com/ptt-alertor-bucket/assets/messenger_code.png">
+                </div>
+            </div>
+
+            <div id="command" class="col-sm-4 col-sm-pull-8">
                 <div class="panel panel-primary center-block">
                     <div class="panel-heading">指令</div>
                     <div class="list-group">
@@ -98,24 +112,6 @@
                             </p>
                         </li>
                     </div>
-                </div>
-            </div>
-
-            <div id="demo" class="col-sm-4">
-                <img id="demo-img" src="https://s3-us-west-2.amazonaws.com/ptt-alertor-bucket/assets/messenger_intro.gif" alt="introduction"
-                    class="center-block img-rounded img-responsive">
-            </div>
-
-            <div id="add" class="col-sm-4">
-                <div class="center-text">
-                    <a href="https://m.me/pttalertor">https://m.me/pttalertor</a>
-                </div>
-                <div class="center-text">
-                    <div class="fb-messengermessageus" messenger_app_id="138626206701047" page_id="151419948734270" color="blue" size="xlarge"></div>
-                </div>
-
-                <div>
-                    <img class="img-responsive center-block" src="https://s3-us-west-2.amazonaws.com/ptt-alertor-bucket/assets/messenger_code.png">
                 </div>
             </div>
         </div>
