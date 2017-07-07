@@ -61,6 +61,7 @@ func main() {
 	router.GET("/line", ctrlr.LineIndex)
 	router.GET("/redirect/:sha1", ctrlr.Redirect)
 	router.GET("/top", ctrlr.Top)
+	router.GET("/doc", ctrlr.Doc)
 
 	router.POST("/broadcast", basicAuth(ctrlr.Broadcast))
 
