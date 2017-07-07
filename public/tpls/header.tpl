@@ -3,7 +3,7 @@
     <nav>
         <ul class="nav nav-pills pull-right">
             <li role="presentation"><a href="/top">TOP 100</a></li>
-            {{if eq .URI "line"}}
+            {{if (or (eq .URI "") (eq .URI "line")) }}
             <li role="presentation"><a href="/messenger">Messenger</a></li>
             {{else}}
             <li role="presentation"><a href="/line">LINE</a></li>
