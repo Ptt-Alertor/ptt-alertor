@@ -11,9 +11,9 @@ import (
 	"fmt"
 
 	"github.com/garyburd/redigo/redis"
+	log "github.com/meifamily/logrus"
 	"github.com/meifamily/ptt-alertor/connections"
 	"github.com/meifamily/ptt-alertor/myutil"
-	log "github.com/meifamily/logrus"
 )
 
 const prefix = "article:"
@@ -30,6 +30,7 @@ type Article struct {
 	PushList         PushList  `json:"pushList,omitempty"`
 	LastPushDateTime time.Time `json:"lastPushDateTime,omitempty"`
 	Board            string    `json:"board,omitempty"`
+	PushCount        int       `json:"pushCount,omitempty"`
 }
 
 type Push struct {

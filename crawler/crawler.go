@@ -13,15 +13,16 @@ import (
 
 	"strings"
 
+	"strconv"
+
 	"golang.org/x/net/html"
 )
 
 const pttHostURL = "https://www.ptt.cc"
 
 // BuildArticles makes board's index articles to a article slice
-func BuildArticles(board string) (article.Articles, error) {
-
-	reqURL := makeBoardURL(board)
+func BuildArticles(board string, page int) (article.Articles, error) {
+	reqURL := makeBoardURL(board, page)
 	rsp, err := fetchHTML(reqURL)
 	if err != nil {
 		return article.Articles{}, err
@@ -32,6 +33,16 @@ func BuildArticles(board string) (article.Articles, error) {
 	initialTargetNodes()
 	articles := make(article.Articles, len(articleBlocks))
 	for index, articleBlock := range articleBlocks {
+		for _, pushCountDiv := range traverseHTMLNode(articleBlock, findPushCountDiv) {
+			initialTargetNodes()
+			if child := pushCountDiv.FirstChild; child != nil {
+				if child := child.FirstChild; child != nil {
+					if err == nil {
+						articles[index].PushCount = convertPushCount(child.Data)
+					}
+				}
+			}
+		}
 		for _, titleDiv := range traverseHTMLNode(articleBlock, findTitleDiv) {
 			initialTargetNodes()
 
@@ -54,7 +65,7 @@ func BuildArticles(board string) (article.Articles, error) {
 			initialTargetNodes()
 
 			for _, date := range traverseHTMLNode(metaDiv, findDateDiv) {
-				articles[index].Date = date.FirstChild.Data
+				articles[index].Date = strings.TrimSpace(date.FirstChild.Data)
 			}
 			for _, author := range traverseHTMLNode(metaDiv, findAuthorDiv) {
 				articles[index].Author = author.FirstChild.Data
@@ -62,6 +73,39 @@ func BuildArticles(board string) (article.Articles, error) {
 		}
 	}
 	return articles, nil
+}
+
+func convertPushCount(str string) int {
+	switch str {
+	case "爆":
+		return 100
+	case "X1":
+		return -10
+	case "X2":
+		return -20
+	case "X3":
+		return -30
+	case "X4":
+		return -40
+	case "X5":
+		return -50
+	case "X6":
+		return -60
+	case "X7":
+		return -70
+	case "X8":
+		return -80
+	case "X9":
+		return -90
+	case "XX":
+		return -100
+	default:
+		cnt, err := strconv.Atoi(str)
+		if err != nil {
+			cnt = 0
+		}
+		return cnt
+	}
 }
 
 // BuildArticle build article object from html
@@ -163,7 +207,7 @@ func getYear(pushTime time.Time) int {
 
 // CheckBoardExist use for checking board exist or not
 func CheckBoardExist(board string) bool {
-	reqURL := makeBoardURL(board)
+	reqURL := makeBoardURL(board, -1)
 	_, err := fetchHTML(reqURL)
 	if _, ok := err.(URLNotFoundError); ok {
 		return false
@@ -181,8 +225,14 @@ func CheckArticleExist(board, articleCode string) bool {
 	return true
 }
 
-func makeBoardURL(board string) string {
-	return pttHostURL + "/bbs/" + board + "/index.html"
+func makeBoardURL(board string, page int) string {
+	var pageStr string
+	if page < 0 {
+		pageStr = ""
+	} else {
+		pageStr = strconv.Itoa(page)
+	}
+	return pttHostURL + "/bbs/" + board + "/index" + pageStr + ".html"
 }
 
 func makeArticleURL(board, articleCode string) string {

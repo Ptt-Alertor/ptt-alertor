@@ -33,7 +33,7 @@ func (bd Board) FetchArticles() (articles article.Articles) {
 	articles, err := rss.BuildArticles(bd.Name)
 	if err != nil {
 		log.WithField("board", bd.Name).WithError(err).Error("RSS Parse Failed, Switch to HTML Crawler")
-		articles, err = crawler.BuildArticles(bd.Name)
+		articles, err = crawler.BuildArticles(bd.Name, -1)
 		if err != nil {
 			log.WithField("board", bd.Name).WithError(err).Error("HTML Parse Failed")
 		}

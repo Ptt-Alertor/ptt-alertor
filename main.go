@@ -94,8 +94,8 @@ func main() {
 }
 
 func startJobs() {
-	go new(jobs.Checker).Run()
-	go jobs.NewPushChecker().Run()
+	// go new(jobs.Checker).Run()
+	// go jobs.NewPushChecker().Run()
 	c := cron.New()
 	c.AddJob("@every 1h", jobs.NewGenerator())
 	c.AddJob("@every 1h", jobs.NewTop())
@@ -104,7 +104,8 @@ func startJobs() {
 
 func init() {
 	auth = myutil.Config("auth")
-	jobs.NewTop().Run()
+	// jobs.NewTop().Run()
+	jobs.NewHotChecker().Run()
 	// for initial app
 	// new(jobs.CleanUpBoards).Run()
 	// jobs.NewGenerator().Run()
