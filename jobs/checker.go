@@ -13,7 +13,7 @@ import (
 	"github.com/meifamily/ptt-alertor/myutil"
 )
 
-const checkBoardDuration = 150 * time.Millisecond
+const checkBoardDuration = 200 * time.Millisecond
 const checkHighBoardDuration = 1 * time.Second
 const workers = 250
 
