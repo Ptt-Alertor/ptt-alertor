@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+{{template "head" .}}
+
+<body>
+    <div class="container">
+        <ul class="nav nav-tabs" role="tablist">
+            <li role="presentation" class="active">
+                <a href="#advanced-comparison" aria-controls="advanced-comparison" role="tab" data-toggle="tab">進階比對</a>
+            </li>
+            <li role="presentation">
+                <a href="#batch-deletion" aria-controls="batch-deletion" role="tab" data-toggle="tab">批量刪除</a>
+            </li>
+        </ul>
+        <div class="tab-content">
+            <div role="tabpanel" class="tab-pane active" id="advanced-comparison">
+                <p></p>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">&: 同時出現</h3>
+                    </div>
+                    <div class="panel-body">
+                        <p class="lead">新增 drama-ticket 售&杰倫</p>
+                        <dl>
+                            <dt>標題同時出現售和杰倫的才會通知</dt>
+                            <dd>✓ [售票] 杰倫地表最強演唱會</dd>
+                            <dd>✗ [售票] 阿妹 烏托邦</dd>
+                        </dl>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">!: 除了B以外的所有文章</h3>
+                    </div>
+                    <div class="panel-body">
+                        <p class="lead"> 新增 gossiping !問卦 </p>
+                        <dl>
+                            <dt>除了問卦以外的文章全部通知</dt>
+                        </dl>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">&!: 出現A裡的文章排除B</h3>
+                    </div>
+                    <div class="panel-body">
+                        <p class="lead"> 新增 gossiping 柯文哲&!問卦 </p>
+                        <dl>
+                            <dt>標題出現柯文哲且不是問卦的才會通知</dt>
+                            <dd>✗ [問卦] 柯文哲...</dd>
+                            <dd>✓ [新聞] 柯文哲...</dd>
+                            <dd>✓ [爆卦] 柯文哲...</dd>
+                        </dl>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">regexp: 正規表示式</h3>
+                    </div>
+                    <div class="panel-body">
+                        <p class="lead"> 新增 hardwaresale regexp:\\[賣/(台中|台北)/.*\\]?(RAM|ram)+.* </p>
+                        <dl>
+                            <dt>看得懂的.. 就看得懂 Orz</dt>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+            <div role="tabpanel" class="tab-pane" id="batch-deletion">
+                <p></p>
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <h4>所有看板：**</h4>
+                        <h4>所有關鍵字或作者：*</h4>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">刪除特定板所有關鍵字：</h3>
+                    </div>
+                    <div class="panel-body">
+                        <dl>
+                            <dd>刪除 gossiping *</dd>
+                            <dd>刪除 gossiping,ezsoft *</dd>
+                        </dl>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">刪除特定關鍵字在所有設定的看板：</h3>
+                    </div>
+                    <div class="panel-body">
+                        <dl>
+                            <dd>刪除 ** 樂透</dd>
+                            <dd>刪除 ** 樂透,閒聊</dd>
+                        </dl>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">刪除全部關鍵字設定：</h3>
+                    </div>
+                    <div class="panel-body">
+                        <dl>
+                            <dd>刪除 ** *</dd>
+                        </dl>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">刪除作者亦同：</h3>
+                    </div>
+                    <div class="panel-body">
+                        <dl>
+                            <dd>刪除作者 gossiping *</dd>
+                            <dd>刪除作者 gossiping,ezsoft *</dd>
+                            <dd>刪除作者 ** chodino</dd>
+                            <dd>刪除作者 ** chodino,obov</dd>
+                            <dd>刪除作者 ** *</dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{template "script"}}
+</body>
+
+</html>

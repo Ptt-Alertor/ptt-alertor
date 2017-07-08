@@ -13,7 +13,7 @@ import (
 	user "github.com/meifamily/ptt-alertor/models/user/redis"
 )
 
-const checkPushDuration = 3
+const checkPushDuration = 3 * time.Second
 
 // PushChecker embedding Checker for checking pushlist
 type PushChecker struct {
@@ -40,7 +40,7 @@ func (pc PushChecker) Run() {
 		for {
 			codes := new(article.Articles).List()
 			for _, code := range codes {
-				time.Sleep(checkPushDuration * time.Second)
+				time.Sleep(checkPushDuration)
 				go checkPushList(code, ach)
 			}
 		}
