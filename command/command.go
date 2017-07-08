@@ -41,12 +41,14 @@ var Commands = map[string]map[string]string{
 }
 
 var commandActionMap = map[string]updateAction{
-	"新增":   addKeywords,
-	"刪除":   removeKeywords,
-	"新增作者": addAuthors,
-	"刪除作者": removeAuthors,
-	"新增推文": addArticles,
-	"刪除推文": removeArticles,
+	"新增":    addKeywords,
+	"刪除":    removeKeywords,
+	"新增作者":  addAuthors,
+	"刪除作者":  removeAuthors,
+	"新增推文":  addArticles,
+	"刪除推文":  removeArticles,
+	"新增推文數": updatePushMax,
+	"新增噓文數": updatePushMin,
 }
 
 func HandleCommand(text string, userID string) string {
@@ -70,6 +72,8 @@ func HandleCommand(text string, userID string) string {
 		return handleAuthor(command, userID, text)
 	case "新增推文", "刪除推文":
 		return handlePush(command, userID, text)
+	case "新增推文數", "新增噓文數":
+		return handlePushSum(command, userID, text)
 	case "清理推文":
 		return cleanPushList(userID)
 	case "推文清單":
@@ -230,6 +234,31 @@ func handlePush(command, userID, text string) string {
 		return "推文追蹤最多 25 篇，輸入「推文清單」，整理追蹤列表。"
 	}
 	err := update(commandActionMap[command], userID, []string{boardName}, articleCode)
+	if err != nil {
+		return command + "失敗，請嘗試封鎖再解封鎖，並重新執行註冊步驟。\n若問題未解決，請至粉絲團或 LINE 首頁留言。"
+	}
+	return command + "成功"
+}
+
+func handlePushSum(command, account, text string) string {
+	re := regexp.MustCompile("^(新增推文數|新增噓文數)\\s+([^,，][\\w-_,，\\.]*[^,，:\\s]):?\\s+(100|[1-9][0-9]|[0-9])$")
+	matched := re.MatchString(text)
+	if !matched {
+		return inputErrorTips() + "\n4. 推噓文數需為介於 0-100 的數字 \n\n正確範例：\n" + command + " gossiping,beauty 100"
+	}
+	args := re.FindStringSubmatch(text)
+	boardNames := splitParamString(args[2])
+	inputs := args[3]
+	log.WithFields(log.Fields{
+		"id":      account,
+		"command": command,
+		"boards":  boardNames,
+		"words":   inputs,
+	}).Info("PushSum Command")
+	err := update(commandActionMap[command], account, boardNames, inputs)
+	if msg, ok := checkBoardError(err); ok {
+		return msg
+	}
 	if err != nil {
 		return command + "失敗，請嘗試封鎖再解封鎖，並重新執行註冊步驟。\n若問題未解決，請至粉絲團或 LINE 首頁留言。"
 	}
