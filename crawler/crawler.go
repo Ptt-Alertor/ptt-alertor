@@ -141,10 +141,7 @@ func parseDateTime(ipdatetime string) (time.Time, error) {
 	re, _ := regexp.Compile("(\\d+\\.\\d+\\.\\d+\\.\\d+)?\\s*(.*)")
 	subMatches := re.FindStringSubmatch(ipdatetime)
 	dateTime := strings.TrimSpace(subMatches[len(subMatches)-1])
-	loc, err := time.LoadLocation("UTC")
-	if err != nil {
-		return time.Time{}, err
-	}
+	loc := time.FixedZone("CST", 8*60*60)
 	t, err := time.ParseInLocation("01/02 15:04", dateTime, loc)
 	if err != nil {
 		return time.Time{}, err
