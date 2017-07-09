@@ -20,6 +20,31 @@ import (
 
 const pttHostURL = "https://www.ptt.cc"
 
+func CurrentPage(board string) (int, error) {
+	url := makeBoardURL(board, -1)
+	rsp, err := fetchHTML(url)
+	if err != nil {
+		return 0, err
+	}
+	htmlNodes := parseHTML(rsp)
+	paging := traverseHTMLNode(htmlNodes, findPagingBlock)
+	for _, page := range paging {
+		anchors := traverseHTMLNode(page, findAnchor)
+		for _, a := range anchors {
+			if strings.Contains(a.FirstChild.Data, "上頁") {
+				link := getAnchorLink(a)
+				re := regexp.MustCompile("\\d+")
+				page, err := strconv.Atoi(re.FindString(link))
+				if err != nil {
+					return 0, err
+				}
+				return page + 1, nil
+			}
+		}
+	}
+	return 0, errors.New("Parse Currenect Page Error")
+}
+
 // BuildArticles makes board's index articles to a article slice
 func BuildArticles(board string, page int) (article.Articles, error) {
 	reqURL := makeBoardURL(board, page)
