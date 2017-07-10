@@ -52,7 +52,7 @@ func (pc PushChecker) Run() {
 			pc.Article = a
 			pc.checkSubscribers(pch)
 		case pc := <-pch:
-			sendMessage(pc)
+			ckCh <- pc
 		}
 	}
 
