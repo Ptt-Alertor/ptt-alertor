@@ -258,6 +258,11 @@ func handlePushSum(command, account, text string) string {
 		"boards":  boardNames,
 		"words":   inputs,
 	}).Info("PushSum Command")
+	for _, boardName := range boardNames {
+		if strings.EqualFold(boardName, "allpost") {
+			return "推文數通知不支持 ALLPOST 板。"
+		}
+	}
 	err := update(commandActionMap[command], account, boardNames, inputs)
 	if msg, ok := checkBoardError(err); ok {
 		return msg

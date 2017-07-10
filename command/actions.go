@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/meifamily/ptt-alertor/models/ptt/article"
+	"github.com/meifamily/ptt-alertor/models/pushsum"
 	"github.com/meifamily/ptt-alertor/models/subscription"
 	user "github.com/meifamily/ptt-alertor/models/user/redis"
 	"github.com/meifamily/ptt-alertor/myutil"
@@ -59,7 +60,11 @@ func updatePushMax(u *user.User, sub subscription.Subscription, inputs ...string
 		}
 	}
 	sub.PushSum.Max = max
-	return u.Subscribes.Update(sub)
+	err = u.Subscribes.Update(sub)
+	if err == nil {
+		dealPushSum(u.Profile.Account, sub)
+	}
+	return err
 }
 
 func updatePushMin(u *user.User, sub subscription.Subscription, inputs ...string) error {
@@ -73,7 +78,23 @@ func updatePushMin(u *user.User, sub subscription.Subscription, inputs ...string
 		}
 	}
 	sub.PushSum.Min = min
-	return u.Subscribes.Update(sub)
+	err = u.Subscribes.Update(sub)
+	if err == nil {
+		dealPushSum(u.Profile.Account, sub)
+	}
+	return err
+}
+
+func dealPushSum(account string, sub subscription.Subscription) (err error) {
+	if !pushsum.Exist(sub.Board) {
+		err = pushsum.Add(sub.Board)
+	}
+	if sub.Max == 0 && sub.Min == 0 {
+		err = pushsum.RemoveSubscriber(sub.Board, account)
+	} else {
+		err = pushsum.AddSubscriber(sub.Board, account)
+	}
+	return err
 }
 
 func addArticles(u *user.User, sub subscription.Subscription, inputs ...string) error {
