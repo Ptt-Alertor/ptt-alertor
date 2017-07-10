@@ -15,6 +15,7 @@ import (
 
 	"strconv"
 
+	"github.com/meifamily/ptt-alertor/models/pushsum"
 	"golang.org/x/net/html"
 )
 
@@ -58,12 +59,15 @@ func BuildArticles(board string, page int) (article.Articles, error) {
 	initialTargetNodes()
 	articles := make(article.Articles, len(articleBlocks))
 	for index, articleBlock := range articleBlocks {
+		if isLastArticleBlock(articleBlock) {
+			break
+		}
 		for _, pushCountDiv := range traverseHTMLNode(articleBlock, findPushCountDiv) {
 			initialTargetNodes()
 			if child := pushCountDiv.FirstChild; child != nil {
 				if child := child.FirstChild; child != nil {
 					if err == nil {
-						articles[index].PushCount = convertPushCount(child.Data)
+						articles[index].PushSum = convertPushCount(child.Data)
 					}
 				}
 			}
@@ -100,37 +104,34 @@ func BuildArticles(board string, page int) (article.Articles, error) {
 	return articles, nil
 }
 
-func convertPushCount(str string) int {
-	switch str {
-	case "爆":
-		return 100
-	case "X1":
-		return -10
-	case "X2":
-		return -20
-	case "X3":
-		return -30
-	case "X4":
-		return -40
-	case "X5":
-		return -50
-	case "X6":
-		return -60
-	case "X7":
-		return -70
-	case "X8":
-		return -80
-	case "X9":
-		return -90
-	case "XX":
-		return -100
-	default:
-		cnt, err := strconv.Atoi(str)
-		if err != nil {
-			cnt = 0
+func isLastArticleBlock(articleBlock *html.Node) bool {
+	for next := articleBlock.NextSibling; ; next = next.NextSibling {
+		if next == nil {
+			break
 		}
-		return cnt
+		if next.Type == html.ElementNode {
+			for _, attr := range next.Attr {
+				if attr.Val == "r-list-sep" {
+					return true
+				}
+				return false
+			}
+		}
 	}
+	return false
+}
+
+func convertPushCount(str string) int {
+	for num, text := range pushsum.NumTextMap {
+		if strings.EqualFold(str, text) {
+			return num
+		}
+	}
+	cnt, err := strconv.Atoi(str)
+	if err != nil {
+		cnt = 0
+	}
+	return cnt
 }
 
 // BuildArticle build article object from html
