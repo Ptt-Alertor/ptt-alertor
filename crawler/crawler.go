@@ -21,17 +21,17 @@ import (
 
 const pttHostURL = "https://www.ptt.cc"
 
+// CurrentPage find Board Last Page Number
 func CurrentPage(board string) (int, error) {
 	url := makeBoardURL(board, -1)
-	log.Info(url)
 	rsp, err := fetchHTML(url)
 	if err != nil {
 		return 0, err
 	}
 	htmlNodes := parseHTML(rsp)
-	paging := traverseHTMLNode(htmlNodes, findPagingBlock)
+	paging := findNodes(htmlNodes, findPagingBlock)
 	for _, page := range paging {
-		anchors := traverseHTMLNode(page, findAnchor)
+		anchors := findNodes(page, findAnchor)
 		for _, a := range anchors {
 			if strings.Contains(a.FirstChild.Data, "上頁") {
 				link := getAnchorLink(a)
@@ -56,15 +56,13 @@ func BuildArticles(board string, page int) (article.Articles, error) {
 	}
 	htmlNodes := parseHTML(rsp)
 
-	articleBlocks := traverseHTMLNode(htmlNodes, findArticleBlocks)
-	initialTargetNodes()
+	articleBlocks := findNodes(htmlNodes, findArticleBlocks)
 	articles := make(article.Articles, len(articleBlocks))
 	for index, articleBlock := range articleBlocks {
 		if isLastArticleBlock(articleBlock) {
 			break
 		}
-		for _, pushCountDiv := range traverseHTMLNode(articleBlock, findPushCountDiv) {
-			initialTargetNodes()
+		for _, pushCountDiv := range findNodes(articleBlock, findPushCountDiv) {
 			if child := pushCountDiv.FirstChild; child != nil {
 				if child := child.FirstChild; child != nil {
 					if err == nil {
@@ -73,10 +71,9 @@ func BuildArticles(board string, page int) (article.Articles, error) {
 				}
 			}
 		}
-		for _, titleDiv := range traverseHTMLNode(articleBlock, findTitleDiv) {
-			initialTargetNodes()
+		for _, titleDiv := range findNodes(articleBlock, findTitleDiv) {
 
-			anchors := traverseHTMLNode(titleDiv, findAnchor)
+			anchors := findNodes(titleDiv, findAnchor)
 
 			if len(anchors) == 0 {
 				articles[index].Title = titleDiv.FirstChild.Data
@@ -84,20 +81,18 @@ func BuildArticles(board string, page int) (article.Articles, error) {
 				continue
 			}
 
-			for _, anchor := range traverseHTMLNode(titleDiv, findAnchor) {
+			for _, anchor := range findNodes(titleDiv, findAnchor) {
 				articles[index].Title = anchor.FirstChild.Data
 				link := pttHostURL + getAnchorLink(anchor)
 				articles[index].Link = link
 				articles[index].ID = articles[index].ParseID(link)
 			}
 		}
-		for _, metaDiv := range traverseHTMLNode(articleBlock, findMetaDiv) {
-			initialTargetNodes()
-
-			for _, date := range traverseHTMLNode(metaDiv, findDateDiv) {
+		for _, metaDiv := range findNodes(articleBlock, findMetaDiv) {
+			for _, date := range findNodes(metaDiv, findDateDiv) {
 				articles[index].Date = strings.TrimSpace(date.FirstChild.Data)
 			}
-			for _, author := range traverseHTMLNode(metaDiv, findAuthorDiv) {
+			for _, author := range findNodes(metaDiv, findAuthorDiv) {
 				articles[index].Author = author.FirstChild.Data
 			}
 		}
@@ -149,27 +144,23 @@ func BuildArticle(board, articleCode string) (article.Article, error) {
 		Code:  articleCode,
 		Board: board,
 	}
-	nodes := traverseHTMLNode(htmlNodes, findOgTitleMeta)
+	nodes := findNodes(htmlNodes, findOgTitleMeta)
 	if len(nodes) > 0 {
 		atcl.Title = getMetaContent(nodes[0])
 	} else {
 		atcl.Title = "[內文標題已被刪除]"
 	}
 	atcl.ID = atcl.ParseID(reqURL)
-	pushBlocks := traverseHTMLNode(htmlNodes, findPushBlocks)
-	initialTargetNodes()
+	pushBlocks := findNodes(htmlNodes, findPushBlocks)
 	pushes := make([]article.Push, len(pushBlocks))
 	for index, pushBlock := range pushBlocks {
-		for _, pushTag := range traverseHTMLNode(pushBlock, findPushTag) {
-			initialTargetNodes()
+		for _, pushTag := range findNodes(pushBlock, findPushTag) {
 			pushes[index].Tag = pushTag.FirstChild.Data
 		}
-		for _, pushUserID := range traverseHTMLNode(pushBlock, findPushUserID) {
-			initialTargetNodes()
+		for _, pushUserID := range findNodes(pushBlock, findPushUserID) {
 			pushes[index].UserID = pushUserID.FirstChild.Data
 		}
-		for _, pushContent := range traverseHTMLNode(pushBlock, findPushContent) {
-			initialTargetNodes()
+		for _, pushContent := range findNodes(pushBlock, findPushContent) {
 			content := pushContent.FirstChild.Data
 			for n := pushContent.FirstChild.NextSibling; n != nil; n = n.NextSibling {
 				if findEmailProtected(n) != nil {
@@ -184,8 +175,7 @@ func BuildArticle(board, articleCode string) (article.Article, error) {
 			}
 			pushes[index].Content = content
 		}
-		for _, pushIPDateTime := range traverseHTMLNode(pushBlock, findPushIPDateTime) {
-			initialTargetNodes()
+		for _, pushIPDateTime := range findNodes(pushBlock, findPushIPDateTime) {
 			ipdatetime := strings.TrimSpace(pushIPDateTime.FirstChild.Data)
 			if ipdatetime == "" {
 				break
@@ -276,7 +266,7 @@ func (u URLNotFoundError) Error() string {
 
 func fetchHTML(reqURL string) (response *http.Response, err error) {
 
-	client := http.Client{
+	client := &http.Client{
 		CheckRedirect: func(req *http.Request, via []*http.Request) error {
 			return errors.New("Redirect")
 		},
