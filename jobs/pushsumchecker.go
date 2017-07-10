@@ -85,7 +85,10 @@ func (psc pushSumChecker) Run() {
 func (psc pushSumChecker) crawlArticles(ba BoardArticles, baCh chan BoardArticles) {
 	currentPage, err := crawler.CurrentPage(ba.board)
 	if err != nil {
-		panic(err)
+		log.WithFields(log.Fields{
+			"board": ba.board,
+		}).WithError(err).Error("Get CurrentPage Failed")
+		baCh <- ba
 	}
 
 Page:
@@ -102,7 +105,11 @@ Page:
 			nowDate := now.Truncate(24 * time.Hour)
 			t = t.AddDate(now.Year(), 0, 0)
 			if err != nil {
-				panic(err)
+				log.WithFields(log.Fields{
+					"board": ba.board,
+					"page":  i,
+				}).WithError(err).Error("Parse DateTime Error")
+				continue
 			}
 			if nowDate.After(t.Add(stopHour)) {
 				break Page
