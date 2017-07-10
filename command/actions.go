@@ -49,17 +49,17 @@ func removeAuthors(u *user.User, sub subscription.Subscription, inputs ...string
 	return u.Subscribes.Remove(sub)
 }
 
-func updatePushMax(u *user.User, sub subscription.Subscription, inputs ...string) error {
-	max, err := strconv.Atoi(inputs[0])
+func updatePushUp(u *user.User, sub subscription.Subscription, inputs ...string) error {
+	up, err := strconv.Atoi(inputs[0])
 	if err != nil {
 		return err
 	}
 	for _, s := range u.Subscribes {
 		if strings.EqualFold(s.Board, sub.Board) {
-			sub.PushSum.Min = s.PushSum.Min
+			sub.PushSum.Down = s.PushSum.Down
 		}
 	}
-	sub.PushSum.Max = max
+	sub.PushSum.Up = up
 	err = u.Subscribes.Update(sub)
 	if err == nil {
 		dealPushSum(u.Profile.Account, sub)
@@ -67,17 +67,17 @@ func updatePushMax(u *user.User, sub subscription.Subscription, inputs ...string
 	return err
 }
 
-func updatePushMin(u *user.User, sub subscription.Subscription, inputs ...string) error {
-	min, err := strconv.Atoi(inputs[0])
+func updatePushDown(u *user.User, sub subscription.Subscription, inputs ...string) error {
+	down, err := strconv.Atoi(inputs[0])
 	if err != nil {
 		return err
 	}
 	for _, s := range u.Subscribes {
 		if strings.EqualFold(s.Board, sub.Board) {
-			sub.PushSum.Max = s.PushSum.Max
+			sub.PushSum.Up = s.PushSum.Up
 		}
 	}
-	sub.PushSum.Min = min
+	sub.PushSum.Down = down
 	err = u.Subscribes.Update(sub)
 	if err == nil {
 		dealPushSum(u.Profile.Account, sub)
@@ -89,7 +89,7 @@ func dealPushSum(account string, sub subscription.Subscription) (err error) {
 	if !pushsum.Exist(sub.Board) {
 		err = pushsum.Add(sub.Board)
 	}
-	if sub.Max == 0 && sub.Min == 0 {
+	if sub.Up == 0 && sub.Down == 0 {
 		err = pushsum.RemoveSubscriber(sub.Board, account)
 	} else {
 		err = pushsum.AddSubscriber(sub.Board, account)

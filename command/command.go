@@ -50,8 +50,8 @@ var commandActionMap = map[string]updateAction{
 	"刪除作者":  removeAuthors,
 	"新增推文":  addArticles,
 	"刪除推文":  removeArticles,
-	"新增推文數": updatePushMax,
-	"新增噓文數": updatePushMin,
+	"新增推文數": updatePushUp,
+	"新增噓文數": updatePushDown,
 }
 
 func HandleCommand(text string, userID string) string {

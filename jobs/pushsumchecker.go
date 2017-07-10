@@ -34,8 +34,8 @@ func NewPushSumChecker() *pushSumChecker {
 
 func (psc pushSumChecker) String() string {
 	textMap := map[string]string{
-		"pushmax": "推文數",
-		"pushmin": "噓文數",
+		"pushup":   "推文數",
+		"pushdown": "噓文數",
 	}
 	subType := textMap[psc.subType]
 	return fmt.Sprintf("%s@%s\r\n看板：%s；%s：%s%s", psc.word, psc.board, psc.board, subType, psc.word, psc.articles.StringWithPushSum())
@@ -84,7 +84,6 @@ func (psc pushSumChecker) Run() {
 
 func (psc pushSumChecker) crawlArticles(ba BoardArticles, baCh chan BoardArticles) {
 	currentPage, err := crawler.CurrentPage(ba.board)
-	log.Info(currentPage)
 	if err != nil {
 		panic(err)
 	}
@@ -129,40 +128,40 @@ func (psc pushSumChecker) checkSubscribers(ba BoardArticles) {
 		psc.line = u.Profile.Line
 		psc.lineNotify = u.Profile.LineAccessToken
 		psc.messenger = u.Profile.Messenger
-		go psc.checkPushSum(u, ba, checkMax)
-		go psc.checkPushSum(u, ba, checkMin)
+		go psc.checkPushSum(u, ba, checkUp)
+		go psc.checkPushSum(u, ba, checkDown)
 	}
 }
 
 type checkPushSum func(*pushSumChecker, subscription.Subscription, article.Articles) (article.Articles, []int)
 
-func checkMax(psc *pushSumChecker, sub subscription.Subscription, articles article.Articles) (maxArticles article.Articles, ids []int) {
-	psc.word = strconv.Itoa(sub.Max)
-	psc.subType = "pushmax"
-	if sub.Max != 0 {
+func checkUp(psc *pushSumChecker, sub subscription.Subscription, articles article.Articles) (upArticles article.Articles, ids []int) {
+	psc.word = strconv.Itoa(sub.Up)
+	psc.subType = "pushup"
+	if sub.Up != 0 {
 		for _, a := range articles {
-			if a.PushSum >= sub.Max {
-				maxArticles = append(maxArticles, a)
+			if a.PushSum >= sub.Up {
+				upArticles = append(upArticles, a)
 				ids = append(ids, a.ID)
 			}
 		}
 	}
-	return maxArticles, ids
+	return upArticles, ids
 }
 
-func checkMin(psc *pushSumChecker, sub subscription.Subscription, articles article.Articles) (minArticles article.Articles, ids []int) {
-	min := sub.Min * -1
-	psc.word = strconv.Itoa(min)
-	psc.subType = "pushmin"
-	if sub.Min != 0 {
+func checkDown(psc *pushSumChecker, sub subscription.Subscription, articles article.Articles) (downArticles article.Articles, ids []int) {
+	down := sub.Down * -1
+	psc.word = strconv.Itoa(down)
+	psc.subType = "pushdown"
+	if sub.Down != 0 {
 		for _, a := range articles {
-			if a.PushSum <= min {
-				minArticles = append(minArticles, a)
+			if a.PushSum <= down {
+				downArticles = append(downArticles, a)
 				ids = append(ids, a.ID)
 			}
 		}
 	}
-	return minArticles, ids
+	return downArticles, ids
 }
 
 func (psc pushSumChecker) checkPushSum(u user.User, ba BoardArticles, checkFn checkPushSum) {
@@ -183,8 +182,8 @@ func (psc pushSumChecker) checkPushSum(u user.User, ba BoardArticles, checkFn ch
 
 func (psc pushSumChecker) toSendArticles(ids []int, articles article.Articles) article.Articles {
 	kindMap := map[string]string{
-		"pushmin": "min",
-		"pushmax": "max",
+		"pushup":   "up",
+		"pushdown": "down",
 	}
 	ids = pushsum.DiffList(psc.account, psc.board, kindMap[psc.subType], ids...)
 	diffIds := make(map[int]bool)

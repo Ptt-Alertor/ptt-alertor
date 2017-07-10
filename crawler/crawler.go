@@ -23,6 +23,7 @@ const pttHostURL = "https://www.ptt.cc"
 
 func CurrentPage(board string) (int, error) {
 	url := makeBoardURL(board, -1)
+	log.Info(url)
 	rsp, err := fetchHTML(url)
 	if err != nil {
 		return 0, err
@@ -275,7 +276,7 @@ func (u URLNotFoundError) Error() string {
 
 func fetchHTML(reqURL string) (response *http.Response, err error) {
 
-	client := &http.Client{
+	client := http.Client{
 		CheckRedirect: func(req *http.Request, via []*http.Request) error {
 			return errors.New("Redirect")
 		},

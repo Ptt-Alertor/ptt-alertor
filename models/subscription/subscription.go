@@ -18,8 +18,8 @@ type Subscription struct {
 }
 
 type PushSum struct {
-	Max int `json:"max"`
-	Min int `json:"min"`
+	Up   int `json:"up"`
+	Down int `json:"down"`
 }
 
 func (s Subscription) String() string {
@@ -43,7 +43,7 @@ func (s Subscription) StringPushSum() string {
 	if s.PushSum == emptyPushSum {
 		return ""
 	}
-	return fmt.Sprintf("%s: 推 %d; 噓 %d", s.Board, s.PushSum.Max, s.PushSum.Min)
+	return fmt.Sprintf("%s: 推 %d; 噓 %d", s.Board, s.PushSum.Up, s.PushSum.Down)
 }
 
 func (s Subscription) StringArticle() string {
