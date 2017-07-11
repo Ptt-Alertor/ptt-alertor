@@ -214,6 +214,84 @@
     Send, 清單{Enter}
     Sleep, 1500
 
+    ; 推文數
+    ; 新增正面
+    Send, 新增推文數 gossiping 10{Enter}
+    Sleep, 1500
+
+    ; 多板
+    Send, 新增推文數 gossiping,beauty 10{Enter}
+    Sleep, 1500
+
+    Send, 清單{Enter}
+    Sleep, 1500
+
+    ; 新增反面
+    Send, 新增推文數 gossping 101{Enter}
+    Sleep, 1500
+
+    Send, 新增推文數 gossping -10{Enter}
+    Sleep, 1500
+
+    Send, 新增推文數 gossping abc{Enter}
+    Sleep, 1500
+
+    Send, 新增推文數 gossping 10{Enter}
+    Sleep, 1500
+
+    Send, 新增推文數 ,gossiping 10{Enter}
+    Sleep, 1500
+
+    Send, 新增推文數 gossiping, 10{Enter}
+    Sleep, 1500
+
+    Send, 清單 {Enter}
+    Sleep, 1500
+
+    ; 推文數
+    ; 新增正面
+    Send, 新增噓文數 gossiping 10{Enter}
+    Sleep, 1500
+
+    ; 多板
+    Send, 新增噓文數 gossiping,beauty 10{Enter}
+    Sleep, 1500
+
+    Send, 清單 {Enter}
+    Sleep, 1500
+
+    ; 新增反面
+    Send, 新增噓文數 gossping 101{Enter}
+    Sleep, 1500
+
+    Send, 新增噓文數 gossping -10{Enter}
+    Sleep, 1500
+
+    Send, 新增噓文數 gossping abc{Enter}
+    Sleep, 1500
+
+    Send, 新增噓文數 gossping 10{Enter}
+    Sleep, 1500
+
+    Send, 新增噓文數 ,gossiping 10{Enter}
+    Sleep, 1500
+
+    Send, 新增噓文數 gossiping, 10{Enter}
+    Sleep, 1500
+
+    Send, 清單 {Enter}
+    Sleep, 1500
+
+    ; 歸零
+    Send, 新增推文數 gossiping 0{Enter}
+    Sleep, 1500
+
+    Send, 新增噓文數 gossiping 0{Enter}
+    Sleep, 1500
+
+    Send, 清單 {Enter}
+    Sleep, 1500
+
     ; 推文
     ; 新增推文
     Send, 新增推文 https://www.ptt.cc/bbs/EZsoft/M.1497363598.A.74E.html{Enter}
