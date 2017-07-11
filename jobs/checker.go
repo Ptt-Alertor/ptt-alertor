@@ -16,7 +16,6 @@ import (
 const checkBoardDuration = 200 * time.Millisecond
 const checkHighBoardDuration = 1 * time.Second
 
-var highBoards []*board.Board
 var boardCh = make(chan *board.Board)
 var ckerCh = make(chan Checker)
 
@@ -48,12 +47,12 @@ func (cker Checker) Self() Checker {
 
 // Run is main in Job
 func (cker Checker) Run() {
-	initHighBoards()
-	go func() {
+	highBoards := highBoards()
+	go func(highBoards []*board.Board) {
 		for {
 			checkBoards(highBoards, checkHighBoardDuration)
 		}
-	}()
+	}(highBoards)
 	go func() {
 		for {
 			checkBoards(new(board.Board).All(), checkBoardDuration)
@@ -70,7 +69,7 @@ func (cker Checker) Run() {
 	}
 }
 
-func initHighBoards() {
+func highBoards() (highBoards []*board.Board) {
 	boardcfg := myutil.Config("board")
 	highBoardNames := strings.Split(boardcfg["high"], ",")
 	for _, name := range highBoardNames {
@@ -78,6 +77,7 @@ func initHighBoards() {
 		bd.Name = name
 		highBoards = append(highBoards, bd)
 	}
+	return highBoards
 }
 
 func checkBoards(bds []*board.Board, duration time.Duration) {
