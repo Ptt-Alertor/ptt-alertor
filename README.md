@@ -16,7 +16,19 @@
 
 * GET /boards/[board name]/articles
 
+* GET /boards/[board name]/articles/[article code]
+
+### PushSum
+
+* GET /pushsum/boards
+
+### Articles
+
+* GET /articles
+
 ### User (Auth)
+
+* GET /users
 
 * GET /users/[account]
 
