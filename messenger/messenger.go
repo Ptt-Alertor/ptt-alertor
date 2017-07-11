@@ -89,7 +89,7 @@ func (m *Messenger) handlePostback(id string, payload string) {
 		var str string
 		commands := make(map[string]string)
 		for cat, cmds := range command.Commands {
-			if strings.EqualFold(cat, "進階應用") {
+			if strings.EqualFold(cat, "進階應用") || strings.EqualFold(cat, "一般") {
 				continue
 			}
 			for cmd, doc := range cmds {
