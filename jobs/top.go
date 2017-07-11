@@ -2,6 +2,7 @@ package jobs
 
 import (
 	"sort"
+	"strconv"
 
 	log "github.com/meifamily/logrus"
 
@@ -19,6 +20,7 @@ func (t Top) Run() {
 	log.Info("Top List Generated")
 	keywordMap := make(map[top.BoardWord]int)
 	authorMap := make(map[top.BoardWord]int)
+	pushSumMap := make(map[top.BoardWord]int)
 	us := new(user.User).All()
 	for _, u := range us {
 		for _, sub := range u.Subscribes {
@@ -28,12 +30,20 @@ func (t Top) Run() {
 			for _, author := range sub.Authors {
 				authorMap[top.BoardWord{sub.Board, author}]++
 			}
+			if sub.PushSum.Up != 0 {
+				pushSumMap[top.BoardWord{sub.Board, strconv.Itoa(sub.PushSum.Up)}]++
+			}
+			if sub.PushSum.Down != 0 {
+				pushSumMap[top.BoardWord{sub.Board, strconv.Itoa(sub.PushSum.Down * -1)}]++
+			}
 		}
 	}
 	topKeywords := rank(keywordMap)
 	topKeywords.SaveKeywords()
 	topAuthors := rank(authorMap)
 	topAuthors.SaveAuthors()
+	topPushSum := rank(pushSumMap)
+	topPushSum.SavePushSum()
 }
 
 func rank(m map[top.BoardWord]int) (orderSlice top.WordOrders) {

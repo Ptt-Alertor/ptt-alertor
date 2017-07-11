@@ -5,8 +5,8 @@ import (
 
 	"strconv"
 
-	log "github.com/meifamily/logrus"
 	"github.com/garyburd/redigo/redis"
+	log "github.com/meifamily/logrus"
 	"github.com/meifamily/ptt-alertor/connections"
 	"github.com/meifamily/ptt-alertor/myutil"
 )
@@ -32,6 +32,10 @@ func (wos WordOrders) SaveAuthors() error {
 	return wos.save("authors")
 }
 
+func (wos WordOrders) SavePushSum() error {
+	return wos.save("pushsum")
+}
+
 func (wos WordOrders) save(kind string) error {
 	conn := connections.Redis()
 	for _, wo := range wos {
@@ -51,6 +55,10 @@ func ListKeywords(num int) []string {
 	return list("keywords", num)
 }
 
+func ListPushSum(num int) []string {
+	return list("pushsum", num)
+}
+
 func list(kind string, num int) []string {
 	conn := connections.Redis()
 	lists, err := redis.Strings(conn.Do("ZREVRANGE", prefix+kind, 0, num-1))
@@ -66,6 +74,10 @@ func ListKeywordWithScore(num int) WordOrders {
 
 func ListAuthorWithScore(num int) WordOrders {
 	return listWithScore("authors", num)
+}
+
+func ListPushSumWithScore(num int) WordOrders {
+	return listWithScore("pushsum", num)
 }
 
 func listWithScore(kind string, num int) (wos WordOrders) {

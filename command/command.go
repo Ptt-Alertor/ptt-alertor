@@ -157,6 +157,10 @@ func listTop() string {
 	for i, author := range top.ListAuthors(5) {
 		content += fmt.Sprintf("\n%d. %s", i+1, author)
 	}
+	content += "\n----\n推噓文"
+	for i, pushSum := range top.ListPushSum(5) {
+		content += fmt.Sprintf("\n%d. %s", i+1, pushSum)
+	}
 	return content
 }
 

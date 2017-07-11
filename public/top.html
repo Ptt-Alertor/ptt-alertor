@@ -13,6 +13,9 @@
             <li role="presentation">
                 <a href="#authors" aria-controls="authors" role="tab" data-toggle="tab">作者</a>
             </li>
+            <li role="presentation">
+                <a href="#pushsum" aria-controls="pushsum" role="tab" data-toggle="tab">推噓文</a>
+            </li>
         </ul>
         <div class="tab-content">
             <div role="tabpanel" class="tab-pane active" id="keywords">
@@ -55,6 +58,27 @@
                     </tbody>
                 </table>
             </div>
+            <div role="tabpanel" class="tab-pane" id="pushsum">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>板名</th>
+                            <th>推噓文</th>
+                            <th>數量</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{range .PushSum}}
+                        <tr>
+                            <td>{{.Board}}</td>
+                            <td>{{.Word}}</td>
+                            <td>{{.Count}}</td>
+                        </tr>
+                        {{end}}
+                    </tbody>
+                </table>
+            </div>
+
         </div>
         {{template "footer"}}
     </div>

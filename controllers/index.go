@@ -34,8 +34,10 @@ func MessengerIndex(w http.ResponseWriter, r *http.Request, _ httprouter.Params)
 }
 
 func Top(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	keywords := top.ListKeywordWithScore(100)
-	authors := top.ListAuthorWithScore(100)
+	count := 100
+	keywords := top.ListKeywordWithScore(count)
+	authors := top.ListAuthorWithScore(count)
+	pushsum := top.ListPushSumWithScore(count)
 	t, err := template.ParseFiles("public/top.html", "public/tpls/head.tpl", "public/tpls/header.tpl", "public/tpls/footer.tpl", "public/tpls/script.tpl")
 	if err != nil {
 		panic(err)
@@ -44,10 +46,12 @@ func Top(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		URI      string
 		Keywords top.WordOrders
 		Authors  top.WordOrders
+		PushSum top.WordOrders
 	}{
 		"top",
 		keywords,
 		authors,
+		pushsum,
 	}
 	t.Execute(w, data)
 }
