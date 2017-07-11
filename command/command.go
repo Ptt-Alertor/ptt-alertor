@@ -312,7 +312,7 @@ func checkBoardError(err error) (string, bool) {
 }
 
 func inputErrorTips() string {
-	return "指令格式錯誤。\n1. 需以空白分隔動作、板名、關鍵字或作者\n2. 板名欄位開頭與結尾不可有逗號\n3. 板名欄位間不允許空白字元。"
+	return "指令格式錯誤。\n1. 需以空白分隔動作、板名、參數\n2. 板名欄位開頭與結尾不可有逗號\n3. 板名欄位間不允許空白字元。"
 }
 
 func checkRegexp(input string) bool {
