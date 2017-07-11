@@ -44,12 +44,14 @@ var Commands = map[string]map[string]string{
 }
 
 var commandActionMap = map[string]updateAction{
-	"新增":   addKeywords,
-	"刪除":   removeKeywords,
-	"新增作者": addAuthors,
-	"刪除作者": removeAuthors,
-	"新增推文": addArticles,
-	"刪除推文": removeArticles,
+	"新增":    addKeywords,
+	"刪除":    removeKeywords,
+	"新增作者":  addAuthors,
+	"刪除作者":  removeAuthors,
+	"新增推文":  addArticles,
+	"刪除推文":  removeArticles,
+	"新增推文數": updatePushUp,
+	"新增噓文數": updatePushDown,
 }
 
 func HandleCommand(text string, userID string) string {
@@ -71,6 +73,8 @@ func HandleCommand(text string, userID string) string {
 		return handleKeyword(command, userID, text)
 	case "新增作者", "刪除作者":
 		return handleAuthor(command, userID, text)
+	case "新增推文數", "新增噓文數":
+		return handlePushSum(command, userID, text)
 	case "新增推文", "刪除推文":
 		return handlePush(command, userID, text)
 	case "清理推文":
@@ -112,7 +116,7 @@ func cleanPushList(account string) string {
 			}
 		}
 	}
-	return fmt.Sprintf("清理%d則推文", i)
+	return fmt.Sprintf("清理 %d 則推文", i)
 }
 
 func handlePushList(account string) string {
@@ -239,6 +243,36 @@ func handlePush(command, userID, text string) string {
 	return command + "成功"
 }
 
+func handlePushSum(command, account, text string) string {
+	re := regexp.MustCompile("^(新增推文數|新增噓文數)\\s+([^,，][\\w-_,，\\.]*[^,，:\\s]):?\\s+(100|[1-9][0-9]|[0-9])$")
+	matched := re.MatchString(text)
+	if !matched {
+		return inputErrorTips() + "\n4. 推噓文數需為介於 0-100 的數字 \n\n正確範例：\n" + command + " gossiping,beauty 100"
+	}
+	args := re.FindStringSubmatch(text)
+	boardNames := splitParamString(args[2])
+	inputs := args[3]
+	log.WithFields(log.Fields{
+		"id":      account,
+		"command": command,
+		"boards":  boardNames,
+		"words":   inputs,
+	}).Info("PushSum Command")
+	for _, boardName := range boardNames {
+		if strings.EqualFold(boardName, "allpost") {
+			return "推文數通知不支持 ALLPOST 板。"
+		}
+	}
+	err := update(commandActionMap[command], account, boardNames, inputs)
+	if msg, ok := checkBoardError(err); ok {
+		return msg
+	}
+	if err != nil {
+		return command + "失敗，請嘗試封鎖再解封鎖，並重新執行註冊步驟。\n若問題未解決，請至粉絲團或 LINE 首頁留言。"
+	}
+	return command + "成功"
+}
+
 func countUserArticles(account string) (cnt int) {
 	u := new(user.User).Find(account)
 	for _, sub := range u.Subscribes {
@@ -278,7 +312,7 @@ func checkBoardError(err error) (string, bool) {
 }
 
 func inputErrorTips() string {
-	return "指令格式錯誤。\n1. 需以空白分隔動作、板名、關鍵字或作者\n2. 板名欄位開頭與結尾不可有逗號\n3. 板名欄位間不允許空白字元。"
+	return "指令格式錯誤。\n1. 需以空白分隔動作、板名、參數\n2. 板名欄位開頭與結尾不可有逗號\n3. 板名欄位間不允許空白字元。"
 }
 
 func checkRegexp(input string) bool {

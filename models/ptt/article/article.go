@@ -11,9 +11,10 @@ import (
 	"fmt"
 
 	"github.com/garyburd/redigo/redis"
-	"github.com/meifamily/ptt-alertor/connections"
-	"github.com/meifamily/ptt-alertor/myutil"
 	log "github.com/meifamily/logrus"
+	"github.com/meifamily/ptt-alertor/connections"
+	"github.com/meifamily/ptt-alertor/models/pushsum"
+	"github.com/meifamily/ptt-alertor/myutil"
 )
 
 const prefix = "article:"
@@ -30,6 +31,7 @@ type Article struct {
 	PushList         PushList  `json:"pushList,omitempty"`
 	LastPushDateTime time.Time `json:"lastPushDateTime,omitempty"`
 	Board            string    `json:"board,omitempty"`
+	PushSum          int       `json:"pushSum,omitempty"`
 }
 
 type Push struct {
@@ -172,6 +174,14 @@ func (a Article) RemoveSubscriber(sub string) error {
 
 func (a Article) String() string {
 	return a.Title + "\r\n" + a.Link
+}
+
+func (a Article) StringWithPushSum() string {
+	sumStr := strconv.Itoa(a.PushSum)
+	if text, ok := pushsum.NumTextMap[a.PushSum]; ok {
+		sumStr = text
+	}
+	return fmt.Sprintf("%s %s\r\n%s", sumStr, a.Title, a.Link)
 }
 
 func matchRegex(title string, regex string) bool {

@@ -8,11 +8,18 @@ import (
 	"github.com/meifamily/ptt-alertor/myutil"
 )
 
+// Subscription is a struct show User Subscription
 type Subscription struct {
 	Board    string             `json:"board"`
 	Keywords myutil.StringSlice `json:"keywords"`
 	Authors  myutil.StringSlice `json:"authors"`
 	Articles myutil.StringSlice `json:"articles"`
+	PushSum  `json:"pushSum"`
+}
+
+type PushSum struct {
+	Up   int `json:"up"`
+	Down int `json:"down"`
 }
 
 func (s Subscription) String() string {
@@ -29,6 +36,14 @@ func (s Subscription) StringAuthor() string {
 	}
 	sort.Strings(s.Authors)
 	return s.Board + ": " + strings.Join(s.Authors, ", ")
+}
+
+func (s Subscription) StringPushSum() string {
+	emptyPushSum := PushSum{}
+	if s.PushSum == emptyPushSum {
+		return ""
+	}
+	return fmt.Sprintf("%s: 推 %d; 噓 %d", s.Board, s.PushSum.Up, s.PushSum.Down)
 }
 
 func (s Subscription) StringArticle() string {

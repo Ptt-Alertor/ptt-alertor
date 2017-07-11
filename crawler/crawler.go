@@ -13,55 +13,123 @@ import (
 
 	"strings"
 
+	"strconv"
+
+	"github.com/meifamily/ptt-alertor/models/pushsum"
 	"golang.org/x/net/html"
 )
 
 const pttHostURL = "https://www.ptt.cc"
 
-// BuildArticles makes board's index articles to a article slice
-func BuildArticles(board string) (article.Articles, error) {
+// CurrentPage find Board Last Page Number
+func CurrentPage(board string) (int, error) {
+	url := makeBoardURL(board, -1)
+	rsp, err := fetchHTML(url)
+	if err != nil {
+		return 0, err
+	}
+	htmlNodes := parseHTML(rsp)
+	paging := findNodes(htmlNodes, findPagingBlock)
+	for _, page := range paging {
+		anchors := findNodes(page, findAnchor)
+		for _, a := range anchors {
+			if strings.Contains(a.FirstChild.Data, "上頁") {
+				link := getAnchorLink(a)
+				re := regexp.MustCompile("\\d+")
+				page, err := strconv.Atoi(re.FindString(link))
+				if err != nil {
+					return 0, err
+				}
+				return page + 1, nil
+			}
+		}
+	}
+	return 0, errors.New("Parse Currenect Page Error")
+}
 
-	reqURL := makeBoardURL(board)
+// BuildArticles makes board's index articles to a article slice
+func BuildArticles(board string, page int) (article.Articles, error) {
+	reqURL := makeBoardURL(board, page)
 	rsp, err := fetchHTML(reqURL)
 	if err != nil {
 		return article.Articles{}, err
 	}
 	htmlNodes := parseHTML(rsp)
 
-	articleBlocks := traverseHTMLNode(htmlNodes, findArticleBlocks)
-	initialTargetNodes()
-	articles := make(article.Articles, len(articleBlocks))
-	for index, articleBlock := range articleBlocks {
-		for _, titleDiv := range traverseHTMLNode(articleBlock, findTitleDiv) {
-			initialTargetNodes()
+	articleBlocks := findNodes(htmlNodes, findArticleBlocks)
+	articles := make(article.Articles, 0)
+	for _, articleBlock := range articleBlocks {
+		article := article.Article{}
+		for _, pushCountDiv := range findNodes(articleBlock, findPushCountDiv) {
+			if child := pushCountDiv.FirstChild; child != nil {
+				if child := child.FirstChild; child != nil {
+					if err == nil {
+						article.PushSum = convertPushCount(child.Data)
+					}
+				}
+			}
+		}
+		for _, titleDiv := range findNodes(articleBlock, findTitleDiv) {
 
-			anchors := traverseHTMLNode(titleDiv, findAnchor)
+			anchors := findNodes(titleDiv, findAnchor)
 
 			if len(anchors) == 0 {
-				articles[index].Title = titleDiv.FirstChild.Data
-				articles[index].Link = ""
+				article.Title = titleDiv.FirstChild.Data
+				article.Link = ""
 				continue
 			}
 
-			for _, anchor := range traverseHTMLNode(titleDiv, findAnchor) {
-				articles[index].Title = anchor.FirstChild.Data
+			for _, anchor := range findNodes(titleDiv, findAnchor) {
+				article.Title = anchor.FirstChild.Data
 				link := pttHostURL + getAnchorLink(anchor)
-				articles[index].Link = link
-				articles[index].ID = articles[index].ParseID(link)
+				article.Link = link
+				article.ID = article.ParseID(link)
 			}
 		}
-		for _, metaDiv := range traverseHTMLNode(articleBlock, findMetaDiv) {
-			initialTargetNodes()
-
-			for _, date := range traverseHTMLNode(metaDiv, findDateDiv) {
-				articles[index].Date = date.FirstChild.Data
+		for _, metaDiv := range findNodes(articleBlock, findMetaDiv) {
+			for _, date := range findNodes(metaDiv, findDateDiv) {
+				article.Date = strings.TrimSpace(date.FirstChild.Data)
 			}
-			for _, author := range traverseHTMLNode(metaDiv, findAuthorDiv) {
-				articles[index].Author = author.FirstChild.Data
+			for _, author := range findNodes(metaDiv, findAuthorDiv) {
+				article.Author = author.FirstChild.Data
 			}
+		}
+		articles = append(articles, article)
+		if isLastArticleBlock(articleBlock) {
+			break
 		}
 	}
 	return articles, nil
+}
+
+func isLastArticleBlock(articleBlock *html.Node) bool {
+	for next := articleBlock.NextSibling; ; next = next.NextSibling {
+		if next == nil {
+			break
+		}
+		if next.Type == html.ElementNode {
+			for _, attr := range next.Attr {
+				if attr.Val == "r-list-sep" {
+					return true
+				}
+				return false
+			}
+		}
+	}
+	return false
+}
+
+func convertPushCount(str string) int {
+	for num, text := range pushsum.NumTextMap {
+		if strings.EqualFold(str, text) {
+			return num
+		}
+	}
+	cnt, err := strconv.Atoi(str)
+	if err != nil {
+		cnt = 0
+	}
+	return cnt
 }
 
 // BuildArticle build article object from html
@@ -78,27 +146,23 @@ func BuildArticle(board, articleCode string) (article.Article, error) {
 		Code:  articleCode,
 		Board: board,
 	}
-	nodes := traverseHTMLNode(htmlNodes, findOgTitleMeta)
+	nodes := findNodes(htmlNodes, findOgTitleMeta)
 	if len(nodes) > 0 {
 		atcl.Title = getMetaContent(nodes[0])
 	} else {
 		atcl.Title = "[內文標題已被刪除]"
 	}
 	atcl.ID = atcl.ParseID(reqURL)
-	pushBlocks := traverseHTMLNode(htmlNodes, findPushBlocks)
-	initialTargetNodes()
+	pushBlocks := findNodes(htmlNodes, findPushBlocks)
 	pushes := make([]article.Push, len(pushBlocks))
 	for index, pushBlock := range pushBlocks {
-		for _, pushTag := range traverseHTMLNode(pushBlock, findPushTag) {
-			initialTargetNodes()
+		for _, pushTag := range findNodes(pushBlock, findPushTag) {
 			pushes[index].Tag = pushTag.FirstChild.Data
 		}
-		for _, pushUserID := range traverseHTMLNode(pushBlock, findPushUserID) {
-			initialTargetNodes()
+		for _, pushUserID := range findNodes(pushBlock, findPushUserID) {
 			pushes[index].UserID = pushUserID.FirstChild.Data
 		}
-		for _, pushContent := range traverseHTMLNode(pushBlock, findPushContent) {
-			initialTargetNodes()
+		for _, pushContent := range findNodes(pushBlock, findPushContent) {
 			content := pushContent.FirstChild.Data
 			for n := pushContent.FirstChild.NextSibling; n != nil; n = n.NextSibling {
 				if findEmailProtected(n) != nil {
@@ -113,8 +177,7 @@ func BuildArticle(board, articleCode string) (article.Article, error) {
 			}
 			pushes[index].Content = content
 		}
-		for _, pushIPDateTime := range traverseHTMLNode(pushBlock, findPushIPDateTime) {
-			initialTargetNodes()
+		for _, pushIPDateTime := range findNodes(pushBlock, findPushIPDateTime) {
 			ipdatetime := strings.TrimSpace(pushIPDateTime.FirstChild.Data)
 			if ipdatetime == "" {
 				break
@@ -160,7 +223,7 @@ func getYear(pushTime time.Time) int {
 
 // CheckBoardExist use for checking board exist or not
 func CheckBoardExist(board string) bool {
-	reqURL := makeBoardURL(board)
+	reqURL := makeBoardURL(board, -1)
 	_, err := fetchHTML(reqURL)
 	if _, ok := err.(URLNotFoundError); ok {
 		return false
@@ -178,8 +241,14 @@ func CheckArticleExist(board, articleCode string) bool {
 	return true
 }
 
-func makeBoardURL(board string) string {
-	return pttHostURL + "/bbs/" + board + "/index.html"
+func makeBoardURL(board string, page int) string {
+	var pageStr string
+	if page < 0 {
+		pageStr = ""
+	} else {
+		pageStr = strconv.Itoa(page)
+	}
+	return pttHostURL + "/bbs/" + board + "/index" + pageStr + ".html"
 }
 
 func makeArticleURL(board, articleCode string) string {
@@ -204,11 +273,11 @@ func fetchHTML(reqURL string) (response *http.Response, err error) {
 
 	response, err = client.Get(reqURL)
 
-	if response.StatusCode == http.StatusNotFound {
+	if err == nil && response.StatusCode == http.StatusNotFound {
 		err = URLNotFoundError{reqURL}
 	}
 
-	if err != nil && response.StatusCode == http.StatusFound {
+	if err != nil && response != nil && response.StatusCode == http.StatusFound {
 		req := passR18(reqURL)
 		response, err = client.Do(req)
 	}

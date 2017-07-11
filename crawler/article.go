@@ -2,10 +2,6 @@ package crawler
 
 import "golang.org/x/net/html"
 
-func findArticleBlocks(node *html.Node) *html.Node {
-	return findDivByClassName(node, "r-ent")
-}
-
 func findTitleDiv(node *html.Node) *html.Node {
 	return findDivByClassName(node, "title")
 }

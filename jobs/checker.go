@@ -15,10 +15,10 @@ import (
 
 const checkBoardDuration = 200 * time.Millisecond
 const checkHighBoardDuration = 1 * time.Second
-const workers = 250
 
 var highBoards []*board.Board
 var boardCh = make(chan *board.Board)
+var ckerCh = make(chan Checker)
 
 type Checker struct {
 	email      string
@@ -59,16 +59,13 @@ func (cker Checker) Run() {
 			checkBoards(new(board.Board).All(), checkBoardDuration)
 		}
 	}()
-	ckerCh := make(chan Checker)
-
-	for i := 0; i < workers; i++ {
-		go messageWorker(ckerCh)
-	}
 
 	for {
 		select {
 		case bd := <-boardCh:
-			checkSubscriber(bd, cker, ckerCh)
+			checkSubscriber(bd, cker)
+		case cker := <-ckerCh:
+			ckCh <- cker
 		}
 	}
 }
@@ -90,19 +87,6 @@ func checkBoards(bds []*board.Board, duration time.Duration) {
 	}
 }
 
-func messageWorker(ckerCh chan Checker) {
-	for {
-		cker := <-ckerCh
-		cker.subType = "keyword"
-		cker.word = cker.keyword
-		if cker.author != "" {
-			cker.subType = "author"
-			cker.word = cker.author
-		}
-		sendMessage(cker)
-	}
-}
-
 func checkNewArticle(bd *board.Board, boardCh chan *board.Board) {
 	bd.WithNewArticles()
 	if bd.NewArticles == nil {
@@ -120,7 +104,7 @@ func checkNewArticle(bd *board.Board, boardCh chan *board.Board) {
 	}
 }
 
-func checkSubscriber(bd *board.Board, cker Checker, ckerCh chan Checker) {
+func checkSubscriber(bd *board.Board, cker Checker) {
 	users := new(user.User).All()
 	for _, user := range users {
 		if user.Enable {
@@ -128,26 +112,26 @@ func checkSubscriber(bd *board.Board, cker Checker, ckerCh chan Checker) {
 			cker.line = user.Profile.Line
 			cker.lineNotify = user.Profile.LineAccessToken
 			cker.messenger = user.Profile.Messenger
-			go subscribeChecker(user, bd, cker, ckerCh)
+			go subscribeChecker(user, bd, cker)
 		}
 	}
 }
 
-func subscribeChecker(user *user.User, bd *board.Board, cker Checker, ckerCh chan Checker) {
+func subscribeChecker(user *user.User, bd *board.Board, cker Checker) {
 	for _, sub := range user.Subscribes {
 		if bd.Name == sub.Board {
 			cker.board = sub.Board
 			for _, keyword := range sub.Keywords {
-				go keywordChecker(keyword, bd, cker, ckerCh)
+				go keywordChecker(keyword, bd, cker)
 			}
 			for _, author := range sub.Authors {
-				go authorChecker(author, bd, cker, ckerCh)
+				go authorChecker(author, bd, cker)
 			}
 		}
 	}
 }
 
-func keywordChecker(keyword string, bd *board.Board, cker Checker, ckerCh chan Checker) {
+func keywordChecker(keyword string, bd *board.Board, cker Checker) {
 	keywordArticles := make(article.Articles, 0)
 	for _, newAtcl := range bd.NewArticles {
 		if newAtcl.MatchKeyword(keyword) {
@@ -158,11 +142,13 @@ func keywordChecker(keyword string, bd *board.Board, cker Checker, ckerCh chan C
 	if len(keywordArticles) != 0 {
 		cker.keyword = keyword
 		cker.articles = keywordArticles
+		cker.subType = "keyword"
+		cker.word = keyword
 		ckerCh <- cker
 	}
 }
 
-func authorChecker(author string, bd *board.Board, cker Checker, ckerCh chan Checker) {
+func authorChecker(author string, bd *board.Board, cker Checker) {
 	authorArticles := make(article.Articles, 0)
 	for _, newAtcl := range bd.NewArticles {
 		if strings.EqualFold(newAtcl.Author, author) {
@@ -172,6 +158,8 @@ func authorChecker(author string, bd *board.Board, cker Checker, ckerCh chan Che
 	if len(authorArticles) != 0 {
 		cker.author = author
 		cker.articles = authorArticles
+		cker.subType = "author"
+		cker.word = author
 		ckerCh <- cker
 	}
 }

@@ -13,34 +13,34 @@ import (
 	user "github.com/meifamily/ptt-alertor/models/user/redis"
 )
 
-const checkPushDuration = 3 * time.Second
+const checkPushListDuration = 3 * time.Second
 
-// PushChecker embedding Checker for checking pushlist
-type PushChecker struct {
+// PushListChecker embedding Checker for checking pushlist
+type PushListChecker struct {
 	Checker
 	Article article.Article
 }
 
-// NewPushChecker return Empty PushChecker pointer
-func NewPushChecker() *PushChecker {
-	return &PushChecker{}
+// NewPushListChecker return Empty PushChecker pointer
+func NewPushListChecker() *PushListChecker {
+	return &PushListChecker{}
 }
 
-func (pc PushChecker) String() string {
+func (pc PushListChecker) String() string {
 	return fmt.Sprintf("推文@%s\n\n%s\n%s\n%s", pc.Article.Board, pc.Article.Title, pc.Article.Link, pc.Article.PushList.String())
 }
 
 // Run start job
-func (pc PushChecker) Run() {
+func (pc PushListChecker) Run() {
 
 	ach := make(chan article.Article)
-	pch := make(chan PushChecker)
+	pch := make(chan PushListChecker)
 
 	go func() {
 		for {
 			codes := new(article.Articles).List()
 			for _, code := range codes {
-				time.Sleep(checkPushDuration)
+				time.Sleep(checkPushListDuration)
 				go checkPushList(code, ach)
 			}
 		}
@@ -52,7 +52,7 @@ func (pc PushChecker) Run() {
 			pc.Article = a
 			pc.checkSubscribers(pch)
 		case pc := <-pch:
-			sendMessage(pc)
+			ckCh <- pc
 		}
 	}
 
@@ -93,7 +93,7 @@ func destroyPushList(a article.Article) {
 	}).Info("Destroy PushList")
 }
 
-func (pc PushChecker) checkSubscribers(pch chan PushChecker) {
+func (pc PushListChecker) checkSubscribers(pch chan PushListChecker) {
 	subs, err := pc.Article.Subscribers()
 	if err != nil {
 		log.WithError(err).Error("Get Subscribers Failed")
@@ -104,7 +104,7 @@ func (pc PushChecker) checkSubscribers(pch chan PushChecker) {
 	}
 }
 
-func send(account string, pc PushChecker, pch chan PushChecker) {
+func send(account string, pc PushListChecker, pch chan PushListChecker) {
 	u := user.User{}
 	u = u.Find(account)
 	pc.board = pc.Article.Board

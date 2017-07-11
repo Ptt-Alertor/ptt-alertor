@@ -6,21 +6,18 @@ import (
 
 type findInHTML func(node *html.Node) *html.Node
 
-var targetNodes []*html.Node
-
-func initialTargetNodes() {
-	targetNodes = make([]*html.Node, 0)
+func findNodes(nodes *html.Node, find findInHTML) []*html.Node {
+	targetNodes := make([]*html.Node, 0)
+	return traverseHTMLNode(nodes, find, targetNodes)
 }
 
-func traverseHTMLNode(nodes *html.Node, find findInHTML) []*html.Node {
-
+func traverseHTMLNode(nodes *html.Node, find findInHTML, targetNodes []*html.Node) []*html.Node {
 	for child := nodes.FirstChild; child != nil; child = child.NextSibling {
 		targetNode := find(child)
 		if targetNode != nil {
 			targetNodes = append(targetNodes, targetNode)
-
 		}
-		traverseHTMLNode(child, find)
+		targetNodes = traverseHTMLNode(child, find, targetNodes)
 	}
 	return targetNodes
 }

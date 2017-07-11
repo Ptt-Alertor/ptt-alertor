@@ -4,9 +4,9 @@ import (
 	"strings"
 
 	"github.com/garyburd/redigo/redis"
+	log "github.com/meifamily/logrus"
 	"github.com/meifamily/ptt-alertor/connections"
 	"github.com/meifamily/ptt-alertor/myutil"
-	log "github.com/meifamily/logrus"
 )
 
 type Articles []Article
@@ -30,6 +30,14 @@ func (as Articles) String() string {
 	var content string
 	for _, a := range as {
 		content += "\r\n\r\n" + a.String()
+	}
+	return content
+}
+
+func (as Articles) StringWithPushSum() string {
+	var content string
+	for _, a := range as {
+		content += "\r\n\r\n" + a.StringWithPushSum()
 	}
 	return content
 }

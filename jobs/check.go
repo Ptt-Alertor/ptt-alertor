@@ -8,6 +8,23 @@ import (
 	"github.com/meifamily/ptt-alertor/messenger"
 )
 
+const workers = 250
+
+var ckCh = make(chan check)
+
+func init() {
+	for i := 0; i < workers; i++ {
+		go messageWorker(ckCh)
+	}
+}
+
+func messageWorker(ckCh chan check) {
+	for {
+		ck := <-ckCh
+		sendMessage(ck)
+	}
+}
+
 type check interface {
 	String() string
 	Self() Checker

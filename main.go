@@ -96,7 +96,8 @@ func main() {
 
 func startJobs() {
 	go new(jobs.Checker).Run()
-	go jobs.NewPushChecker().Run()
+	go jobs.NewPushListChecker().Run()
+	go jobs.NewPushSumChecker().Run()
 	c := cron.New()
 	c.AddJob("@every 1h", jobs.NewGenerator())
 	c.AddJob("@every 1h", jobs.NewTop())

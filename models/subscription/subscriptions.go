@@ -28,6 +28,12 @@ func (ss Subscriptions) String() string {
 			str += sub.StringAuthor() + "\n"
 		}
 	}
+	str += "----\n推文數\n"
+	for _, sub := range ss {
+		if sub.StringPushSum() != "" {
+			str += sub.StringPushSum() + "\n"
+		}
+	}
 	str += "----\n推文\n請輸入「推文清單」查看推文追蹤列表。"
 
 	return str
@@ -76,15 +82,37 @@ func (ss *Subscriptions) Remove(sub Subscription) error {
 			s.DeleteAuthors(sub.Authors)
 			s.DeleteArticles(sub.Articles)
 			(*ss)[i] = s
-		}
-		if isSubEmpty((*ss)[i]) {
-			*ss = append((*ss)[:i], (*ss)[i+1:]...)
-			i--
+			if isSubEmpty((*ss)[i]) {
+				*ss = append((*ss)[:i], (*ss)[i+1:]...)
+				i--
+				return nil
+			}
 		}
 	}
 	return nil
 }
 
+func (ss *Subscriptions) Update(sub Subscription) error {
+	sub.Board = strings.ToLower(sub.Board)
+	if ok, suggestion := board.CheckBoardExist(sub.Board); !ok {
+		return boardProto.BoardNotExistError{suggestion}
+	}
+	for i := 0; i < len(*ss); i++ {
+		s := (*ss)[i]
+		if strings.EqualFold(s.Board, sub.Board) {
+			s.PushSum = sub.PushSum
+			(*ss)[i] = s
+			if isSubEmpty((*ss)[i]) {
+				*ss = append((*ss)[:i], (*ss)[i+1:]...)
+				i--
+			}
+			return nil
+		}
+	}
+	*ss = append(*ss, sub)
+	return nil
+}
+
 func isSubEmpty(sub Subscription) bool {
-	return len(sub.Keywords) == 0 && len(sub.Authors) == 0 && len(sub.Articles) == 0
+	return len(sub.Keywords) == 0 && len(sub.Authors) == 0 && len(sub.Articles) == 0 && sub.PushSum == PushSum{}
 }
