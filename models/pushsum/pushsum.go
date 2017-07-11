@@ -99,3 +99,14 @@ func DiffList(account, board, kind string, ids ...int) []int {
 	}
 	return ids
 }
+
+func DelDiffList(account, board, kind string) error {
+	preKey := prefix + account + ":" + board + ":" + kind + ":pre"
+	conn := connections.Redis()
+	defer conn.Close()
+	_, err := conn.Do("DEL", preKey)
+	if err != nil {
+		log.WithField("runtime", myutil.BasicRuntimeInfo()).WithError(err).Error()
+	}
+	return err
+}

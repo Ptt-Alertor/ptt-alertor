@@ -62,7 +62,7 @@ func updatePushUp(u *user.User, sub subscription.Subscription, inputs ...string)
 	sub.PushSum.Up = up
 	err = u.Subscribes.Update(sub)
 	if err == nil {
-		dealPushSum(u.Profile.Account, sub)
+		err = dealPushSum(u.Profile.Account, sub)
 	}
 	return err
 }
@@ -80,7 +80,7 @@ func updatePushDown(u *user.User, sub subscription.Subscription, inputs ...strin
 	sub.PushSum.Down = down
 	err = u.Subscribes.Update(sub)
 	if err == nil {
-		dealPushSum(u.Profile.Account, sub)
+		err = dealPushSum(u.Profile.Account, sub)
 	}
 	return err
 }
@@ -88,6 +88,12 @@ func updatePushDown(u *user.User, sub subscription.Subscription, inputs ...strin
 func dealPushSum(account string, sub subscription.Subscription) (err error) {
 	if !pushsum.Exist(sub.Board) {
 		err = pushsum.Add(sub.Board)
+	}
+	if sub.Up == 0 {
+		err = pushsum.DelDiffList(account, sub.Board, "up")
+	}
+	if sub.Down == 0 {
+		err = pushsum.DelDiffList(account, sub.Board, "down")
 	}
 	if sub.Up == 0 && sub.Down == 0 {
 		err = pushsum.RemoveSubscriber(sub.Board, account)
