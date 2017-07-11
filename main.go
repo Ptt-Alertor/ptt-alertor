@@ -70,6 +70,9 @@ func main() {
 	router.GET("/boards/:boardName/articles", ctrlr.BoardArticleIndex)
 	router.GET("/boards", ctrlr.BoardIndex)
 
+	// pushsum apis
+	router.GET("/pushsum/boards", ctrlr.PushSumBoards)
+
 	// articles apis
 	router.GET("/articles", ctrlr.ArticleIndex)
 
