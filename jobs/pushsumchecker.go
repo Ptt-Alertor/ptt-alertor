@@ -18,7 +18,8 @@ import (
 )
 
 const stopHour = 48 * time.Hour
-const checkPushSumDuration = 1 * time.Minute
+const checkPushSumDuration = 500 * time.Millisecond
+const pauseCheckPushSum = 1 * time.Minute
 
 var psckerCh = make(chan pushSumChecker)
 var boardFinish = make(map[string]bool)
@@ -63,8 +64,9 @@ func (psc pushSumChecker) Run() {
 					boardFinish[board] = false
 					go psc.crawlArticles(ba, baCh)
 				}
+				time.Sleep(checkPushSumDuration)
 			}
-			time.Sleep(checkPushSumDuration)
+			time.Sleep(pauseCheckPushSum)
 		}
 	}()
 
@@ -92,8 +94,8 @@ func (psc pushSumChecker) crawlArticles(ba BoardArticles, baCh chan BoardArticle
 	}
 
 Page:
-	for i := currentPage; ; i-- {
-		articles, _ := crawler.BuildArticles(ba.board, i)
+	for page := currentPage; ; page-- {
+		articles, _ := crawler.BuildArticles(ba.board, page)
 		for i := len(articles) - 1; i > 0; i-- {
 			a := articles[i]
 			if a.ID == 0 {
@@ -107,7 +109,7 @@ Page:
 			if err != nil {
 				log.WithFields(log.Fields{
 					"board": ba.board,
-					"page":  i,
+					"page":  page,
 				}).WithError(err).Error("Parse DateTime Error")
 				continue
 			}

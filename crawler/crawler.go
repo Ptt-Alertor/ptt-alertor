@@ -57,16 +57,14 @@ func BuildArticles(board string, page int) (article.Articles, error) {
 	htmlNodes := parseHTML(rsp)
 
 	articleBlocks := findNodes(htmlNodes, findArticleBlocks)
-	articles := make(article.Articles, len(articleBlocks))
-	for index, articleBlock := range articleBlocks {
-		if isLastArticleBlock(articleBlock) {
-			break
-		}
+	articles := make(article.Articles, 0)
+	for _, articleBlock := range articleBlocks {
+		article := article.Article{}
 		for _, pushCountDiv := range findNodes(articleBlock, findPushCountDiv) {
 			if child := pushCountDiv.FirstChild; child != nil {
 				if child := child.FirstChild; child != nil {
 					if err == nil {
-						articles[index].PushSum = convertPushCount(child.Data)
+						article.PushSum = convertPushCount(child.Data)
 					}
 				}
 			}
@@ -76,25 +74,29 @@ func BuildArticles(board string, page int) (article.Articles, error) {
 			anchors := findNodes(titleDiv, findAnchor)
 
 			if len(anchors) == 0 {
-				articles[index].Title = titleDiv.FirstChild.Data
-				articles[index].Link = ""
+				article.Title = titleDiv.FirstChild.Data
+				article.Link = ""
 				continue
 			}
 
 			for _, anchor := range findNodes(titleDiv, findAnchor) {
-				articles[index].Title = anchor.FirstChild.Data
+				article.Title = anchor.FirstChild.Data
 				link := pttHostURL + getAnchorLink(anchor)
-				articles[index].Link = link
-				articles[index].ID = articles[index].ParseID(link)
+				article.Link = link
+				article.ID = article.ParseID(link)
 			}
 		}
 		for _, metaDiv := range findNodes(articleBlock, findMetaDiv) {
 			for _, date := range findNodes(metaDiv, findDateDiv) {
-				articles[index].Date = strings.TrimSpace(date.FirstChild.Data)
+				article.Date = strings.TrimSpace(date.FirstChild.Data)
 			}
 			for _, author := range findNodes(metaDiv, findAuthorDiv) {
-				articles[index].Author = author.FirstChild.Data
+				article.Author = author.FirstChild.Data
 			}
+		}
+		articles = append(articles, article)
+		if isLastArticleBlock(articleBlock) {
+			break
 		}
 	}
 	return articles, nil
@@ -274,11 +276,11 @@ func fetchHTML(reqURL string) (response *http.Response, err error) {
 
 	response, err = client.Get(reqURL)
 
-	if response.StatusCode == http.StatusNotFound {
+	if err == nil && response.StatusCode == http.StatusNotFound {
 		err = URLNotFoundError{reqURL}
 	}
 
-	if err != nil && response.StatusCode == http.StatusFound {
+	if err != nil && response != nil && response.StatusCode == http.StatusFound {
 		req := passR18(reqURL)
 		response, err = client.Do(req)
 	}

@@ -73,10 +73,10 @@ func HandleCommand(text string, userID string) string {
 		return handleKeyword(command, userID, text)
 	case "新增作者", "刪除作者":
 		return handleAuthor(command, userID, text)
-	case "新增推文", "刪除推文":
-		return handlePush(command, userID, text)
 	case "新增推文數", "新增噓文數":
 		return handlePushSum(command, userID, text)
+	case "新增推文", "刪除推文":
+		return handlePush(command, userID, text)
 	case "清理推文":
 		return cleanPushList(userID)
 	case "推文清單":
@@ -116,7 +116,7 @@ func cleanPushList(account string) string {
 			}
 		}
 	}
-	return fmt.Sprintf("清理%d則推文", i)
+	return fmt.Sprintf("清理 %d 則推文", i)
 }
 
 func handlePushList(account string) string {
