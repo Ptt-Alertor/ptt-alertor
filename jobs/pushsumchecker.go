@@ -19,7 +19,7 @@ import (
 
 const stopHour = 48 * time.Hour
 const checkPushSumDuration = 500 * time.Millisecond
-const pauseCheckPushSum = 1 * time.Minute
+const pauseCheckPushSum = 3 * time.Minute
 
 var psckerCh = make(chan pushSumChecker)
 var boardFinish = make(map[string]bool)
