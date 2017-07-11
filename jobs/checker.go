@@ -3,6 +3,7 @@ package jobs
 import (
 	"fmt"
 	"strings"
+	"sync"
 	"time"
 
 	log "github.com/meifamily/logrus"
@@ -48,14 +49,18 @@ func (cker Checker) Self() Checker {
 // Run is main in Job
 func (cker Checker) Run() {
 	highBoards := highBoards()
+	var wgHigh sync.WaitGroup
+	var wg sync.WaitGroup
 	go func(highBoards []*board.Board) {
 		for {
-			checkBoards(highBoards, checkHighBoardDuration)
+			checkBoards(&wgHigh, highBoards, checkHighBoardDuration)
+			wgHigh.Wait()
 		}
 	}(highBoards)
 	go func() {
 		for {
-			checkBoards(new(board.Board).All(), checkBoardDuration)
+			checkBoards(&wg, new(board.Board).All(), checkBoardDuration)
+			wg.Wait()
 		}
 	}()
 
@@ -80,14 +85,16 @@ func highBoards() (highBoards []*board.Board) {
 	return highBoards
 }
 
-func checkBoards(bds []*board.Board, duration time.Duration) {
+func checkBoards(wg *sync.WaitGroup, bds []*board.Board, duration time.Duration) {
+	wg.Add(len(bds))
 	for _, bd := range bds {
 		time.Sleep(duration)
-		go checkNewArticle(bd, boardCh)
+		go checkNewArticle(wg, bd, boardCh)
 	}
 }
 
-func checkNewArticle(bd *board.Board, boardCh chan *board.Board) {
+func checkNewArticle(wg *sync.WaitGroup, bd *board.Board, boardCh chan *board.Board) {
+	defer wg.Done()
 	bd.WithNewArticles()
 	if bd.NewArticles == nil {
 		bd.Articles = bd.OnlineArticles
