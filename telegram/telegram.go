@@ -30,7 +30,7 @@ func init() {
 		log.WithError(err).Fatal("Telegram Bot Initialize Failed")
 	}
 	// bot.Debug = true
-	log.Info("Telegram Authorized on account %s", bot.Self.UserName)
+	log.Info("Telegram Authorized on " + bot.Self.UserName)
 
 	_, err = bot.SetWebhook(tgbotapi.NewWebhook(host + "/telegram/" + Token))
 	if err != nil {
@@ -89,6 +89,12 @@ func handleCommand(update tgbotapi.Update) {
 		responseText = "歡迎使用 Ptt Alertor\n輸入「指令」查看相關功能。\n\n觀看Demo:\nhttps://media.giphy.com/media/3ohzdF6vidM6I49lQs/giphy.gif"
 	case "help":
 		responseText = command.HandleCommand("指令", userID)
+	case "showkeyboard":
+		showReplyKeyboard(chatID)
+		return
+	case "hidekeyboard":
+		hideReplyKeyboard(chatID)
+		return
 	default:
 		responseText = "I don't know the command"
 	}
@@ -129,5 +135,30 @@ func SendTextMessage(chatID int64, text string) {
 	_, err := bot.Send(msg)
 	if err != nil {
 		log.WithError(err).Error("Telegram Send Message Failed")
+	}
+}
+
+func showReplyKeyboard(chatID int64) {
+	keyboard := tgbotapi.NewReplyKeyboard(
+		tgbotapi.NewKeyboardButtonRow(
+			tgbotapi.NewKeyboardButton("清單"),
+			tgbotapi.NewKeyboardButton("推文清單"),
+			tgbotapi.NewKeyboardButton("排行"),
+			tgbotapi.NewKeyboardButton("指令"),
+		))
+	msg := tgbotapi.NewMessage(chatID, "顯示小鍵盤")
+	msg.ReplyMarkup = keyboard
+	_, err := bot.Send(msg)
+	if err != nil {
+		log.WithError(err).Error("Telegram Show Reply Keyboard Failed")
+	}
+}
+
+func hideReplyKeyboard(chatID int64) {
+	msg := tgbotapi.NewMessage(chatID, "隱藏小鍵盤")
+	msg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
+	_, err := bot.Send(msg)
+	if err != nil {
+		log.WithError(err).Error("Telegram Hide Reply Keyboard Failed")
 	}
 }
