@@ -161,6 +161,7 @@ func listTop() string {
 	for i, pushSum := range top.ListPushSum(5) {
 		content += fmt.Sprintf("\n%d. %s", i+1, pushSum)
 	}
+	content += "\n\nTOP 100:\nhttp://pttalertor.dinolai.com/top"
 	return content
 }
 
