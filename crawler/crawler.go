@@ -48,16 +48,15 @@ func CurrentPage(board string) (int, error) {
 }
 
 // BuildArticles makes board's index articles to a article slice
-func BuildArticles(board string, page int) (article.Articles, error) {
+func BuildArticles(board string, page int) (articles article.Articles, err error) {
 	reqURL := makeBoardURL(board, page)
 	rsp, err := fetchHTML(reqURL)
 	if err != nil {
-		return article.Articles{}, err
+		return nil, err
 	}
 	htmlNodes := parseHTML(rsp)
 
 	articleBlocks := findNodes(htmlNodes, findArticleBlocks)
-	articles := make(article.Articles, 0)
 	for _, articleBlock := range articleBlocks {
 		article := article.Article{}
 		for _, pushCountDiv := range findNodes(articleBlock, findPushCountDiv) {
@@ -255,6 +254,7 @@ func makeArticleURL(board, articleCode string) string {
 	return pttHostURL + "/bbs/" + board + "/" + articleCode + ".html"
 }
 
+// URLNotFoundError is an error type present 404 Not Found
 type URLNotFoundError struct {
 	URL string
 }

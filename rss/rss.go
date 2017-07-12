@@ -5,13 +5,12 @@ import (
 	"github.com/mmcdole/gofeed"
 )
 
-func BuildArticles(board string) (article.Articles, error) {
+func BuildArticles(board string) (articles article.Articles, err error) {
 	fp := gofeed.NewParser()
 	feed, err := fp.ParseURL("https://www.ptt.cc/atom/" + board + ".xml")
 	if err != nil {
 		return nil, err
 	}
-	articles := make(article.Articles, 0)
 	for _, item := range feed.Items {
 		article := article.Article{
 			Title:  item.Title,
