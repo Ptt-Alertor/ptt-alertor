@@ -137,6 +137,8 @@ func (psc pushSumChecker) checkSubscribers(ba BoardArticles) {
 		psc.line = u.Profile.Line
 		psc.lineNotify = u.Profile.LineAccessToken
 		psc.messenger = u.Profile.Messenger
+		psc.telegram = u.Profile.Telegram
+		psc.telegramChat = u.Profile.TelegramChat
 		go psc.checkPushSum(u, ba, checkUp)
 		go psc.checkPushSum(u, ba, checkDown)
 	}

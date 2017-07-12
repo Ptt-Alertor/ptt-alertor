@@ -15,6 +15,12 @@
 			"revisionTime": "2016-12-24T14:14:13Z"
 		},
 		{
+			"checksumSHA1": "yPx9oI7ShIcQBQbsiwSxeVovl7k=",
+			"path": "github.com/go-telegram-bot-api/telegram-bot-api",
+			"revision": "ebe7b8254e1592d3701010dc4f927a87b3559397",
+			"revisionTime": "2017-07-02T20:43:42Z"
+		},
+		{
 			"checksumSHA1": "O/QVS0SPzCiPTGKR1H9FVGUmki4=",
 			"path": "github.com/julienschmidt/httprouter",
 			"revision": "8a45e95fc75cb77048068a62daed98cc22fdac7c",
@@ -73,6 +79,12 @@
 			"path": "github.com/robfig/cron",
 			"revision": "9585fd555638e77bba25f25db5c44b41f264aeb7",
 			"revisionTime": "2016-09-27T16:42:31Z"
+		},
+		{
+			"checksumSHA1": "mYrkYI/2iFOlfvPzsjYIKO8KUGY=",
+			"path": "github.com/technoweenie/multipartstreamer",
+			"revision": "a90a01d73ae432e2611d178c18367fbaa13e0154",
+			"revisionTime": "2013-10-20T00:18:33Z"
 		},
 		{
 			"checksumSHA1": "Y+HGqEkYM15ir+J93MEaHdyFy0c=",

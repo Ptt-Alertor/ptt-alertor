@@ -114,5 +114,7 @@ func send(account string, pc PushListChecker, pch chan PushListChecker) {
 	pc.line = u.Profile.Line
 	pc.lineNotify = u.Profile.LineAccessToken
 	pc.messenger = u.Profile.Messenger
+	pc.telegram = u.Profile.Telegram
+	pc.telegramChat = u.Profile.TelegramChat
 	pch <- pc
 }

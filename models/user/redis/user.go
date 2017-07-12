@@ -57,8 +57,8 @@ func (u User) Save() error {
 		return errors.New("account can not be empty")
 	}
 
-	if u.Profile.Email == "" && u.Profile.Line == "" && u.Profile.Messenger == "" {
-		return errors.New("Email or Line or Messenger have to be complete")
+	if u.Profile.Email == "" && u.Profile.Line == "" && u.Profile.Messenger == "" && u.Profile.Telegram == "" {
+		return errors.New("one of Email, Line, Messenger and Telegram have to be complete")
 	}
 
 	u.CreateTime = time.Now()
