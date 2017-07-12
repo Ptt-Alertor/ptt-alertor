@@ -152,7 +152,6 @@ func (m *Messenger) SendQuickReplies(id string, payload string) {
 		Recipient{id},
 		Message{Text: "確定" + payload, QuickReplies: &qrs},
 	}
-	log.WithField("ID", id).Info("Messenger Confirmation Sent")
 	m.callSendAPI(body)
 }
 

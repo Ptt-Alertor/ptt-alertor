@@ -21,16 +21,18 @@ var boardCh = make(chan *board.Board)
 var ckerCh = make(chan Checker)
 
 type Checker struct {
-	email      string
-	line       string
-	lineNotify string
-	messenger  string
-	board      string
-	keyword    string
-	author     string
-	articles   article.Articles
-	subType    string
-	word       string
+	email        string
+	line         string
+	lineNotify   string
+	messenger    string
+	telegram     string
+	telegramChat int64
+	board        string
+	keyword      string
+	author       string
+	articles     article.Articles
+	subType      string
+	word         string
 }
 
 func (cker Checker) String() string {
@@ -119,6 +121,8 @@ func checkSubscriber(bd *board.Board, cker Checker) {
 			cker.line = user.Profile.Line
 			cker.lineNotify = user.Profile.LineAccessToken
 			cker.messenger = user.Profile.Messenger
+			cker.telegram = user.Profile.Telegram
+			cker.telegramChat = user.Profile.TelegramChat
 			go subscribeChecker(user, bd, cker)
 		}
 	}

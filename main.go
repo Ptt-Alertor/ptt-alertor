@@ -12,6 +12,7 @@ import (
 	"github.com/meifamily/ptt-alertor/line"
 	"github.com/meifamily/ptt-alertor/messenger"
 	"github.com/meifamily/ptt-alertor/myutil"
+	"github.com/meifamily/ptt-alertor/telegram"
 )
 
 var auth map[string]string
@@ -89,6 +90,9 @@ func main() {
 	// facebook messenger
 	router.GET("/messenger/webhook", m.Verify)
 	router.POST("/messenger/webhook", m.Received)
+
+	// telegram
+	router.POST("/telegram/"+telegram.Token, telegram.HandleRequest)
 
 	err := http.ListenAndServe(":9090", router)
 	if err != nil {

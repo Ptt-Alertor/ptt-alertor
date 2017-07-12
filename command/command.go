@@ -405,6 +405,17 @@ func HandleMessengerFollow(id string) error {
 	return handleFollow(u)
 }
 
+func HandleTelegramFollow(id string, chatID int64) error {
+	u := new(user.User).Find(id)
+	u.Profile.Telegram = id
+	u.Profile.TelegramChat = chatID
+	log.WithFields(log.Fields{
+		"id":       id,
+		"platform": "telegram",
+	}).Info("User Join")
+	return handleFollow(u)
+}
+
 func handleFollow(u user.User) error {
 	if u.Profile.Account != "" {
 		u.Enable = true
@@ -412,8 +423,12 @@ func handleFollow(u user.User) error {
 	} else {
 		if u.Profile.Messenger != "" {
 			u.Profile.Account = u.Profile.Messenger
-		} else {
+		}
+		if u.Profile.Line != "" {
 			u.Profile.Account = u.Profile.Line
+		}
+		if u.Profile.Telegram != "" {
+			u.Profile.Account = u.Profile.Telegram
 		}
 		u.Enable = true
 		err := u.Save()

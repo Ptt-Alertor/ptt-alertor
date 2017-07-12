@@ -6,6 +6,7 @@ import (
 	"github.com/meifamily/ptt-alertor/line"
 	"github.com/meifamily/ptt-alertor/mail"
 	"github.com/meifamily/ptt-alertor/messenger"
+	"github.com/meifamily/ptt-alertor/telegram"
 )
 
 const workers = 250
@@ -50,6 +51,11 @@ func sendMessage(c check) {
 		platform = "messenger"
 		sendMessenger(c)
 	}
+	if cr.telegram != "" {
+		account = cr.telegram
+		platform = "telegram"
+		sendTelegram(c)
+	}
 	log.WithFields(log.Fields{
 		"account":  account,
 		"platform": platform,
@@ -83,4 +89,9 @@ func sendMessenger(c check) {
 	cr := c.Self()
 	m := messenger.New()
 	m.SendTextMessage(cr.messenger, c.String())
+}
+
+func sendTelegram(c check) {
+	cr := c.Self()
+	telegram.SendTextMessage(cr.telegramChat, c.String())
 }
