@@ -69,7 +69,7 @@ func (cker Checker) Run() {
 	for {
 		select {
 		case bd := <-boardCh:
-			checkSubscriber(bd, cker)
+			go checkSubscriber(bd, cker)
 		case cker := <-ckerCh:
 			ckCh <- cker
 		}

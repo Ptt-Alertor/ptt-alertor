@@ -11,7 +11,7 @@ import (
 
 const workers = 250
 
-var ckCh = make(chan check, 250)
+var ckCh = make(chan check)
 
 func init() {
 	for i := 0; i < workers; i++ {
