@@ -31,7 +31,7 @@ func (title Title) String() string {
 }
 
 func (body Body) String() string {
-	return body.Articles.String() + "Send From Ptt Alertor"
+	return body.Articles.String() + "\r\n\r\nSend From Ptt Alertor"
 }
 
 func (mail Mail) Send() {
