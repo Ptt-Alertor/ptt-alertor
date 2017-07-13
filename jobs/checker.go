@@ -17,8 +17,8 @@ import (
 const checkBoardDuration = 200 * time.Millisecond
 const checkHighBoardDuration = 1 * time.Second
 
-var boardCh = make(chan *board.Board)
-var ckerCh = make(chan Checker)
+var boardCh = make(chan *board.Board, 100)
+var ckerCh = make(chan Checker, 100)
 
 type Checker struct {
 	email        string

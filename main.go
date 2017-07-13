@@ -102,7 +102,7 @@ func main() {
 }
 
 func startJobs() {
-	// go new(jobs.Checker).Run()
+	go new(jobs.Checker).Run()
 	go jobs.NewPushListChecker().Run()
 	go jobs.NewPushSumChecker().Run()
 	c := cron.New()
