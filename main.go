@@ -60,6 +60,7 @@ func main() {
 	router.GET("/", ctrlr.Index)
 	router.GET("/messenger", ctrlr.MessengerIndex)
 	router.GET("/line", ctrlr.LineIndex)
+	router.GET("/telegram", ctrlr.TelegramIndex)
 	router.GET("/redirect/:sha1", ctrlr.Redirect)
 	router.GET("/top", ctrlr.Top)
 	router.GET("/docs", ctrlr.Docs)

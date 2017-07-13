@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+{{template "head" .}}
+
+<body>
+    <div class="container">
+        {{template "header" .}}
+        <h1 class="center-text">訂閱看板作者關鍵字，即時通知最新文章</h1>
+        <div id="main" class="row bg-info">
+            <div id="demo" class="col-sm-4 col-sm-push-4">
+                <img id="demo-img" src="https://s3-us-west-2.amazonaws.com/ptt-alertor-bucket/assets/telegram_intro.gif" alt="introduction" class="center-block img-rounded img-responsive">
+            </div>
+
+            <div id="add" class="col-sm-4 col-sm-push-4">
+                <div class="center-text">
+                    <p>username: @PttAlertorBot</p>
+                </div>
+                <div class="center-text">
+                    <a href="https://t.me/PttAlertorBot">https://t.me/PttAlertorBot</a>
+                </div>
+                <div>
+                    <img class="img-responsive center-block" src="https://s3-us-west-2.amazonaws.com/ptt-alertor-bucket/assets/telegram_code.png">
+                </div>
+            </div>
+            {{template "command"}}
+       </div>
+        {{template "footer"}}
+    </div>
+    {{template "script"}}
+</body>
+
+</html>

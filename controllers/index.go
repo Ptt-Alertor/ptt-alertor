@@ -33,6 +33,14 @@ func MessengerIndex(w http.ResponseWriter, r *http.Request, _ httprouter.Params)
 	t.Execute(w, struct{ URI string }{"messenger"})
 }
 
+func TelegramIndex(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	t, err := template.ParseFiles("public/telegram.html", "public/tpls/head.tpl", "public/tpls/header.tpl", "public/tpls/command.tpl", "public/tpls/footer.tpl", "public/tpls/script.tpl")
+	if err != nil {
+		panic(err)
+	}
+	t.Execute(w, struct{ URI string }{"telegram"})
+}
+
 func Top(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	count := 100
 	keywords := top.ListKeywordWithScore(count)
@@ -46,7 +54,7 @@ func Top(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		URI      string
 		Keywords top.WordOrders
 		Authors  top.WordOrders
-		PushSum top.WordOrders
+		PushSum  top.WordOrders
 	}{
 		"top",
 		keywords,
