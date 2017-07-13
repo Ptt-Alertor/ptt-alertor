@@ -83,9 +83,11 @@ func ListSubscribers(board string) []string {
 	return subs
 }
 
-func DiffList(account, board, kind string, ids ...int) []int {
+func DiffList(account, board, day, kind string, ids ...int) []int {
 	nowKey := prefix + account + ":" + board + ":" + kind + ":now"
 	preKey := prefix + account + ":" + board + ":" + kind + ":pre"
+	tmpKey := prefix + account + ":" + board + ":" + kind + ":tmp"
+	dayKey := prefix + account + ":" + board + ":" + kind + ":day:" + day
 	conn := connections.Redis()
 	defer conn.Close()
 	bl, err := redis.Bool(conn.Do("EXISTS", preKey))
@@ -95,8 +97,16 @@ func DiffList(account, board, kind string, ids ...int) []int {
 	conn.Send("RENAME", nowKey, preKey)
 	r, err := redis.Values(conn.Do("EXEC"))
 	if !bl {
-		ids = []int{}
-	} else {
+		return []int{}
+	}
+	ids, err = redis.Ints(r[1], err)
+	if len(ids) > 0 {
+		conn.Send("MULTI")
+		conn.Send("SADD", redis.Args{}.Add(tmpKey).AddFlat(ids)...)
+		conn.Send("SDIFF", tmpKey, dayKey)
+		conn.Send("SADD", redis.Args{}.Add(dayKey).AddFlat(ids)...)
+		conn.Send("DEL", tmpKey)
+		r, err = redis.Values(conn.Do("EXEC"))
 		ids, err = redis.Ints(r[1], err)
 	}
 	if err != nil {
@@ -106,10 +116,23 @@ func DiffList(account, board, kind string, ids ...int) []int {
 }
 
 func DelDiffList(account, board, kind string) error {
-	preKey := prefix + account + ":" + board + ":" + kind + ":pre"
+	preKeyTemplate := prefix + account + ":" + board + ":" + kind + ":*"
 	conn := connections.Redis()
 	defer conn.Close()
-	_, err := conn.Do("DEL", preKey)
+	preKeys, err := redis.Strings(conn.Do("KEYS", preKeyTemplate))
+	_, err = conn.Do("DEL", redis.Args{}.AddFlat(preKeys)...)
+	if err != nil {
+		log.WithField("runtime", myutil.BasicRuntimeInfo()).WithError(err).Error()
+	}
+	return err
+}
+
+func DelDayKeys(day string) error {
+	keyTemplate := prefix + "*:*:*:day:" + day
+	conn := connections.Redis()
+	defer conn.Close()
+	preKeys, err := redis.Strings(conn.Do("KEYS", keyTemplate))
+	_, err = conn.Do("DEL", redis.Args{}.AddFlat(preKeys)...)
 	if err != nil {
 		log.WithField("runtime", myutil.BasicRuntimeInfo()).WithError(err).Error()
 	}

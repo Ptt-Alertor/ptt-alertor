@@ -196,7 +196,8 @@ func (psc pushSumChecker) toSendArticles(ids []int, articles article.Articles) a
 		"pushup":   "up",
 		"pushdown": "down",
 	}
-	ids = pushsum.DiffList(psc.account, psc.board, kindMap[psc.subType], ids...)
+	date := strconv.Itoa(time.Now().Day())
+	ids = pushsum.DiffList(psc.account, psc.board, date, kindMap[psc.subType], ids...)
 	diffIds := make(map[int]bool)
 	for _, id := range ids {
 		diffIds[id] = true
