@@ -3,6 +3,7 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
+	"html/template"
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
@@ -21,31 +22,45 @@ func UserFind(w http.ResponseWriter, r *http.Request, params httprouter.Params) 
 
 func UserAll(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	us := new(user.User).All()
-	fmt.Fprintf(w, "總人數：%d\n", len(us))
-	var line, messenger, subCount, boardCount, keywordCount, authorCount, idleUser, blockUser int
+
+	data := struct {
+		Total, Line, Messenger, Telegram, IdleUser, BlockUser         int
+		SubCount, BoardCount, KeywordCount, AuthorCount, PushSumCount int
+		Users                                                         []*user.User
+	}{}
+	data.Users = us
+	data.Total = len(us)
 	for _, u := range us {
 		if !u.Enable {
-			blockUser++
+			data.BlockUser++
 		}
 		if u.Profile.Line != "" {
-			line++
+			data.Line++
 		}
 		if u.Profile.Messenger != "" {
-			messenger++
+			data.Messenger++
 		}
-		subCount = len(u.Subscribes)
-		if subCount == 0 {
-			idleUser++
+		if u.Profile.Telegram != "" {
+			data.Telegram++
 		}
-		boardCount += subCount
+		data.SubCount = len(u.Subscribes)
+		if data.SubCount == 0 {
+			data.IdleUser++
+		}
+		data.BoardCount += data.SubCount
 		for _, s := range u.Subscribes {
-			keywordCount += len(s.Keywords)
-			authorCount += len(s.Authors)
+			data.KeywordCount += len(s.Keywords)
+			data.AuthorCount += len(s.Authors)
+			if s.PushSum.Up != 0 || s.PushSum.Down != 0 {
+				data.PushSumCount++
+			}
 		}
-		fmt.Fprintf(w, "%s\n", u.Profile.Account)
 	}
-	fmt.Fprintf(w, "LINE: %d, Messenger: %d, count(Board): %d, count(Keyword): %d, count(Author): %d", line, messenger, boardCount, keywordCount, authorCount)
-	fmt.Fprintf(w, "BlockUser: %d, IdleUser: %d", blockUser, idleUser)
+	t, err := template.ParseFiles("public/user.tpl")
+	if err != nil {
+		panic(err)
+	}
+	t.Execute(w, data)
 }
 
 func UserCreate(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
