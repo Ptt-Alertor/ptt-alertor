@@ -14,7 +14,7 @@ import (
 	"github.com/meifamily/ptt-alertor/myutil"
 )
 
-const checkBoardDuration = 200 * time.Millisecond
+const checkBoardDuration = 500 * time.Millisecond
 const checkHighBoardDuration = 1 * time.Second
 
 var boardCh = make(chan *board.Board)
