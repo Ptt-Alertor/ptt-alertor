@@ -32,9 +32,8 @@ func (bd Board) Exist() bool {
 	return false
 }
 
-func (bd Board) All() []*Board {
+func (bd Board) All() (bds []*Board) {
 	boards := bd.listName()
-	bds := make([]*Board, 0)
 	for _, board := range boards {
 		bd := new(Board)
 		bd.Name = board
@@ -53,7 +52,7 @@ func (bd Board) listName() []string {
 	return boards
 }
 
-func (bd Board) GetArticles() article.Articles {
+func (bd Board) GetArticles() (articles article.Articles) {
 	conn := connections.Redis()
 	defer conn.Close()
 
@@ -63,7 +62,6 @@ func (bd Board) GetArticles() article.Articles {
 		log.WithField("runtime", myutil.BasicRuntimeInfo()).WithError(err).Error()
 	}
 
-	articles := make(article.Articles, 0)
 	if articlesJSON != nil {
 		err = json.Unmarshal(articlesJSON, &articles)
 		if err != nil {
