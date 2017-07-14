@@ -20,13 +20,13 @@ type User struct {
 
 const prefix string = "user:"
 
-func (u User) All() []*User {
+func (u User) All() (us []*User) {
 	conn := connections.Redis()
+	defer conn.Close()
 	userKeys, err := redis.Strings(conn.Do("KEYS", "user:*"))
 	if err != nil {
 		log.WithField("runtime", myutil.BasicRuntimeInfo()).WithError(err).Error()
 	}
-	us := make([]*User, 0)
 	for _, uKey := range userKeys {
 		uJSON, _ := redis.Bytes(conn.Do("GET", uKey))
 		var user User
@@ -40,8 +40,8 @@ func (u User) All() []*User {
 }
 
 func (u User) Save() error {
-
 	conn := connections.Redis()
+	defer conn.Close()
 	key := prefix + u.Profile.Account
 	val, err := conn.Do("GET", key)
 
@@ -81,6 +81,8 @@ func (u User) Save() error {
 func (u User) Update() error {
 
 	conn := connections.Redis()
+	defer conn.Close()
+
 	key := prefix + u.Profile.Account
 	val, err := conn.Do("GET", key)
 

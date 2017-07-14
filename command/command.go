@@ -194,6 +194,7 @@ func handleKeyword(command, userID, text string) string {
 		return msg
 	}
 	if err != nil {
+		log.WithError(err).Error("Keyword Command Failed")
 		return command + "失敗，請嘗試封鎖再解封鎖，並重新執行註冊步驟。\n若問題未解決，請至粉絲團或 LINE 首頁留言。"
 	}
 	return command + "成功"
@@ -220,6 +221,7 @@ func handleAuthor(command, userID, text string) string {
 		return msg
 	}
 	if err != nil {
+		log.WithError(err).Error("Author Command Failed")
 		return command + "失敗，請嘗試封鎖再解封鎖，並重新執行註冊步驟。\n若問題未解決，請至粉絲團或 LINE 首頁留言。"
 	}
 	return command + "成功"
@@ -248,6 +250,7 @@ func handlePush(command, userID, text string) string {
 	}
 	err := update(commandActionMap[command], userID, []string{boardName}, articleCode)
 	if err != nil {
+		log.WithError(err).Error("Pushlist Command Failed")
 		return command + "失敗，請嘗試封鎖再解封鎖，並重新執行註冊步驟。\n若問題未解決，請至粉絲團或 LINE 首頁留言。"
 	}
 	return command + "成功"
@@ -278,6 +281,7 @@ func handlePushSum(command, account, text string) string {
 		return msg
 	}
 	if err != nil {
+		log.WithError(err).Error("PushSum Command Failed")
 		return command + "失敗，請嘗試封鎖再解封鎖，並重新執行註冊步驟。\n若問題未解決，請至粉絲團或 LINE 首頁留言。"
 	}
 	return command + "成功"

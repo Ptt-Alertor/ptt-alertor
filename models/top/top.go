@@ -38,6 +38,7 @@ func (wos WordOrders) SavePushSum() error {
 
 func (wos WordOrders) save(kind string) error {
 	conn := connections.Redis()
+	defer conn.Close()
 	for _, wo := range wos {
 		if _, err := conn.Do("ZADD", prefix+kind, wo.Count, wo.String()); err != nil {
 			log.WithField("runtime", myutil.BasicRuntimeInfo()).WithError(err).Error()
@@ -61,6 +62,7 @@ func ListPushSum(num int) []string {
 
 func list(kind string, num int) []string {
 	conn := connections.Redis()
+	defer conn.Close()
 	lists, err := redis.Strings(conn.Do("ZREVRANGE", prefix+kind, 0, num-1))
 	if err != nil {
 		log.WithField("runtime", myutil.BasicRuntimeInfo()).WithError(err).Error()
@@ -82,6 +84,7 @@ func ListPushSumWithScore(num int) WordOrders {
 
 func listWithScore(kind string, num int) (wos WordOrders) {
 	conn := connections.Redis()
+	defer conn.Close()
 	list, err := redis.Strings(conn.Do("ZREVRANGE", prefix+kind, 0, num-1, "WITHSCORES"))
 	if err != nil {
 		log.WithField("runtime", myutil.BasicRuntimeInfo()).WithError(err).Error()

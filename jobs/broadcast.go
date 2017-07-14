@@ -21,13 +21,13 @@ func (bc Broadcast) String() string {
 	return bc.Msg
 }
 
-func (bc Broadcast) Send(pfs []string) error {
+func (bc Broadcast) Send(plfms []string) error {
 	var platformBl = make(map[string]bool)
-	for _, pf := range pfs {
-		if _, ok := platforms[pf]; !ok {
-			return errors.New("platform " + pf + "is not in broadcast list")
+	for _, plfm := range plfms {
+		if _, ok := platforms[plfm]; !ok {
+			return errors.New("platform " + plfm + "is not in broadcast list")
 		}
-		platformBl[pf] = true
+		platformBl[plfm] = true
 	}
 
 	users := new(user.User).All()
@@ -47,17 +47,17 @@ func (bc Broadcast) Send(pfs []string) error {
 }
 
 func (bc Broadcast) sendEmail(u *user.User) {
-	bc.email = u.Profile.Email
+	bc.Profile.Email = u.Profile.Email
 	ckCh <- bc
 }
 
 func (bc Broadcast) sendLine(u *user.User) {
-	bc.line = u.Profile.Line
-	bc.lineNotify = u.Profile.LineAccessToken
+	bc.Profile.Line = u.Profile.Line
+	bc.Profile.LineAccessToken = u.Profile.LineAccessToken
 	ckCh <- bc
 }
 
 func (bc Broadcast) sendMessenger(u *user.User) {
-	bc.messenger = u.Profile.Messenger
+	bc.Profile.Messenger = u.Profile.Messenger
 	ckCh <- bc
 }
