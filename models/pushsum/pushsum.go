@@ -143,36 +143,3 @@ func ReplaceBaseKeys() error {
 	}
 	return err
 }
-
-// TODO: for migrate new diff algorithm
-func ReplacePreKeys() error {
-	benchKeyTemplate := prefix + "*:*:*:pre"
-	conn := connections.Redis()
-	defer conn.Close()
-	keys, err := redis.Strings(conn.Do("KEYS", benchKeyTemplate))
-	for _, key := range keys {
-		basekey := strings.TrimSuffix(key, "pre")
-		basekey += "base"
-		conn.Send("WATCH", basekey)
-		conn.Send("MULTI")
-		conn.Send("RENAME", key, basekey)
-		_, err = conn.Do("EXEC")
-		if err != nil {
-			log.WithField("runtime", myutil.BasicRuntimeInfo()).WithError(err).Error()
-		}
-	}
-	return err
-}
-
-// TODO: for migrate new diff algorithm
-func DelDayKeys(day string) error {
-	keyTemplate := prefix + "*:*:*:day:" + day
-	conn := connections.Redis()
-	defer conn.Close()
-	preKeys, err := redis.Strings(conn.Do("KEYS", keyTemplate))
-	_, err = conn.Do("DEL", redis.Args{}.AddFlat(preKeys)...)
-	if err != nil {
-		log.WithField("runtime", myutil.BasicRuntimeInfo()).WithError(err).Error()
-	}
-	return err
-}
