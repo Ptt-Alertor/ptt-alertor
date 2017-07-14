@@ -8,6 +8,8 @@ import (
 
 	log "github.com/meifamily/logrus"
 
+	"strings"
+
 	"github.com/garyburd/redigo/redis"
 	"github.com/meifamily/ptt-alertor/connections"
 	"github.com/meifamily/ptt-alertor/models/user"
@@ -19,6 +21,19 @@ type User struct {
 }
 
 const prefix string = "user:"
+
+func (u User) List() []string {
+	conn := connections.Redis()
+	defer conn.Close()
+	userKeys, err := redis.Strings(conn.Do("KEYS", "user:*"))
+	if err != nil {
+		log.WithField("runtime", myutil.BasicRuntimeInfo()).WithError(err).Error()
+	}
+	for i, key := range userKeys {
+		userKeys[i] = strings.TrimPrefix(key, "user:")
+	}
+	return userKeys
+}
 
 func (u User) All() (us []*User) {
 	conn := connections.Redis()

@@ -18,7 +18,7 @@ import (
 const checkBoardDuration = 200 * time.Millisecond
 const checkHighBoardDuration = 1 * time.Second
 
-var boardCh = make(chan *board.Board)
+var boardCh = make(chan *board.Board, 700)
 var ckerCh = make(chan Checker)
 var highBoards []*board.Board
 
@@ -82,7 +82,7 @@ func (cker Checker) Run() {
 		//step 2: check user who subscribes board
 		case bd := <-boardCh:
 			go checkSubscriber(bd, cker)
-			//step 3: send notification
+		//step 3: send notification
 		case cker := <-ckerCh:
 			ckCh <- cker
 		}
@@ -116,8 +116,10 @@ func checkNewArticle(wg *sync.WaitGroup, bd *board.Board, boardCh chan *board.Bo
 }
 
 func checkSubscriber(bd *board.Board, cker Checker) {
-	users := new(user.User).All()
-	for _, user := range users {
+	u := new(user.User)
+	accounts := u.List()
+	for _, account := range accounts {
+		user := u.Find(account)
 		if user.Enable {
 			cker.Profile = user.Profile
 			go subscribeChecker(user, bd, cker)
@@ -125,7 +127,7 @@ func checkSubscriber(bd *board.Board, cker Checker) {
 	}
 }
 
-func subscribeChecker(user *user.User, bd *board.Board, cker Checker) {
+func subscribeChecker(user user.User, bd *board.Board, cker Checker) {
 	for _, sub := range user.Subscribes {
 		if bd.Name == sub.Board {
 			cker.board = sub.Board
