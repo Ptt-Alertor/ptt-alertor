@@ -10,7 +10,7 @@ type User struct {
 	Enable     bool      `json:"enable"`
 	CreateTime time.Time `json:"createTime"`
 	UpdateTime time.Time `json:"updateTime"`
-	Profile
+	Profile    `json:"Profile"`
 	Subscribes subscription.Subscriptions
 }
 
