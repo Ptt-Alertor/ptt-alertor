@@ -80,8 +80,9 @@ func (cker Checker) Run() {
 	for {
 		select {
 		//step 2: check user who subscribes board
-		case bd := <-boardCh:
-			go checkSubscriber(bd, cker)
+		case <-boardCh:
+		// case bd := <-boardCh:
+		// go checkSubscriber(bd, cker)
 		//step 3: send notification
 		case cker := <-ckerCh:
 			ckCh <- cker
