@@ -132,13 +132,7 @@ func (psc pushSumChecker) checkSubscribers(ba BoardArticles) {
 	subs := pushsum.ListSubscribers(ba.board)
 	for _, account := range subs {
 		u := new(user.User).Find(account)
-		psc.account = u.Profile.Account
-		psc.email = u.Profile.Email
-		psc.line = u.Profile.Line
-		psc.lineNotify = u.Profile.LineAccessToken
-		psc.messenger = u.Profile.Messenger
-		psc.telegram = u.Profile.Telegram
-		psc.telegramChat = u.Profile.TelegramChat
+		psc.Profile = u.Profile
 		go psc.checkPushSum(u, ba, checkUp)
 		go psc.checkPushSum(u, ba, checkDown)
 	}

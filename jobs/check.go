@@ -33,26 +33,22 @@ type check interface {
 
 func sendMessage(c check) {
 	cr := c.Self()
-	var account string
+	account := cr.Profile.Account
 	var platform string
 
-	if cr.email != "" {
-		account = cr.email
+	if cr.Profile.Email != "" {
 		platform = "mail"
 		sendMail(c)
 	}
-	if cr.lineNotify != "" {
-		account = cr.line
+	if cr.Profile.LineAccessToken != "" {
 		platform = "line"
 		sendLineNotify(c)
 	}
-	if cr.messenger != "" {
-		account = cr.messenger
+	if cr.Profile.Messenger != "" {
 		platform = "messenger"
 		sendMessenger(c)
 	}
-	if cr.telegram != "" {
-		account = cr.telegram
+	if cr.Profile.Telegram != "" {
 		platform = "telegram"
 		sendTelegram(c)
 	}
@@ -71,27 +67,27 @@ func sendMail(c check) {
 	m.Title.BoardName = cr.board
 	m.Title.Keyword = cr.keyword
 	m.Body.Articles = cr.articles
-	m.Receiver = cr.email
+	m.Receiver = cr.Profile.Email
 	m.Send()
 }
 
 func sendLine(c check) {
 	cr := c.Self()
-	line.PushTextMessage(cr.line, c.String())
+	line.PushTextMessage(cr.Profile.Line, c.String())
 }
 
 func sendLineNotify(c check) {
 	cr := c.Self()
-	line.Notify(cr.lineNotify, c.String())
+	line.Notify(cr.Profile.LineAccessToken, c.String())
 }
 
 func sendMessenger(c check) {
 	cr := c.Self()
 	m := messenger.New()
-	m.SendTextMessage(cr.messenger, c.String())
+	m.SendTextMessage(cr.Profile.Messenger, c.String())
 }
 
 func sendTelegram(c check) {
 	cr := c.Self()
-	telegram.SendTextMessage(cr.telegramChat, c.String())
+	telegram.SendTextMessage(cr.Profile.TelegramChat, c.String())
 }

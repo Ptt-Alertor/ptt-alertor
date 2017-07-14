@@ -10,6 +10,7 @@ import (
 
 	"github.com/meifamily/ptt-alertor/models/ptt/article"
 	board "github.com/meifamily/ptt-alertor/models/ptt/board/redis"
+	userProto "github.com/meifamily/ptt-alertor/models/user"
 	user "github.com/meifamily/ptt-alertor/models/user/redis"
 	"github.com/meifamily/ptt-alertor/myutil"
 )
@@ -19,20 +20,30 @@ const checkHighBoardDuration = 1 * time.Second
 
 var boardCh = make(chan *board.Board)
 var ckerCh = make(chan Checker)
+var highBoards []*board.Board
+
+func init() {
+	initHighBoards()
+}
+
+func initHighBoards() {
+	boardcfg := myutil.Config("board")
+	highBoardNames := strings.Split(boardcfg["high"], ",")
+	for _, name := range highBoardNames {
+		bd := new(board.Board)
+		bd.Name = name
+		highBoards = append(highBoards, bd)
+	}
+}
 
 type Checker struct {
-	email        string
-	line         string
-	lineNotify   string
-	messenger    string
-	telegram     string
-	telegramChat int64
-	board        string
-	keyword      string
-	author       string
-	articles     article.Articles
-	subType      string
-	word         string
+	board    string
+	keyword  string
+	author   string
+	articles article.Articles
+	subType  string
+	word     string
+	Profile  userProto.Profile
 }
 
 func (cker Checker) String() string {
@@ -50,15 +61,15 @@ func (cker Checker) Self() Checker {
 
 // Run is main in Job
 func (cker Checker) Run() {
-	highBoards := highBoards()
 	var wgHigh sync.WaitGroup
 	var wg sync.WaitGroup
-	go func(highBoards []*board.Board) {
+	// step 1: check boards which one has new articles
+	go func() {
 		for {
 			checkBoards(&wgHigh, highBoards, checkHighBoardDuration)
 			wgHigh.Wait()
 		}
-	}(highBoards)
+	}()
 	go func() {
 		for {
 			checkBoards(&wg, new(board.Board).All(), checkBoardDuration)
@@ -68,23 +79,14 @@ func (cker Checker) Run() {
 
 	for {
 		select {
+		//step 2: check user who subscribes board
 		case bd := <-boardCh:
 			go checkSubscriber(bd, cker)
+		//step 3: send notification
 		case cker := <-ckerCh:
 			ckCh <- cker
 		}
 	}
-}
-
-func highBoards() (highBoards []*board.Board) {
-	boardcfg := myutil.Config("board")
-	highBoardNames := strings.Split(boardcfg["high"], ",")
-	for _, name := range highBoardNames {
-		bd := new(board.Board)
-		bd.Name = name
-		highBoards = append(highBoards, bd)
-	}
-	return highBoards
 }
 
 func checkBoards(wg *sync.WaitGroup, bds []*board.Board, duration time.Duration) {
@@ -117,12 +119,7 @@ func checkSubscriber(bd *board.Board, cker Checker) {
 	users := new(user.User).All()
 	for _, user := range users {
 		if user.Enable {
-			cker.email = user.Profile.Email
-			cker.line = user.Profile.Line
-			cker.lineNotify = user.Profile.LineAccessToken
-			cker.messenger = user.Profile.Messenger
-			cker.telegram = user.Profile.Telegram
-			cker.telegramChat = user.Profile.TelegramChat
+			cker.Profile = user.Profile
 			go subscribeChecker(user, bd, cker)
 		}
 	}

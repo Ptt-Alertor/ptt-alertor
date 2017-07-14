@@ -110,11 +110,6 @@ func send(account string, pc PushListChecker, pch chan PushListChecker) {
 	pc.board = pc.Article.Board
 	pc.subType = "push"
 	pc.word = pc.Article.Code
-	pc.email = u.Profile.Email
-	pc.line = u.Profile.Line
-	pc.lineNotify = u.Profile.LineAccessToken
-	pc.messenger = u.Profile.Messenger
-	pc.telegram = u.Profile.Telegram
-	pc.telegramChat = u.Profile.TelegramChat
+	pc.Profile = u.Profile
 	pch <- pc
 }

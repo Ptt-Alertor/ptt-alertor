@@ -15,6 +15,18 @@
 			"revisionTime": "2016-12-24T14:14:13Z"
 		},
 		{
+			"checksumSHA1": "6X3O3mfvOyiwV2iAb5GjxARs08c=",
+			"path": "github.com/garyburd/redigo/internal",
+			"revision": "0d253a66e6e1349f4581d6d2b300ee434ee2da9f",
+			"revisionTime": "2017-02-16T21:49:44Z"
+		},
+		{
+			"checksumSHA1": "EDmOMfaSDiQ760zXZRBZNeggmgs=",
+			"path": "github.com/garyburd/redigo/redis",
+			"revision": "0d253a66e6e1349f4581d6d2b300ee434ee2da9f",
+			"revisionTime": "2017-02-16T21:49:44Z"
+		},
+		{
 			"checksumSHA1": "yPx9oI7ShIcQBQbsiwSxeVovl7k=",
 			"path": "github.com/go-telegram-bot-api/telegram-bot-api",
 			"revision": "ebe7b8254e1592d3701010dc4f927a87b3559397",
