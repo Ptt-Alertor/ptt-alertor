@@ -109,13 +109,14 @@ func startJobs() {
 	c := cron.New()
 	c.AddJob("@hourly", jobs.NewGenerator())
 	c.AddJob("@hourly", jobs.NewTop())
-	c.AddJob("@daily", jobs.NewCleanUpPushSum())
+	c.AddJob("@every 3d", jobs.NewReplacePushSumKey())
 	c.Start()
 }
 
 func init() {
 	auth = myutil.Config("auth")
 	jobs.NewTop().Run()
+	jobs.NewCleanUpPushSum().Run()
 	// for initial app
 	// new(jobs.CleanUpBoards).Run()
 	// jobs.NewGenerator().Run()

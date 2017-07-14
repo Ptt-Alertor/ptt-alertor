@@ -1,6 +1,8 @@
 package pushsum
 
 import (
+	"strings"
+
 	"github.com/garyburd/redigo/redis"
 	log "github.com/meifamily/logrus"
 	"github.com/meifamily/ptt-alertor/connections"
@@ -83,34 +85,30 @@ func ListSubscribers(board string) []string {
 	return subs
 }
 
-func DiffList(account, board, day, kind string, ids ...int) []int {
+func DiffList(account, board, kind string, ids ...int) []int {
 	nowKey := prefix + account + ":" + board + ":" + kind + ":now"
-	preKey := prefix + account + ":" + board + ":" + kind + ":pre"
-	tmpKey := prefix + account + ":" + board + ":" + kind + ":tmp"
-	dayKey := prefix + account + ":" + board + ":" + kind + ":day:" + day
+	baseKey := prefix + account + ":" + board + ":" + kind + ":base"
+	benchKey := prefix + account + ":" + board + ":" + kind + ":bench"
 	conn := connections.Redis()
 	defer conn.Close()
-	bl, err := redis.Bool(conn.Do("EXISTS", preKey))
+	bl, err := redis.Bool(conn.Do("EXISTS", baseKey))
 	conn.Send("MULTI")
 	conn.Send("SADD", redis.Args{}.Add(nowKey).AddFlat(ids)...)
-	conn.Send("SDIFF", nowKey, preKey)
-	conn.Send("RENAME", nowKey, preKey)
+	conn.Send("SDIFF", nowKey, baseKey)
+	conn.Send("DEL", nowKey)
 	r, err := redis.Values(conn.Do("EXEC"))
-	if !bl {
-		return []int{}
-	}
 	ids, err = redis.Ints(r[1], err)
 	if len(ids) > 0 {
 		conn.Send("MULTI")
-		conn.Send("SADD", redis.Args{}.Add(tmpKey).AddFlat(ids)...)
-		conn.Send("SDIFF", tmpKey, dayKey)
-		conn.Send("SADD", redis.Args{}.Add(dayKey).AddFlat(ids)...)
-		conn.Send("DEL", tmpKey)
-		r, err = redis.Values(conn.Do("EXEC"))
-		ids, err = redis.Ints(r[1], err)
+		conn.Send("SADD", redis.Args{}.Add(baseKey).AddFlat(ids)...)
+		conn.Send("SADD", redis.Args{}.Add(benchKey).AddFlat(ids)...)
+		_, err = redis.Values(conn.Do("EXEC"))
 	}
 	if err != nil {
 		log.WithField("runtime", myutil.BasicRuntimeInfo()).WithError(err).Error()
+	}
+	if !bl {
+		return []int{}
 	}
 	return ids
 }
@@ -127,6 +125,46 @@ func DelDiffList(account, board, kind string) error {
 	return err
 }
 
+func ReplaceBaseKeys() error {
+	benchKeyTemplate := prefix + "*:*:*:bench"
+	conn := connections.Redis()
+	defer conn.Close()
+	keys, err := redis.Strings(conn.Do("KEYS", benchKeyTemplate))
+	for _, key := range keys {
+		basekey := strings.TrimSuffix(key, "bench")
+		basekey += "base"
+		conn.Send("WATCH", basekey)
+		conn.Send("MULTI")
+		conn.Send("RENAME", key, basekey)
+		_, err = conn.Do("EXEC")
+		if err != nil {
+			log.WithField("runtime", myutil.BasicRuntimeInfo()).WithError(err).Error()
+		}
+	}
+	return err
+}
+
+// TODO: for migrate new diff algorithm
+func ReplacePreKeys() error {
+	benchKeyTemplate := prefix + "*:*:*:pre"
+	conn := connections.Redis()
+	defer conn.Close()
+	keys, err := redis.Strings(conn.Do("KEYS", benchKeyTemplate))
+	for _, key := range keys {
+		basekey := strings.TrimSuffix(key, "pre")
+		basekey += "base"
+		conn.Send("WATCH", basekey)
+		conn.Send("MULTI")
+		conn.Send("RENAME", key, basekey)
+		_, err = conn.Do("EXEC")
+		if err != nil {
+			log.WithField("runtime", myutil.BasicRuntimeInfo()).WithError(err).Error()
+		}
+	}
+	return err
+}
+
+// TODO: for migrate new diff algorithm
 func DelDayKeys(day string) error {
 	keyTemplate := prefix + "*:*:*:day:" + day
 	conn := connections.Redis()

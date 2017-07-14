@@ -17,6 +17,7 @@ import (
 	user "github.com/meifamily/ptt-alertor/models/user/redis"
 )
 
+// change stopHour must change cronjob replacepushsumkey in the mean time
 const stopHour = 48 * time.Hour
 const checkPushSumDuration = 500 * time.Millisecond
 const pauseCheckPushSum = 3 * time.Minute
@@ -189,8 +190,7 @@ func (psc pushSumChecker) toSendArticles(ids []int, articles article.Articles) a
 		"pushup":   "up",
 		"pushdown": "down",
 	}
-	date := strconv.Itoa(time.Now().Day())
-	ids = pushsum.DiffList(psc.Profile.Account, psc.board, date, kindMap[psc.subType], ids...)
+	ids = pushsum.DiffList(psc.Profile.Account, psc.board, kindMap[psc.subType], ids...)
 	diffIds := make(map[int]bool)
 	for _, id := range ids {
 		diffIds[id] = true
