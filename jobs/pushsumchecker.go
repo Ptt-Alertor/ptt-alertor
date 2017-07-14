@@ -26,7 +26,6 @@ var boardFinish = make(map[string]bool)
 
 type pushSumChecker struct {
 	Checker
-	account string
 }
 
 func NewPushSumChecker() *pushSumChecker {
@@ -191,7 +190,7 @@ func (psc pushSumChecker) toSendArticles(ids []int, articles article.Articles) a
 		"pushdown": "down",
 	}
 	date := strconv.Itoa(time.Now().Day())
-	ids = pushsum.DiffList(psc.account, psc.board, date, kindMap[psc.subType], ids...)
+	ids = pushsum.DiffList(psc.Profile.Account, psc.board, date, kindMap[psc.subType], ids...)
 	diffIds := make(map[int]bool)
 	for _, id := range ids {
 		diffIds[id] = true
