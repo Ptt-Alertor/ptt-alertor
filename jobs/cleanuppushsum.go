@@ -27,10 +27,9 @@ func (c cleanUpPushSum) Run() {
 	if err != nil {
 		log.WithError(err).Error("Clean Up Overdue Keys Failed")
 	}
-	log.Info("Clean Up Overdue Keys Done")
 	err = pushsum.ReplacePreKeys()
 	if err != nil {
-		log.WithError(err).Error("Clean Up Overdue Keys Failed")
+		log.WithError(err).Error("Change Pre Key to Base Key Failed")
 	}
-	log.Info("Change Pre Key to Base Key Done")
+	log.Info("Change Pre Key and Clean Up to Base Key Done")
 }
