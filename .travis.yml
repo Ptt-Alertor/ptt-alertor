@@ -4,7 +4,6 @@ go:
 cache:
   directories:
     - $HOME/.local
-    - config
 services:
 - docker
 before_install:
