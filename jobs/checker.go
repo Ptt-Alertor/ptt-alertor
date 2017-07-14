@@ -83,8 +83,9 @@ func (cker Checker) Run() {
 		case bd := <-boardCh:
 			go checkSubscriber(bd, cker)
 		//step 3: send notification
-		case cker := <-ckerCh:
-			ckCh <- cker
+		case <-ckerCh:
+			// case cker := <-ckerCh:
+			// ckCh <- cker
 		}
 	}
 }
