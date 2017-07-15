@@ -26,6 +26,7 @@ func CurrentPage(board string) (int, error) {
 	url := makeBoardURL(board, -1)
 	rsp, err := fetchHTML(url)
 	if err != nil {
+		rsp.Body.Close()
 		return 0, err
 	}
 	htmlNodes := parseHTML(rsp)
@@ -52,6 +53,7 @@ func BuildArticles(board string, page int) (articles article.Articles, err error
 	reqURL := makeBoardURL(board, page)
 	rsp, err := fetchHTML(reqURL)
 	if err != nil {
+		rsp.Body.Close()
 		return nil, err
 	}
 	htmlNodes := parseHTML(rsp)
@@ -137,6 +139,7 @@ func BuildArticle(board, articleCode string) (article.Article, error) {
 	reqURL := makeArticleURL(board, articleCode)
 	rsp, err := fetchHTML(reqURL)
 	if err != nil {
+		rsp.Body.Close()
 		return article.Article{}, err
 	}
 	htmlNodes := parseHTML(rsp)
@@ -223,7 +226,8 @@ func getYear(pushTime time.Time) int {
 // CheckBoardExist use for checking board exist or not
 func CheckBoardExist(board string) bool {
 	reqURL := makeBoardURL(board, -1)
-	_, err := fetchHTML(reqURL)
+	rsp, err := fetchHTML(reqURL)
+	rsp.Body.Close()
 	if _, ok := err.(URLNotFoundError); ok {
 		return false
 	}
@@ -233,7 +237,8 @@ func CheckBoardExist(board string) bool {
 // CheckArticleExist user for checking article exist or not
 func CheckArticleExist(board, articleCode string) bool {
 	reqURL := makeArticleURL(board, articleCode)
-	_, err := fetchHTML(reqURL)
+	rsp, err := fetchHTML(reqURL)
+	rsp.Body.Close()
 	if _, ok := err.(URLNotFoundError); ok {
 		return false
 	}
@@ -310,6 +315,7 @@ func passR18(reqURL string) (req *http.Request) {
 
 func parseHTML(response *http.Response) *html.Node {
 	doc, err := html.Parse(response.Body)
+	response.Body.Close()
 	if err != nil {
 		log.Error(err)
 	}
