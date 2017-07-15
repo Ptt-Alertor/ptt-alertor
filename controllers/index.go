@@ -9,36 +9,34 @@ import (
 	"github.com/meifamily/ptt-alertor/shorturl"
 )
 
+var templates = template.Must(template.ParseFiles("public/docs.html", "public/top.html", "public/telegram.html", "public/messenger.html", "public/line.html", "public/tpls/head.tpl", "public/tpls/header.tpl", "public/tpls/command.tpl", "public/tpls/footer.tpl", "public/tpls/script.tpl"))
+
 func Index(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	t, err := template.ParseFiles("public/line.html", "public/tpls/head.tpl", "public/tpls/header.tpl", "public/tpls/command.tpl", "public/tpls/footer.tpl", "public/tpls/script.tpl")
+	err := templates.ExecuteTemplate(w, "line.html", struct{ URI string }{"line"})
 	if err != nil {
-		panic(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
-	t.Execute(w, struct{ URI string }{""})
 }
 
 func LineIndex(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	t, err := template.ParseFiles("public/line.html", "public/tpls/head.tpl", "public/tpls/header.tpl", "public/tpls/command.tpl", "public/tpls/footer.tpl", "public/tpls/script.tpl")
+	err := templates.ExecuteTemplate(w, "line.html", struct{ URI string }{"line"})
 	if err != nil {
-		panic(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
-	t.Execute(w, struct{ URI string }{"line"})
 }
 
 func MessengerIndex(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	t, err := template.ParseFiles("public/messenger.html", "public/tpls/head.tpl", "public/tpls/header.tpl", "public/tpls/command.tpl", "public/tpls/footer.tpl", "public/tpls/script.tpl")
+	err := templates.ExecuteTemplate(w, "messenger.html", struct{ URI string }{"messenger"})
 	if err != nil {
-		panic(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
-	t.Execute(w, struct{ URI string }{"messenger"})
 }
 
 func TelegramIndex(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	t, err := template.ParseFiles("public/telegram.html", "public/tpls/head.tpl", "public/tpls/header.tpl", "public/tpls/command.tpl", "public/tpls/footer.tpl", "public/tpls/script.tpl")
+	err := templates.ExecuteTemplate(w, "telegram.html", struct{ URI string }{"telegram"})
 	if err != nil {
-		panic(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
-	t.Execute(w, struct{ URI string }{"telegram"})
 }
 
 func Top(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
@@ -46,10 +44,6 @@ func Top(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	keywords := top.ListKeywordWithScore(count)
 	authors := top.ListAuthorWithScore(count)
 	pushsum := top.ListPushSumWithScore(count)
-	t, err := template.ParseFiles("public/top.html", "public/tpls/head.tpl", "public/tpls/header.tpl", "public/tpls/footer.tpl", "public/tpls/script.tpl")
-	if err != nil {
-		panic(err)
-	}
 	data := struct {
 		URI      string
 		Keywords top.WordOrders
@@ -61,15 +55,17 @@ func Top(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		authors,
 		pushsum,
 	}
-	t.Execute(w, data)
+	err := templates.ExecuteTemplate(w, "top.html", data)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
 }
 
 func Docs(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	t, err := template.ParseFiles("public/docs.html", "public/tpls/head.tpl", "public/tpls/script.tpl")
+	err := templates.ExecuteTemplate(w, "docs.html", struct{ URI string }{"docs"})
 	if err != nil {
-		panic(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
-	t.Execute(w, struct{ URI string }{"docs"})
 }
 
 func Redirect(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
@@ -80,7 +76,7 @@ func Redirect(w http.ResponseWriter, r *http.Request, params httprouter.Params) 
 	} else {
 		t, err := template.ParseFiles("public/404.html")
 		if err != nil {
-			panic(err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
 		t.Execute(w, nil)
 	}
