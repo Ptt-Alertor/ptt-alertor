@@ -57,7 +57,7 @@ func (pl PushList) String() string {
 }
 
 func (a Article) ParseID(Link string) (id int) {
-	reg, err := regexp.Compile("https?://www.ptt.cc/bbs/.*/M\\.(\\d+)\\..*")
+	reg, err := regexp.Compile("https?://www.ptt.cc/bbs/.*/[GM]\\.(\\d+)\\..*")
 	if err != nil {
 		log.Fatal(err)
 	}
