@@ -25,16 +25,16 @@ func (t Top) Run() {
 	for _, u := range us {
 		for _, sub := range u.Subscribes {
 			for _, keyword := range sub.Keywords {
-				keywordMap[top.BoardWord{sub.Board, keyword}]++
+				keywordMap[top.BoardWord{Board: sub.Board, Word: keyword}]++
 			}
 			for _, author := range sub.Authors {
-				authorMap[top.BoardWord{sub.Board, author}]++
+				authorMap[top.BoardWord{Board: sub.Board, Word: author}]++
 			}
 			if sub.PushSum.Up != 0 {
-				pushSumMap[top.BoardWord{sub.Board, strconv.Itoa(sub.PushSum.Up)}]++
+				pushSumMap[top.BoardWord{Board: sub.Board, Word: strconv.Itoa(sub.PushSum.Up)}]++
 			}
 			if sub.PushSum.Down != 0 {
-				pushSumMap[top.BoardWord{sub.Board, strconv.Itoa(sub.PushSum.Down * -1)}]++
+				pushSumMap[top.BoardWord{Board: sub.Board, Word: strconv.Itoa(sub.PushSum.Down * -1)}]++
 			}
 		}
 	}
@@ -48,7 +48,7 @@ func (t Top) Run() {
 
 func rank(m map[top.BoardWord]int) (orderSlice top.WordOrders) {
 	for key, count := range m {
-		k := top.WordOrder{key, count}
+		k := top.WordOrder{BoardWord: key, Count: count}
 		orderSlice = append(orderSlice, k)
 	}
 	sort.Slice(orderSlice, func(i, j int) bool {
