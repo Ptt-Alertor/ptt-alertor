@@ -118,7 +118,9 @@ func DelDiffList(account, board, kind string) error {
 	conn := connections.Redis()
 	defer conn.Close()
 	preKeys, err := redis.Strings(conn.Do("KEYS", preKeyTemplate))
-	_, err = conn.Do("DEL", redis.Args{}.AddFlat(preKeys)...)
+	if len(preKeys) > 0 {
+		_, err = conn.Do("DEL", redis.Args{}.AddFlat(preKeys)...)
+	}
 	if err != nil {
 		log.WithField("runtime", myutil.BasicRuntimeInfo()).WithError(err).Error()
 	}
