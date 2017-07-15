@@ -1,4 +1,4 @@
-最近做的聊天機器人：Ptt Alertor 訂閱看板作者關鍵字推文數，即時通知最新文章
+最近做的聊天機器人：Ptt Alertor 訂閱看板推文數作者關鍵字，即時通知最新文章
 
 喜歡在 HardwareSale 板買賣二手品，常關心電蝦板情報文，都很好用！
 
@@ -7,6 +7,8 @@
 LINE Bot: https://line.me/R/ti/p/%40vxl5146r
 
 Messenger Bot: https://m.me/pttalertor
+
+Telegram Bot: https://t.me/PttAlertorBot
 
 Demo：
 
@@ -51,7 +53,8 @@ https://www.ptt.cc/bbs/EZsoft/M.1497363598.A.74E.html
 
 1. 板名、關鍵字、作者，皆不區分英文大小寫
 2. 推文數通知為兩天內的文章
-3. 推文追蹤因 Ptt 網頁版更新速度，5 - 10 分鐘通知一次。
+3. 推文數歸零即不通知：新增推文數 getmarry 0
+4. 推文追蹤因 Ptt 網頁版更新速度，5-10 分鐘通知一次。
 
 
 若想知道此工具更多使用方法與最新消息，我會在 #1PF_IETE (EZsoft) 持續更新。
