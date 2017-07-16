@@ -17,8 +17,8 @@ import (
 	user "github.com/meifamily/ptt-alertor/models/user/redis"
 )
 
-// change stopHour must change cronjob replacepushsumkey in the mean time
-const stopHour = 48 * time.Hour
+// change overdueHour must change cronjob replacepushsumkey in the mean time
+const overdueHour = 48 * time.Hour
 const checkPushSumDuration = 500 * time.Millisecond
 const pauseCheckPushSum = 3 * time.Minute
 
@@ -113,7 +113,7 @@ Page:
 				}).WithError(err).Error("Parse DateTime Error")
 				continue
 			}
-			if nowDate.After(t.Add(stopHour)) {
+			if nowDate.After(t.Add(overdueHour)) {
 				break Page
 			}
 			ba.articles = append(ba.articles, a)
