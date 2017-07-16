@@ -23,7 +23,7 @@ type Board struct {
 }
 
 func (bd Board) Exist() bool {
-	names := bd.listName()
+	names := bd.List()
 	for _, name := range names {
 		if bd.Name == name {
 			return true
@@ -33,7 +33,7 @@ func (bd Board) Exist() bool {
 }
 
 func (bd Board) All() (bds []*Board) {
-	boards := bd.listName()
+	boards := bd.List()
 	for _, board := range boards {
 		bd := new(Board)
 		bd.Name = board
@@ -42,7 +42,7 @@ func (bd Board) All() (bds []*Board) {
 	return bds
 }
 
-func (bd Board) listName() []string {
+func (bd Board) List() []string {
 	conn := connections.Redis()
 	defer conn.Close()
 	boards, err := redis.Strings(conn.Do("SMEMBERS", "boards"))
@@ -120,7 +120,7 @@ func (bd Board) Delete() error {
 }
 
 func (bd Board) SuggestBoardName() string {
-	names := bd.listName()
+	names := bd.List()
 	boardWeight := map[string]int{}
 	chars := strings.Split(strings.ToLower(bd.Name), "")
 	for _, name := range names {

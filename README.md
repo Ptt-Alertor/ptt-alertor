@@ -18,6 +18,14 @@
 
 * GET /boards/[board name]/articles/[article code]
 
+### Keyword
+
+* GET /keyword/boards
+
+### Author
+
+* GET /author/boards
+
 ### PushSum
 
 * GET /pushsum/boards

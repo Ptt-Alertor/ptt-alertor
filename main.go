@@ -72,6 +72,12 @@ func main() {
 	router.GET("/boards/:boardName/articles", ctrlr.BoardArticleIndex)
 	router.GET("/boards", ctrlr.BoardIndex)
 
+	// keyword apis
+	router.GET("/keyword/boards", ctrlr.KeywordBoards)
+
+	// author apis
+	router.GET("/author/boards", ctrlr.AuthorBoards)
+
 	// pushsum apis
 	router.GET("/pushsum/boards", ctrlr.PushSumBoards)
 
@@ -118,6 +124,6 @@ func init() {
 	jobs.NewTop().Run()
 	// for initial app
 	// new(jobs.CleanUpBoards).Run()
-	jobs.NewGenerator().Run()
+	// jobs.NewGenerator().Run()
 	// jobs.NewFetcher().Run()
 }
