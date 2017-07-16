@@ -118,6 +118,6 @@ func init() {
 	jobs.NewTop().Run()
 	// for initial app
 	// new(jobs.CleanUpBoards).Run()
-	// jobs.NewGenerator().Run()
+	jobs.NewGenerator().Run()
 	// jobs.NewFetcher().Run()
 }

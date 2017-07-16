@@ -4,6 +4,8 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/meifamily/ptt-alertor/models/author"
+	"github.com/meifamily/ptt-alertor/models/keyword"
 	"github.com/meifamily/ptt-alertor/models/ptt/article"
 	"github.com/meifamily/ptt-alertor/models/pushsum"
 	"github.com/meifamily/ptt-alertor/models/subscription"
@@ -15,7 +17,11 @@ type updateAction func(u *user.User, sub subscription.Subscription, inputs ...st
 
 func addKeywords(u *user.User, sub subscription.Subscription, inputs ...string) error {
 	sub.Keywords = inputs
-	return u.Subscribes.Add(sub)
+	err := u.Subscribes.Add(sub)
+	if err == nil {
+		err = keyword.AddSubscriber(sub.Board, u.Profile.Account)
+	}
+	return err
 }
 
 func removeKeywords(u *user.User, sub subscription.Subscription, inputs ...string) error {
@@ -28,12 +34,25 @@ func removeKeywords(u *user.User, sub subscription.Subscription, inputs ...strin
 			}
 		}
 	}
-	return u.Subscribes.Remove(sub)
+	err := u.Subscribes.Remove(sub)
+	if err == nil {
+		for _, uSub := range u.Subscribes {
+			if strings.EqualFold(sub.Board, uSub.Board) && len(uSub.Keywords) > 0 {
+				return nil
+			}
+		}
+		err = keyword.RemoveSubscriber(sub.Board, u.Profile.Account)
+	}
+	return err
 }
 
 func addAuthors(u *user.User, sub subscription.Subscription, inputs ...string) error {
 	sub.Authors = inputs
-	return u.Subscribes.Add(sub)
+	err := u.Subscribes.Add(sub)
+	if err == nil {
+		err = author.AddSubscriber(sub.Board, u.Profile.Account)
+	}
+	return err
 }
 
 func removeAuthors(u *user.User, sub subscription.Subscription, inputs ...string) error {
@@ -46,7 +65,16 @@ func removeAuthors(u *user.User, sub subscription.Subscription, inputs ...string
 			}
 		}
 	}
-	return u.Subscribes.Remove(sub)
+	err := u.Subscribes.Remove(sub)
+	if err == nil {
+		for _, uSub := range u.Subscribes {
+			if strings.EqualFold(sub.Board, uSub.Board) && len(uSub.Authors) > 0 {
+				return nil
+			}
+		}
+		err = author.RemoveSubscriber(sub.Board, u.Profile.Account)
+	}
+	return err
 }
 
 func updatePushUp(u *user.User, sub subscription.Subscription, inputs ...string) error {

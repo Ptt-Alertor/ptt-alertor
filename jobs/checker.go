@@ -8,6 +8,8 @@ import (
 
 	log "github.com/meifamily/logrus"
 
+	"github.com/meifamily/ptt-alertor/models/author"
+	"github.com/meifamily/ptt-alertor/models/keyword"
 	"github.com/meifamily/ptt-alertor/models/ptt/article"
 	board "github.com/meifamily/ptt-alertor/models/ptt/board/redis"
 	userProto "github.com/meifamily/ptt-alertor/models/user"
@@ -81,7 +83,8 @@ func (cker Checker) Run() {
 		select {
 		//step 2: check user who subscribes board
 		case bd := <-boardCh:
-			go checkSubscriber(bd, cker)
+			go checkKeywordSubscriber(bd, cker)
+			go checkAuthorSubscriber(bd, cker)
 		//step 3: send notification
 		case cker := <-ckerCh:
 			ckCh <- cker
@@ -115,33 +118,30 @@ func checkNewArticle(wg *sync.WaitGroup, bd *board.Board, boardCh chan *board.Bo
 	}
 }
 
-func checkSubscriber(bd *board.Board, cker Checker) {
+func checkKeywordSubscriber(bd *board.Board, cker Checker) {
 	u := new(user.User)
-	accounts := u.List()
+	accounts := keyword.Subscribers(bd.Name)
 	for _, account := range accounts {
 		user := u.Find(account)
 		if user.Enable {
 			cker.Profile = user.Profile
-			go subscribeChecker(user, bd, cker)
+			go checkKeywordSubscription(user, bd, cker)
 		}
 	}
 }
 
-func subscribeChecker(user user.User, bd *board.Board, cker Checker) {
+func checkKeywordSubscription(user user.User, bd *board.Board, cker Checker) {
 	for _, sub := range user.Subscribes {
 		if bd.Name == sub.Board {
 			cker.board = sub.Board
 			for _, keyword := range sub.Keywords {
-				go keywordChecker(keyword, bd, cker)
-			}
-			for _, author := range sub.Authors {
-				go authorChecker(author, bd, cker)
+				go checkKeyword(keyword, bd, cker)
 			}
 		}
 	}
 }
 
-func keywordChecker(keyword string, bd *board.Board, cker Checker) {
+func checkKeyword(keyword string, bd *board.Board, cker Checker) {
 	keywordArticles := make(article.Articles, 0)
 	for _, newAtcl := range bd.NewArticles {
 		if newAtcl.MatchKeyword(keyword) {
@@ -158,7 +158,30 @@ func keywordChecker(keyword string, bd *board.Board, cker Checker) {
 	}
 }
 
-func authorChecker(author string, bd *board.Board, cker Checker) {
+func checkAuthorSubscriber(bd *board.Board, cker Checker) {
+	u := new(user.User)
+	accounts := author.Subscribers(bd.Name)
+	for _, account := range accounts {
+		user := u.Find(account)
+		if user.Enable {
+			cker.Profile = user.Profile
+			go checkAuthorSubscription(user, bd, cker)
+		}
+	}
+}
+
+func checkAuthorSubscription(user user.User, bd *board.Board, cker Checker) {
+	for _, sub := range user.Subscribes {
+		if bd.Name == sub.Board {
+			cker.board = sub.Board
+			for _, author := range sub.Authors {
+				go checkAuthor(author, bd, cker)
+			}
+		}
+	}
+}
+
+func checkAuthor(author string, bd *board.Board, cker Checker) {
 	authorArticles := make(article.Articles, 0)
 	for _, newAtcl := range bd.NewArticles {
 		if strings.EqualFold(newAtcl.Author, author) {
