@@ -8,15 +8,16 @@
     text-align: center;
 }
 #main {
-        padding-top:20px;
-        padding-bottom:20px;
+    padding-top:20px;
+    padding-bottom:20px;
 }
 #demo-img {
-        height:75vh;
+    height:75vh;
 }
 dl {
     -webkit-margin-after: 0px;
 }
-a.fa-icon {
+a.fa-icon, .text-muted a {
     color:inherit;
+    text-decoration: none;
 }

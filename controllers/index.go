@@ -9,7 +9,21 @@ import (
 	"github.com/meifamily/ptt-alertor/shorturl"
 )
 
-var templates = template.Must(template.ParseFiles("public/docs.html", "public/top.html", "public/telegram.html", "public/messenger.html", "public/line.html", "public/tpls/head.tpl", "public/tpls/header.tpl", "public/tpls/command.tpl", "public/tpls/footer.tpl", "public/tpls/script.tpl"))
+var tpls = []string{
+	"public/docs.html",
+	"public/top.html",
+	"public/telegram.html",
+	"public/messenger.html",
+	"public/line.html",
+	"public/tpls/head.tpl",
+	"public/tpls/header.tpl",
+	"public/tpls/slogan.tpl",
+	"public/tpls/command.tpl",
+	"public/tpls/footer.tpl",
+	"public/tpls/script.tpl",
+}
+
+var templates = template.Must(template.ParseFiles(tpls...))
 
 func Index(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	err := templates.ExecuteTemplate(w, "line.html", struct{ URI string }{"line"})

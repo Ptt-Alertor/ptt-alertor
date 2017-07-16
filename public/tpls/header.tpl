@@ -20,7 +20,7 @@
             </li>
         </ul>
     </nav>
-    <h3 class="text-muted">Ptt Alertor</h3>
+    <h3 class="text-muted"><a href="/">Ptt Alertor</a></h3>
 </div>
 <hr>
 {{end}}
