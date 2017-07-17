@@ -14,4 +14,4 @@ COPY public/ public/
 ENTRYPOINT /ptt-alertor
 
 # Document that the service listens on port 9090.
-EXPOSE 9090
+EXPOSE 9090 6060
