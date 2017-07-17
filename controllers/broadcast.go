@@ -21,7 +21,7 @@ func Broadcast(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	if err != nil {
 		log.WithError(err).Error("Decode Notify Body Failed")
 	}
-	bc := new(jobs.Broadcast)
+	bc := new(jobs.Broadcaster)
 	bc.Msg = body.Content
 	err = bc.Send(body.Platforms)
 	if err != nil {

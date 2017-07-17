@@ -1,16 +1,21 @@
 package jobs
 
 import (
-	log "github.com/meifamily/logrus"
 	"github.com/garyburd/redigo/redis"
+	log "github.com/meifamily/logrus"
 	"github.com/meifamily/ptt-alertor/connections"
 	"github.com/meifamily/ptt-alertor/myutil"
 )
 
-type CleanUpBoards struct {
+func NewCacheCleaner() *cacheCleaner {
+	return &cacheCleaner{}
 }
 
-func (c *CleanUpBoards) Run() {
+type cacheCleaner struct {
+}
+
+// TODO: clean keyword, author, pushsum, pushlist keys
+func (c *cacheCleaner) Run() {
 	conn := connections.Redis()
 	defer conn.Close()
 	_, err := redis.Strings(conn.Do("DEL", "boards"))
@@ -21,5 +26,5 @@ func (c *CleanUpBoards) Run() {
 	if err != nil {
 		log.WithField("runtime", myutil.BasicRuntimeInfo()).WithError(err).Error()
 	}
-	log.Info("clean up boards")
+	log.Info("Clean Up Cache")
 }

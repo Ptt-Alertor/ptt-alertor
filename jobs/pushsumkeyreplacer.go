@@ -5,13 +5,13 @@ import (
 	"github.com/meifamily/ptt-alertor/models/pushsum"
 )
 
-type ReplacePushSumKey struct{}
+type PushSumKeyReplacer struct{}
 
-func NewReplacePushSumKey() *ReplacePushSumKey {
-	return &ReplacePushSumKey{}
+func NewPushSumKeyReplacer() *PushSumKeyReplacer {
+	return &PushSumKeyReplacer{}
 }
 
-func (r ReplacePushSumKey) Run() {
+func (r PushSumKeyReplacer) Run() {
 	err := pushsum.ReplaceBaseKeys()
 	if err != nil {
 		log.WithError(err).Error("Replace Pushsum Key Failed")

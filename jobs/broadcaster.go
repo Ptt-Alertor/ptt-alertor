@@ -10,18 +10,19 @@ var platforms = map[string]bool{
 	"email":     true,
 	"line":      true,
 	"messenger": true,
+	"telegram":  true,
 }
 
-type Broadcast struct {
+type Broadcaster struct {
 	Checker
 	Msg string
 }
 
-func (bc Broadcast) String() string {
+func (bc Broadcaster) String() string {
 	return bc.Msg
 }
 
-func (bc Broadcast) Send(plfms []string) error {
+func (bc Broadcaster) Send(plfms []string) error {
 	var platformBl = make(map[string]bool)
 	for _, plfm := range plfms {
 		if _, ok := platforms[plfm]; !ok {
@@ -39,6 +40,9 @@ func (bc Broadcast) Send(plfms []string) error {
 		if platformBl["messenger"] {
 			go bc.sendMessenger(u)
 		}
+		if platformBl["telegram"] {
+			go bc.sendTelegram(u)
+		}
 		if platformBl["email"] {
 			go bc.sendEmail(u)
 		}
@@ -46,18 +50,24 @@ func (bc Broadcast) Send(plfms []string) error {
 	return nil
 }
 
-func (bc Broadcast) sendEmail(u *user.User) {
+func (bc Broadcaster) sendEmail(u *user.User) {
 	bc.Profile.Email = u.Profile.Email
 	ckCh <- bc
 }
 
-func (bc Broadcast) sendLine(u *user.User) {
+func (bc Broadcaster) sendLine(u *user.User) {
 	bc.Profile.Line = u.Profile.Line
 	bc.Profile.LineAccessToken = u.Profile.LineAccessToken
 	ckCh <- bc
 }
 
-func (bc Broadcast) sendMessenger(u *user.User) {
+func (bc Broadcaster) sendMessenger(u *user.User) {
 	bc.Profile.Messenger = u.Profile.Messenger
+	ckCh <- bc
+}
+
+func (bc Broadcaster) sendTelegram(u *user.User) {
+	bc.Profile.Telegram = u.Profile.Telegram
+	bc.Profile.TelegramChat = u.Profile.TelegramChat
 	ckCh <- bc
 }

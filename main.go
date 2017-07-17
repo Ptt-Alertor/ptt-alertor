@@ -109,13 +109,12 @@ func main() {
 }
 
 func startJobs() {
-	go new(jobs.Checker).Run()
+	go jobs.NewChecker().Run()
 	go jobs.NewPushListChecker().Run()
 	go jobs.NewPushSumChecker().Run()
 	c := cron.New()
-	c.AddJob("@hourly", jobs.NewGenerator())
 	c.AddJob("@hourly", jobs.NewTop())
-	c.AddJob("@every 3d", jobs.NewReplacePushSumKey())
+	c.AddJob("@every 3d", jobs.NewPushSumKeyReplacer())
 	c.Start()
 }
 
@@ -123,7 +122,7 @@ func init() {
 	auth = myutil.Config("auth")
 	jobs.NewTop().Run()
 	// for initial app
-	// new(jobs.CleanUpBoards).Run()
+	// jobs.NewCacheCleaner().Run()
 	// jobs.NewGenerator().Run()
 	// jobs.NewFetcher().Run()
 }

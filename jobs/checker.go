@@ -38,6 +38,10 @@ func initHighBoards() {
 	}
 }
 
+func NewChecker() *Checker {
+	return &Checker{}
+}
+
 type Checker struct {
 	board    string
 	keyword  string
