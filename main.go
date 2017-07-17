@@ -24,8 +24,9 @@ type myRouter struct {
 
 func (mr myRouter) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	log.WithFields(log.Fields{
-		"IP":  r.RemoteAddr,
-		"URI": r.URL.Path,
+		"method": r.Method,
+		"IP":     r.RemoteAddr,
+		"URI":    r.URL.Path,
 	}).Info("visit")
 	mr.Router.ServeHTTP(w, r)
 }
