@@ -3,7 +3,6 @@ package main
 import (
 	"net/http"
 
-	"github.com/google/gops/agent"
 	"github.com/julienschmidt/httprouter"
 	log "github.com/meifamily/logrus"
 	"github.com/robfig/cron"
@@ -102,11 +101,6 @@ func main() {
 
 	// telegram
 	router.POST("/telegram/"+telegram.Token, telegram.HandleRequest)
-
-	// gops agent
-	if err := agent.Listen(&agent.Options{Addr: "127.0.0.1:9090", NoShutdownCleanup: false}); err != nil {
-		log.Fatal(err)
-	}
 
 	err := http.ListenAndServe(":9090", router)
 	if err != nil {
