@@ -8,13 +8,13 @@ import (
 	"regexp"
 
 	"github.com/julienschmidt/httprouter"
+	"github.com/line/line-bot-sdk-go/linebot"
+	log "github.com/meifamily/logrus"
 	"github.com/meifamily/ptt-alertor/command"
 	board "github.com/meifamily/ptt-alertor/models/ptt/board/redis"
 	user "github.com/meifamily/ptt-alertor/models/user/redis"
 	"github.com/meifamily/ptt-alertor/myutil"
 	"github.com/meifamily/ptt-alertor/shorturl"
-	"github.com/line/line-bot-sdk-go/linebot"
-	log "github.com/meifamily/logrus"
 )
 
 var bd board.Board

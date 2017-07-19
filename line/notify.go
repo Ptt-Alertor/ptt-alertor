@@ -2,25 +2,21 @@ package line
 
 import (
 	"bytes"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"html/template"
 	"io/ioutil"
 	"net/http"
+	"net/url"
+	"sort"
+	"strconv"
 
 	"github.com/julienschmidt/httprouter"
 	log "github.com/meifamily/logrus"
-	"github.com/meifamily/ptt-alertor/myutil"
-
-	"encoding/json"
-
-	"sort"
-
-	"strconv"
-
-	"net/url"
 
 	user "github.com/meifamily/ptt-alertor/models/user/redis"
+	"github.com/meifamily/ptt-alertor/myutil"
 )
 
 const notifyBotHost string = "https://notify-bot.line.me"
@@ -40,7 +36,7 @@ func init() {
 
 func buildQueryString(params map[string]string) (query string) {
 	var keys []string
-	for key, _ := range params {
+	for key := range params {
 		keys = append(keys, key)
 	}
 	sort.Strings(keys)

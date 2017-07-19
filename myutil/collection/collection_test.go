@@ -32,9 +32,9 @@ func testIndexByStrcut(t *testing.T) {
 		Name string
 	}
 	slc := []user{
-		user{"a"},
-		user{"b"},
-		user{"c"},
+		{"a"},
+		{"b"},
+		{"c"},
 	}
 	actual := Index(slc, user{"b"})
 	if expected != actual {
