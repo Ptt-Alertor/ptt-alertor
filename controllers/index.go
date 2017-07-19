@@ -32,14 +32,10 @@ var tpls = []string{
 
 var templates = template.Must(template.ParseFiles(tpls...))
 
+var host string
+
 func Index(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	err := templates.ExecuteTemplate(w, "line.html", struct {
-		URI   string
-		Count []string
-	}{"line", count()})
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
+	LineIndex(w, r, nil)
 }
 
 func count() (counterStrs []string) {
@@ -60,8 +56,9 @@ func count() (counterStrs []string) {
 func LineIndex(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	err := templates.ExecuteTemplate(w, "line.html", struct {
 		URI   string
+		Host  string
 		Count []string
-	}{"line", count()})
+	}{"line", r.Host, count()})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
@@ -70,8 +67,9 @@ func LineIndex(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 func MessengerIndex(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	err := templates.ExecuteTemplate(w, "messenger.html", struct {
 		URI   string
+		Host  string
 		Count []string
-	}{"messenger", count()})
+	}{"messenger", r.Host, count()})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
@@ -80,8 +78,9 @@ func MessengerIndex(w http.ResponseWriter, r *http.Request, _ httprouter.Params)
 func TelegramIndex(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	err := templates.ExecuteTemplate(w, "telegram.html", struct {
 		URI   string
+		Host  string
 		Count []string
-	}{"telegram", count()})
+	}{"telegram", r.Host, count()})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
