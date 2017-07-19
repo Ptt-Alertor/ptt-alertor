@@ -19,20 +19,21 @@ import (
 var bot *tgbotapi.BotAPI
 var err error
 
-// Token is telegram authentication token
-var Token string
+var token string
 
 func init() {
-	Token = myutil.Config("telegram")["token"]
+	token = myutil.Config("telegram")["token"]
 	host := myutil.Config("app")["host"]
-	bot, err = tgbotapi.NewBotAPI(Token)
+	bot, err = tgbotapi.NewBotAPI(token)
 	if err != nil {
 		log.WithError(err).Fatal("Telegram Bot Initialize Failed")
 	}
 	// bot.Debug = true
 	log.Info("Telegram Authorized on " + bot.Self.UserName)
 
-	_, err = bot.SetWebhook(tgbotapi.NewWebhook(host + "/telegram/" + Token))
+	webhookConfig := tgbotapi.NewWebhook(host + "/telegram/" + token)
+	webhookConfig.MaxConnections = 100
+	_, err = bot.SetWebhook(webhookConfig)
 	if err != nil {
 		log.WithError(err).Fatal("Telegram Bot Set Webhook Failed")
 	}
