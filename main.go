@@ -17,6 +17,7 @@ import (
 )
 
 var auth map[string]string
+var telegramToken string
 
 type myRouter struct {
 	httprouter.Router
@@ -104,7 +105,7 @@ func main() {
 	router.POST("/messenger/webhook", m.Received)
 
 	// telegram
-	router.POST("/telegram/"+telegram.Token, telegram.HandleRequest)
+	router.POST("/telegram/"+telegramToken, telegram.HandleRequest)
 
 	// gops agent
 	if err := agent.Listen(&agent.Options{Addr: ":6060", NoShutdownCleanup: false}); err != nil {
@@ -130,6 +131,7 @@ func startJobs() {
 
 func init() {
 	auth = myutil.Config("auth")
+	telegramToken = myutil.Config("telegram")["token"]
 	jobs.NewTop().Run()
 	// for initial app
 	// jobs.NewCacheCleaner().Run()
