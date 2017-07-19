@@ -3,10 +3,17 @@ package controllers
 import (
 	"html/template"
 	"net/http"
+	"strconv"
 
+	"strings"
+
+	"github.com/garyburd/redigo/redis"
 	"github.com/julienschmidt/httprouter"
+	"github.com/meifamily/ptt-alertor/connections"
+	"github.com/meifamily/ptt-alertor/models/counter"
 	"github.com/meifamily/ptt-alertor/models/top"
 	"github.com/meifamily/ptt-alertor/shorturl"
+	"golang.org/x/net/websocket"
 )
 
 var tpls = []string{
@@ -26,28 +33,55 @@ var tpls = []string{
 var templates = template.Must(template.ParseFiles(tpls...))
 
 func Index(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	err := templates.ExecuteTemplate(w, "line.html", struct{ URI string }{"line"})
+	err := templates.ExecuteTemplate(w, "line.html", struct {
+		URI   string
+		Count []string
+	}{"line", count()})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
 
+func count() (counterStrs []string) {
+	count, err := counter.Alert()
+	if err != nil {
+		return nil
+	}
+	countStrs := strings.Split((strconv.Itoa(count)), "")
+	for index, num := range countStrs {
+		counterStrs = append(counterStrs, num)
+		if backIndex := len(countStrs) - index; backIndex != 1 && backIndex%3 == 1 {
+			counterStrs = append(counterStrs, ",")
+		}
+	}
+	return counterStrs
+}
+
 func LineIndex(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	err := templates.ExecuteTemplate(w, "line.html", struct{ URI string }{"line"})
+	err := templates.ExecuteTemplate(w, "line.html", struct {
+		URI   string
+		Count []string
+	}{"line", count()})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
 
 func MessengerIndex(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	err := templates.ExecuteTemplate(w, "messenger.html", struct{ URI string }{"messenger"})
+	err := templates.ExecuteTemplate(w, "messenger.html", struct {
+		URI   string
+		Count []string
+	}{"messenger", count()})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
 
 func TelegramIndex(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	err := templates.ExecuteTemplate(w, "telegram.html", struct{ URI string }{"telegram"})
+	err := templates.ExecuteTemplate(w, "telegram.html", struct {
+		URI   string
+		Count []string
+	}{"telegram", count()})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
@@ -93,5 +127,32 @@ func Redirect(w http.ResponseWriter, r *http.Request, params httprouter.Params) 
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
 		t.Execute(w, nil)
+	}
+}
+
+func WebSocket(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+	websocket.Handler(CounterHandler).ServeHTTP(w, r)
+}
+
+func CounterHandler(ws *websocket.Conn) {
+	conn := connections.Redis()
+	defer conn.Close()
+	psc := redis.PubSubConn{Conn: conn}
+	psc.Subscribe("alert-counter")
+	defer psc.Unsubscribe("alert-counter")
+	for {
+		switch v := psc.Receive().(type) {
+		case redis.Message:
+			_, err := ws.Write([]byte(v.Data))
+			if err != nil {
+				ws.Close()
+				psc.Unsubscribe("alert-counter")
+				return
+			}
+		case redis.Subscription:
+			// fmt.Printf("%s: %s %d\n", v.Channel, v.Kind, v.Count)
+		case error:
+			return
+		}
 	}
 }

@@ -67,6 +67,9 @@ func main() {
 	router.GET("/top", ctrlr.Top)
 	router.GET("/docs", ctrlr.Docs)
 
+	// websocket
+	router.GET("/ws", ctrlr.WebSocket)
+
 	router.POST("/broadcast", basicAuth(ctrlr.Broadcast))
 
 	// boards apis

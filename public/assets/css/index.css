@@ -21,3 +21,7 @@ a.fa-icon, .text-muted a {
     color:inherit;
     text-decoration: none;
 }
+#counter-board {
+    margin-bottom: 0px;
+    display: inline-block;
+}
