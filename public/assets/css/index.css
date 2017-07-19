@@ -1,8 +1,6 @@
-#home,
-#add,
-#example {
-    padding-top: 20px;
-    padding-bottom: 20px;
+#demo,
+#add {
+    margin-bottom: 20px;
 }
 .center-text {
     text-align: center;
@@ -20,8 +18,4 @@ dl {
 a.fa-icon, .text-muted a {
     color:inherit;
     text-decoration: none;
-}
-#counter-board {
-    margin-bottom: 0px;
-    display: inline-block;
 }

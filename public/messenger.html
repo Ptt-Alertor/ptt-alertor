@@ -5,7 +5,7 @@
 
 <body>
     <div class="container">
-        {{template "header" .}}
+        {{template "header"}}
         {{template "slogan"}}
         <div id="main" class="row bg-info">
             <div id="demo" class="col-sm-4 col-sm-push-4">
@@ -14,6 +14,9 @@
             </div>
 
             <div id="add" class="col-sm-4 col-sm-push-4">
+                <div class="center-text">
+                    {{template "counter" .}}
+                </div>
                 <div class="center-text">
                     <a href="https://m.me/pttalertor">https://m.me/pttalertor</a>
                 </div>
@@ -28,7 +31,7 @@
 
             {{template "command"}}
        </div>
-        {{template "footer" .}}
+        {{template "footer"}}
     </div>
     {{template "script" .}}
     <script>

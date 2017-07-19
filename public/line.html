@@ -5,7 +5,7 @@
 
 <body>
     <div class="container">
-        {{template "header" .}}
+        {{template "header"}}
         {{template "slogan"}}
         <div id="main" class="row bg-success">
             <div id="demo" class="col-sm-4 col-sm-push-4">
@@ -13,6 +13,9 @@
             </div>
 
             <div id="add" class="col-sm-4 col-sm-push-4">
+                <div class="center-text">
+                    {{template "counter" .}}
+                </div>
                 <div class="center-text">
                     <p>LINE ID: @vxl5146r</p>
                 </div>
@@ -26,7 +29,7 @@
             </div>
             {{template "command"}}
        </div>
-        {{template "footer" .}}
+        {{template "footer"}}
     </div>
     {{template "script" .}}
 </body>

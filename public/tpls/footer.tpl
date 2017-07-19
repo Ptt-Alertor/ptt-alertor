@@ -1,19 +1,5 @@
 {{define "footer"}}
 <footer class="footer center-text">
-    {{if .Count}}
-    <div id="counter-board" class="well well-sm">
-        <i class="fa fa-bell" aria-hidden="true"></i>
-        <span id="counter">
-            {{range .Count}}
-                {{if eq . ","}}
-                <span>,</span>
-                {{else}}
-                <span class="label label-default">{{.}}</span>
-                {{end}}
-            {{end}}
-        </span>
-    </div>
-    {{end}}
     <p>&copy; 2017 Ptt Alertor. Icons made by <a href="http://www.flaticon.com/authors/madebyoliver" title="Madebyoliver">Madebyoliver</a>        from <a href="http://www.flaticon.com" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/"
             title="Creative Commons BY 3.0" target="_blank">CC BY 3.0</a>
         <a class="fa-icon" target="_blank" href="https://facebook.com/pttalertor">

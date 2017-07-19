@@ -26,6 +26,7 @@ var tpls = []string{
 	"public/tpls/header.tpl",
 	"public/tpls/slogan.tpl",
 	"public/tpls/command.tpl",
+	"public/tpls/counter.tpl",
 	"public/tpls/footer.tpl",
 	"public/tpls/script.tpl",
 }
