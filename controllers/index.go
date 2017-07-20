@@ -146,7 +146,6 @@ func CounterHandler(ws *websocket.Conn) {
 			_, err := ws.Write([]byte(v.Data))
 			if err != nil {
 				ws.Close()
-				psc.Unsubscribe("alert-counter")
 				return
 			}
 		case redis.Subscription:
