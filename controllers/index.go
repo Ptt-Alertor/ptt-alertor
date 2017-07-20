@@ -35,8 +35,45 @@ var templates = template.Must(template.ParseFiles(tpls...))
 
 var host string
 
+// Index Handles router "/" request
 func Index(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	LineIndex(w, r, nil)
+}
+
+// LineIndex Handles router "/line" request
+func LineIndex(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	err := templates.ExecuteTemplate(w, "line.html", struct {
+		URI   string
+		Host  string
+		Count []string
+	}{"line", r.Host, count()})
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
+// MessengerIndex Handles router "/messenger" request
+func MessengerIndex(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	err := templates.ExecuteTemplate(w, "messenger.html", struct {
+		URI   string
+		Host  string
+		Count []string
+	}{"messenger", r.Host, count()})
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
+// TelegramIndex Handles router "/telegram" request
+func TelegramIndex(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	err := templates.ExecuteTemplate(w, "telegram.html", struct {
+		URI   string
+		Host  string
+		Count []string
+	}{"telegram", r.Host, count()})
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
 }
 
 func count() (counterStrs []string) {
@@ -54,39 +91,7 @@ func count() (counterStrs []string) {
 	return counterStrs
 }
 
-func LineIndex(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	err := templates.ExecuteTemplate(w, "line.html", struct {
-		URI   string
-		Host  string
-		Count []string
-	}{"line", r.Host, count()})
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
-}
-
-func MessengerIndex(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	err := templates.ExecuteTemplate(w, "messenger.html", struct {
-		URI   string
-		Host  string
-		Count []string
-	}{"messenger", r.Host, count()})
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
-}
-
-func TelegramIndex(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	err := templates.ExecuteTemplate(w, "telegram.html", struct {
-		URI   string
-		Host  string
-		Count []string
-	}{"telegram", r.Host, count()})
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
-}
-
+// Top Handles router "/top" request, it shows top rank of keywords, authors, pushsum
 func Top(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	count := 100
 	keywords := top.ListKeywordWithScore(count)
@@ -109,6 +114,7 @@ func Top(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	}
 }
 
+// Docs shows advanced intructions
 func Docs(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	err := templates.ExecuteTemplate(w, "docs.html", struct{ URI string }{"docs"})
 	if err != nil {
@@ -116,9 +122,10 @@ func Docs(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	}
 }
 
+// Redirect redirects short url to original url
 func Redirect(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-	sha1 := params.ByName("sha1")
-	url := shorturl.Original(sha1)
+	checksum := params.ByName("checksum")
+	url := shorturl.Original(checksum)
 	if url != "" {
 		http.Redirect(w, r, url, http.StatusMovedPermanently)
 	} else {
@@ -130,11 +137,12 @@ func Redirect(w http.ResponseWriter, r *http.Request, params httprouter.Params) 
 	}
 }
 
+// WebSocket upgrades http request to websocket
 func WebSocket(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-	websocket.Handler(CounterHandler).ServeHTTP(w, r)
+	websocket.Handler(counterHandler).ServeHTTP(w, r)
 }
 
-func CounterHandler(ws *websocket.Conn) {
+func counterHandler(ws *websocket.Conn) {
 	conn := connections.Redis()
 	defer conn.Close()
 	psc := redis.PubSubConn{Conn: conn}
