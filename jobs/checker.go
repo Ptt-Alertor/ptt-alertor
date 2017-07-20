@@ -3,7 +3,6 @@ package jobs
 import (
 	"fmt"
 	"strings"
-	"sync"
 	"time"
 
 	log "github.com/meifamily/logrus"
@@ -17,7 +16,7 @@ import (
 	"github.com/meifamily/ptt-alertor/myutil"
 )
 
-const checkBoardDuration = 250 * time.Millisecond
+const checkBoardDuration = 200 * time.Millisecond
 const checkHighBoardDuration = 1 * time.Second
 
 var boardCh = make(chan *board.Board, 700)
@@ -67,21 +66,48 @@ func (cker Checker) Self() Checker {
 
 // Run is main in Job
 func (cker Checker) Run() {
-	var wgHigh sync.WaitGroup
-	var wg sync.WaitGroup
 	// step 1: check boards which one has new articles
 	go func() {
 		for {
-			checkBoards(&wgHigh, highBoards, checkHighBoardDuration)
-			wgHigh.Wait()
+			checkBoards(highBoards, checkHighBoardDuration)
 		}
 	}()
-	go func() {
+	offPeakCh := make(chan bool)
+	go func(offPeakCh <-chan bool) {
+		var offPeak bool
+		duration := checkBoardDuration
 		for {
-			checkBoards(&wg, new(board.Board).All(), checkBoardDuration)
-			wg.Wait()
+			select {
+			case op := <-offPeakCh:
+				if offPeak != op {
+					if op {
+						log.Info("Switch to Slow Mode")
+						duration = checkBoardDuration * 2
+					} else {
+						log.Info("Switch to Normal Mode")
+						duration = checkBoardDuration
+					}
+					offPeak = op
+				}
+			default:
+				checkBoards(new(board.Board).All(), duration)
+			}
 		}
-	}()
+	}(offPeakCh)
+
+	// check off peak
+	go func(offPeakCh chan<- bool) {
+		loc := time.FixedZone("CST", 8*60*60)
+		for {
+			t := time.Now().In(loc)
+			if t.Hour() >= 3 && t.Hour() < 7 {
+				offPeakCh <- true
+			} else {
+				offPeakCh <- false
+			}
+			time.Sleep(10 * time.Minute)
+		}
+	}(offPeakCh)
 
 	for {
 		select {
@@ -96,16 +122,14 @@ func (cker Checker) Run() {
 	}
 }
 
-func checkBoards(wg *sync.WaitGroup, bds []*board.Board, duration time.Duration) {
-	wg.Add(len(bds))
+func checkBoards(bds []*board.Board, duration time.Duration) {
 	for _, bd := range bds {
 		time.Sleep(duration)
-		go checkNewArticle(wg, bd, boardCh)
+		go checkNewArticle(bd, boardCh)
 	}
 }
 
-func checkNewArticle(wg *sync.WaitGroup, bd *board.Board, boardCh chan *board.Board) {
-	defer wg.Done()
+func checkNewArticle(bd *board.Board, boardCh chan *board.Board) {
 	bd.WithNewArticles()
 	if bd.NewArticles == nil {
 		bd.Articles = bd.OnlineArticles
