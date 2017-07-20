@@ -12,6 +12,7 @@ import (
 	"github.com/meifamily/ptt-alertor/connections"
 	"github.com/meifamily/ptt-alertor/models/counter"
 	"github.com/meifamily/ptt-alertor/models/top"
+	"github.com/meifamily/ptt-alertor/myutil"
 	"github.com/meifamily/ptt-alertor/shorturl"
 	"golang.org/x/net/websocket"
 )
@@ -33,7 +34,7 @@ var tpls = []string{
 
 var templates = template.Must(template.ParseFiles(tpls...))
 
-var host string
+var wsHost = myutil.Config("app")["websocketHost"]
 
 // Index Handles router "/" request
 func Index(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
@@ -43,10 +44,10 @@ func Index(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 // LineIndex Handles router "/line" request
 func LineIndex(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	err := templates.ExecuteTemplate(w, "line.html", struct {
-		URI   string
-		Host  string
-		Count []string
-	}{"line", r.Host, count()})
+		URI    string
+		WSHost string
+		Count  []string
+	}{"line", wsHost, count()})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
@@ -55,10 +56,10 @@ func LineIndex(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 // MessengerIndex Handles router "/messenger" request
 func MessengerIndex(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	err := templates.ExecuteTemplate(w, "messenger.html", struct {
-		URI   string
-		Host  string
-		Count []string
-	}{"messenger", r.Host, count()})
+		URI    string
+		WSHost string
+		Count  []string
+	}{"messenger", wsHost, count()})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
@@ -67,10 +68,10 @@ func MessengerIndex(w http.ResponseWriter, r *http.Request, _ httprouter.Params)
 // TelegramIndex Handles router "/telegram" request
 func TelegramIndex(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	err := templates.ExecuteTemplate(w, "telegram.html", struct {
-		URI   string
-		Host  string
-		Count []string
-	}{"telegram", r.Host, count()})
+		URI    string
+		WSHost string
+		Count  []string
+	}{"telegram", wsHost, count()})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
