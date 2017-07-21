@@ -6,6 +6,8 @@ import (
 
 	log "github.com/meifamily/logrus"
 
+	"strings"
+
 	"github.com/meifamily/ptt-alertor/models/top"
 	user "github.com/meifamily/ptt-alertor/models/user/redis"
 )
@@ -25,9 +27,11 @@ func (t Top) Run() {
 	for _, u := range us {
 		for _, sub := range u.Subscribes {
 			for _, keyword := range sub.Keywords {
+				keyword = strings.ToLower(keyword)
 				keywordMap[top.BoardWord{Board: sub.Board, Word: keyword}]++
 			}
 			for _, author := range sub.Authors {
+				author = strings.ToLower(author)
 				authorMap[top.BoardWord{Board: sub.Board, Word: author}]++
 			}
 			if sub.PushSum.Up != 0 {
