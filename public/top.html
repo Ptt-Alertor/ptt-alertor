@@ -25,6 +25,7 @@
                             <th>板名</th>
                             <th>關鍵字</th>
                             <th>數量</th>
+                            <th>指令</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -33,6 +34,11 @@
                             <td>{{.Board}}</td>
                             <td>{{.Word}}</td>
                             <td>{{.Count}}</td>
+                            <td>
+                                <button type="button" class="copy btn btn-default btn-xs" data-toggle="tooltip">
+                                    <span class="glyphicon glyphicon-copy"></span>
+                                </button>
+                            </td>
                         </tr>
                         {{end}}
                     </tbody>
@@ -45,6 +51,7 @@
                             <th>板名</th>
                             <th>作者</th>
                             <th>數量</th>
+                            <th>指令</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -53,6 +60,11 @@
                             <td>{{.Board}}</td>
                             <td>{{.Word}}</td>
                             <td>{{.Count}}</td>
+                            <td>
+                                <button type="button" class="copy btn btn-default btn-xs" data-toggle="tooltip">
+                                    <span class="glyphicon glyphicon-copy"></span>
+                                </button>
+                            </td>
                         </tr>
                         {{end}}
                     </tbody>
@@ -65,6 +77,7 @@
                             <th>板名</th>
                             <th>推噓文</th>
                             <th>數量</th>
+                            <th>指令</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -73,16 +86,62 @@
                             <td>{{.Board}}</td>
                             <td>{{.Word}}</td>
                             <td>{{.Count}}</td>
+                            <td>
+                                <button type="button" class="copy btn btn-default btn-xs" data-toggle="tooltip">
+                                    <span class="glyphicon glyphicon-copy"></span>
+                                </button>
+                            </td>
                         </tr>
                         {{end}}
                     </tbody>
                 </table>
             </div>
-
         </div>
         {{template "footer"}}
     </div>
     {{template "script"}}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js"></script>
+    <script>
+        $(function () {
+            var tab = "keywords"
+            var tabCommands = {
+                keywords: "新增",
+                authors: "新增作者",
+                pushsum: "新增推文數",
+                pushsumDown: "新增噓文數"
+            }
+            $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+                tab = e.target.getAttribute("aria-controls");
+            });
+            $('[data-toggle="tooltip"]').tooltip({
+                title: '複製！',
+                trigger: 'manual'
+            }).on('shown.bs.tooltip', function(e) {
+                setTimeout(function() {
+                    $(e.target).tooltip('hide');
+                }, 1000);
+            });
+            var clipboard = new Clipboard('.copy', {
+                text: function (trigger) {
+                    let boardElem = trigger.parentElement.parentElement.firstElementChild;
+                    let board = boardElem.textContent;
+                    let word = boardElem.nextElementSibling.textContent;
+                    let command = tabCommands[tab];
+                    if (tab === "pushsum" && parseInt(word) < 0) {
+                        command = tabCommands["pushsumDown"];
+                        word = Math.abs(word);
+                    }
+                    return command + " " + board + " " + word;
+                }
+            });
+            clipboard.on('success', function (e) {
+                $(e.trigger).tooltip('show');
+            });
+            clipboard.on('error', function (e) {
+                $(e.trigger).attr('title', '失敗！').tooltip('fixTitle').tooltip('show');
+            });
+        })
+    </script>
 </body>
 
 </html>

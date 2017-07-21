@@ -106,5 +106,5 @@ func listWithScore(kind string, num int) (wos WordOrders) {
 }
 
 func (wo WordOrder) String() string {
-	return wo.Board + ": " + wo.Word
+	return wo.Board + ":" + wo.Word
 }
