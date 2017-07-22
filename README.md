@@ -81,4 +81,8 @@ Rose Li, Aries Huang, Scott Kao, Amy Li
 
 ### Ptt
 
-DMM, oas, bestpika, Zero0910, lucky0509, wbreeze, chang0206, lindo0130, hungys, gyman7788, tooilxui, myamyakoko, whkuo
+DMM, oas, bestpika, Zero0910, lucky0509, wbreeze, chang0206, lindo0130, hungys, gyman7788, tooilxui, myamyakoko, whkuo, papago89
+
+### Facebook
+
+Mr.clu
