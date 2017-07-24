@@ -2,6 +2,7 @@
 <div class="header">
     <nav>
         <ul class="nav nav-pills pull-right">
+            <li class="hidden-xs" role="presentation"><a href="/docs">DOCS</a></li>
             <li role="presentation"><a href="/top">TOP 100</a></li>
 
             <li class="hidden-xs" role="presentation"><a href="/line">LINE</a></li>
