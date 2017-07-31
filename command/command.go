@@ -245,7 +245,7 @@ func handlePush(command, userID, text string) string {
 	if !checkArticleExist(boardName, articleCode) {
 		return "文章不存在"
 	}
-	if countUserArticles(userID) > subArticlesLimit {
+	if strings.EqualFold("新增推文", command) && countUserArticles(userID) > subArticlesLimit {
 		return "推文追蹤最多 25 篇，輸入「推文清單」，整理追蹤列表。"
 	}
 	err := update(commandActionMap[command], userID, []string{boardName}, articleCode)
