@@ -7,6 +7,7 @@ import (
 	"github.com/meifamily/ptt-alertor/models/keyword"
 	board "github.com/meifamily/ptt-alertor/models/ptt/board/redis"
 	"github.com/meifamily/ptt-alertor/models/pushsum"
+	"github.com/meifamily/ptt-alertor/models/subscription"
 	user "github.com/meifamily/ptt-alertor/models/user/redis"
 )
 
@@ -25,21 +26,21 @@ func (gb Generator) Run() {
 		boardNameBool[bd.Name] = true
 	}
 
-	// emptyPushSum := subscription.PushSum{}
+	emptyPushSum := subscription.PushSum{}
 	for _, u := range users {
 		for _, sub := range u.Subscribes {
-			// if !boardNameBool[sub.Board] {
-			// 	createBoard(sub.Board, u.Profile.Account)
-			// }
-			// if sub.PushSum != emptyPushSum {
-			// 	createPushSumKeys(u.Profile.Account, sub.Board)
-			// }
+			if !boardNameBool[sub.Board] {
+				createBoard(sub.Board, u.Profile.Account)
+			}
+			if sub.PushSum != emptyPushSum {
+				createPushSumKeys(u.Profile.Account, sub.Board)
+			}
 			if len(sub.Keywords) > 0 {
 				createKeyword(u.Profile.Account, sub.Board)
 			}
-			// if len(sub.Authors) > 0 {
-			// 	createAuthor(u.Profile.Account, sub.Board)
-			// }
+			if len(sub.Authors) > 0 {
+				createAuthor(u.Profile.Account, sub.Board)
+			}
 		}
 	}
 	log.Info("Generated Done")

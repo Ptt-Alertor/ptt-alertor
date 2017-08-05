@@ -123,7 +123,7 @@ func startJobs() {
 	go jobs.NewChecker().Run()
 	go jobs.NewPushListChecker().Run()
 	go jobs.NewPushSumChecker().Run()
-	// go jobs.NewPttLifeMonitor().Run()
+	// go jobs.NewPttMonitor().Run()
 	c := cron.New()
 	c.AddJob("@hourly", jobs.NewTop())
 	c.AddJob("@every 3d", jobs.NewPushSumKeyReplacer())
@@ -136,6 +136,6 @@ func init() {
 	// for initial app
 	// jobs.NewTop().Run()
 	// jobs.NewCacheCleaner().Run()
-	jobs.NewGenerator().Run()
+	// jobs.NewGenerator().Run()
 	// jobs.NewFetcher().Run()
 }
