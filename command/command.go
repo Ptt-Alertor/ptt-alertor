@@ -1,8 +1,13 @@
 package command
 
 import (
+	"errors"
+	"flag"
 	"regexp"
+	"strconv"
 	"strings"
+
+	"github.com/meifamily/ptt-alertor/myutil"
 
 	"fmt"
 
@@ -16,6 +21,14 @@ import (
 )
 
 const subArticlesLimit int = 25
+const updateFailedMsg string = "失敗，請嘗試封鎖再解封鎖，並重新執行註冊步驟。\n若問題未解決，請至粉絲團或 LINE 首頁留言。"
+
+var inputErrorTips = []string{
+	"指令格式錯誤。",
+	"1. 需以空白分隔動作、板名、參數",
+	"2. 板名欄位開頭與結尾不可有逗號",
+	"3. 板名欄位間不允許空白字元。",
+}
 
 var Commands = map[string]map[string]string{
 	"一般": {
@@ -60,7 +73,7 @@ var commandActionMap = map[string]updateAction{
 }
 
 func HandleCommand(text string, userID string) string {
-	command := strings.Fields(strings.TrimSpace(text))[0]
+	command := strings.ToLower(strings.Fields(strings.TrimSpace(text))[0])
 	log.WithFields(log.Fields{
 		"account": userID,
 		"command": command,
@@ -75,19 +88,150 @@ func HandleCommand(text string, userID string) string {
 	case "排行":
 		return listTop()
 	case "新增", "刪除":
-		return handleKeyword(command, userID, text)
+		re := regexp.MustCompile("^(新增|刪除)\\s+([^,，][\\w-_,，\\.]*[^,，:\\s]):?\\s+(\\*|.*[^\\s])")
+		if matched := re.MatchString(text); !matched {
+			additionalTips := []string{
+				"正確範例：",
+				command + " gossiping,lol 問卦,爆卦",
+			}
+			inputErrorTips = append(inputErrorTips, additionalTips...)
+			return strings.Join(inputErrorTips, "\n")
+		}
+		args := re.FindStringSubmatch(text)
+		result, err := handleKeyword(command, userID, args[2], args[3])
+		if err != nil {
+			return err.Error()
+		}
+		return result
 	case "新增作者", "刪除作者":
-		return handleAuthor(command, userID, text)
+		re := regexp.MustCompile("^(新增作者|刪除作者)\\s+([^,，][\\w-_,，\\.]*[^,，:\\s]):?\\s+(\\*|[\\s,\\w]+)")
+		matched := re.MatchString(text)
+		if !matched {
+			additionalTips := []string{
+				"4. 作者為半形英文與數字組成。",
+				"正確範例：",
+				command + " gossiping,lol ffaarr,obov",
+			}
+			inputErrorTips = append(inputErrorTips, additionalTips...)
+			return strings.Join(inputErrorTips, "\n")
+		}
+		args := re.FindStringSubmatch(text)
+		result, err := handleAuthor(command, userID, args[2], args[3])
+		if err != nil {
+			return err.Error()
+		}
+		return result
 	case "新增推文數", "新增噓文數":
-		return handlePushSum(command, userID, text)
+		re := regexp.MustCompile("^(新增推文數|新增噓文數)\\s+([^,，][\\w-_,，\\.]*[^,，:\\s]):?\\s+(100|[1-9][0-9]|[0-9])$")
+		matched := re.MatchString(text)
+		if !matched {
+			additionalTips := []string{
+				"4. 推噓文數需為介於 0-100 的數字",
+				"正確範例：",
+				command + " gossiping,beauty 100",
+			}
+			inputErrorTips = append(inputErrorTips, additionalTips...)
+			return strings.Join(inputErrorTips, "\n")
+		}
+		args := re.FindStringSubmatch(text)
+		result, err := handlePushSum(command, userID, args[2], args[3])
+		if err != nil {
+			return err.Error()
+		}
+		return result
 	case "新增推文", "刪除推文":
-		return handlePush(command, userID, text)
+		re := regexp.MustCompile("^(新增推文|刪除推文)\\s+https?://www.ptt.cc/bbs/([\\w-_]*)/(M\\.\\d+.A.\\w*)\\.html$")
+		matched := re.MatchString(text)
+		if !matched {
+			inputErrorTips = []string{
+				"指令格式錯誤。",
+				"1. 網址與指令需至少一個空白。",
+				"2. 網址錯誤格式。",
+				"正確範例：",
+				command + " https://www.ptt.cc/bbs/EZsoft/M.1497363598.A.74E.html",
+			}
+			return strings.Join(inputErrorTips, "\n")
+		}
+		args := re.FindStringSubmatch(text)
+		result, err := handlePush(command, userID, args[2], args[3])
+		if err != nil {
+			return err.Error()
+		}
+		return result
 	case "清理推文":
 		return cleanPushList(userID)
 	case "推文清單":
 		return handlePushList(userID)
+	case "add", "del":
+		return handleCommandLine(userID, text)
 	}
 	return "無此指令，請打「指令」查看指令清單"
+}
+
+func handleCommandLine(userID, text string) string {
+	var keywordStr, authorStr, push, boo string
+	cl := flag.NewFlagSet("cl", flag.ContinueOnError)
+	cl.StringVar(&keywordStr, "keyword", "", "keyword string seperate by comma")
+	cl.StringVar(&keywordStr, "k", "", "keyword string seperate by comma")
+	cl.StringVar(&authorStr, "author", "", "author string seperate by comma")
+	cl.StringVar(&authorStr, "a", "", "author string seperate by comma")
+	cl.StringVar(&push, "push", "", "push sum")
+	cl.StringVar(&push, "p", "", "push sum")
+	cl.StringVar(&boo, "boo", "", "boo sum")
+	cl.StringVar(&boo, "b", "", "boo sum")
+
+	args := strings.Fields(text)
+	cl.Parse(args[1:])
+	boardStr := cl.Arg(0)
+	if boardStr == "" {
+		return "未指定板名。"
+	}
+
+	var commandPrefix string
+	switch args[0] {
+	case "add":
+		commandPrefix = "新增"
+	case "del":
+		commandPrefix = "刪除"
+	}
+
+	var command string
+	var err error
+	var errMsgs myutil.StringSlice
+	if keywordStr != "" {
+		command = commandPrefix
+		_, err = handleKeyword(command, userID, boardStr, keywordStr)
+		if err != nil {
+			errMsgs.AppendNonRepeatStr(err.Error(), false)
+		}
+	}
+	if authorStr != "" {
+		command = commandPrefix + "作者"
+		_, err = handleAuthor(command, userID, boardStr, authorStr)
+		if err != nil {
+			errMsgs.AppendNonRepeatStr(err.Error(), false)
+		}
+	}
+	if commandPrefix == "新增" {
+		if push != "" {
+			command = commandPrefix + "推文數"
+			_, err = handlePushSum(command, userID, boardStr, push)
+			if err != nil {
+				errMsgs.AppendNonRepeatStr(err.Error(), false)
+			}
+		}
+		if boo != "" {
+			command = commandPrefix + "噓文數"
+			_, err = handlePushSum(command, userID, boardStr, boo)
+			if err != nil {
+				errMsgs.AppendNonRepeatStr(err.Error(), false)
+			}
+		}
+	}
+	if len(errMsgs) != 0 {
+		return strings.Join([]string(errMsgs), "\n")
+	}
+	return commandPrefix + "成功。"
 }
 
 func handleDebug(account string) string {
@@ -165,23 +309,17 @@ func listTop() string {
 	return content
 }
 
-func handleKeyword(command, userID, text string) string {
-	re := regexp.MustCompile("^(新增|刪除)\\s+([^,，][\\w-_,，\\.]*[^,，:\\s]):?\\s+(\\*|.*[^\\s])")
-	matched := re.MatchString(text)
-	if !matched {
-		return inputErrorTips() + "\n\n正確範例：\n" + command + " gossiping,lol 問卦,爆卦"
-	}
-	args := re.FindStringSubmatch(text)
-	boardNames := splitParamString(args[2])
-	input := args[3]
+func handleKeyword(command, userID, board, keywordStr string) (string, error) {
+	boardNames := splitParamString(board)
+	input := keywordStr
 	var inputs []string
 	if strings.HasPrefix(input, "regexp:") {
 		if !checkRegexp(input) {
-			return "正規表示式錯誤，請檢查規則。"
+			return "", errors.New("正規表示式錯誤，請檢查規則。")
 		}
-		inputs = []string{args[3]}
+		inputs = []string{keywordStr}
 	} else {
-		inputs = splitParamString(args[3])
+		inputs = splitParamString(keywordStr)
 	}
 	log.WithFields(log.Fields{
 		"id":      userID,
@@ -191,51 +329,66 @@ func handleKeyword(command, userID, text string) string {
 	}).Info("Keyword Command")
 	err := update(commandActionMap[command], userID, boardNames, inputs...)
 	if msg, ok := checkBoardError(err); ok {
-		return msg
+		return "", errors.New(msg)
 	}
 	if err != nil {
 		log.WithError(err).Error("Keyword Command Failed")
-		return command + "失敗，請嘗試封鎖再解封鎖，並重新執行註冊步驟。\n若問題未解決，請至粉絲團或 LINE 首頁留言。"
+		return "", errors.New(command + updateFailedMsg)
 	}
-	return command + "成功"
-
+	return command + "成功", nil
 }
 
-func handleAuthor(command, userID, text string) string {
-	re := regexp.MustCompile("^(新增作者|刪除作者)\\s+([^,，][\\w-_,，\\.]*[^,，:\\s]):?\\s+(\\*|[\\s,\\w]+)")
-	matched := re.MatchString(text)
-	if !matched {
-		return inputErrorTips() + "\n4. 作者為半形英文與數字組成。\n\n正確範例：\n" + command + " gossiping,lol ffaarr,obov"
+func handleAuthor(command, userID, board, authorStr string) (string, error) {
+	if ok, _ := regexp.MatchString("\\*|[\\s,\\w]+", authorStr); !ok {
+		return "", errors.New("作者為半形英文與數字組成。")
 	}
-	args := re.FindStringSubmatch(text)
-	boardNames := splitParamString(args[2])
-	inputs := splitParamString(args[3])
+	boardNames := splitParamString(board)
+	authors := splitParamString(authorStr)
 	log.WithFields(log.Fields{
 		"id":      userID,
 		"command": command,
 		"boards":  boardNames,
-		"words":   inputs,
+		"words":   authors,
 	}).Info("Author Command")
-	err := update(commandActionMap[command], userID, boardNames, inputs...)
+	err := update(commandActionMap[command], userID, boardNames, authors...)
 	if msg, ok := checkBoardError(err); ok {
-		return msg
+		return "", errors.New(msg)
 	}
 	if err != nil {
 		log.WithError(err).Error("Author Command Failed")
-		return command + "失敗，請嘗試封鎖再解封鎖，並重新執行註冊步驟。\n若問題未解決，請至粉絲團或 LINE 首頁留言。"
+		return "", errors.New(command + updateFailedMsg)
 	}
-	return command + "成功"
+	return command + "成功", nil
 }
 
-func handlePush(command, userID, text string) string {
-	re := regexp.MustCompile("^(新增推文|刪除推文)\\s+https?://www.ptt.cc/bbs/([\\w-_]*)/(M\\.\\d+.A.\\w*)\\.html$")
-	matched := re.MatchString(text)
-	if !matched {
-		return "指令格式錯誤。\n1. 網址與指令需至少一個空白。\n2. 網址錯誤格式。\n正確範例：\n" + command + " https://www.ptt.cc/bbs/EZsoft/M.1497363598.A.74E.html"
+func handlePushSum(command, account, board, sumStr string) (string, error) {
+	if sum, _ := strconv.Atoi(sumStr); sum < 0 || sum > 100 {
+		return "", errors.New("推噓文數需為介於 0-100 的數字")
 	}
-	args := re.FindStringSubmatch(text)
-	boardName := args[2]
-	articleCode := args[3]
+	boardNames := splitParamString(board)
+	log.WithFields(log.Fields{
+		"id":      account,
+		"command": command,
+		"boards":  boardNames,
+		"words":   sumStr,
+	}).Info("PushSum Command")
+	for _, boardName := range boardNames {
+		if strings.EqualFold(boardName, "allpost") {
+			return "", errors.New("推文數通知不支持 ALLPOST 板。")
+		}
+	}
+	err := update(commandActionMap[command], account, boardNames, sumStr)
+	if msg, ok := checkBoardError(err); ok {
+		return "", errors.New(msg)
+	}
+	if err != nil {
+		log.WithError(err).Error("PushSum Command Failed")
+		return "", errors.New(command + updateFailedMsg)
+	}
+	return command + "成功", nil
+}
+
+func handlePush(command, userID, boardName, articleCode string) (string, error) {
 	log.WithFields(log.Fields{
 		"id":      userID,
 		"command": command,
@@ -243,48 +396,17 @@ func handlePush(command, userID, text string) string {
 		"words":   articleCode,
 	}).Info("Push Command")
 	if !checkArticleExist(boardName, articleCode) {
-		return "文章不存在"
+		return "", errors.New("文章不存在")
 	}
 	if strings.EqualFold("新增推文", command) && countUserArticles(userID) > subArticlesLimit {
-		return "推文追蹤最多 25 篇，輸入「推文清單」，整理追蹤列表。"
+		return "", errors.New("推文追蹤最多 25 篇，輸入「推文清單」，整理追蹤列表。")
 	}
 	err := update(commandActionMap[command], userID, []string{boardName}, articleCode)
 	if err != nil {
 		log.WithError(err).Error("Pushlist Command Failed")
-		return command + "失敗，請嘗試封鎖再解封鎖，並重新執行註冊步驟。\n若問題未解決，請至粉絲團或 LINE 首頁留言。"
+		return "", errors.New(command + updateFailedMsg)
 	}
-	return command + "成功"
-}
-
-func handlePushSum(command, account, text string) string {
-	re := regexp.MustCompile("^(新增推文數|新增噓文數)\\s+([^,，][\\w-_,，\\.]*[^,，:\\s]):?\\s+(100|[1-9][0-9]|[0-9])$")
-	matched := re.MatchString(text)
-	if !matched {
-		return inputErrorTips() + "\n4. 推噓文數需為介於 0-100 的數字 \n\n正確範例：\n" + command + " gossiping,beauty 100"
-	}
-	args := re.FindStringSubmatch(text)
-	boardNames := splitParamString(args[2])
-	inputs := args[3]
-	log.WithFields(log.Fields{
-		"id":      account,
-		"command": command,
-		"boards":  boardNames,
-		"words":   inputs,
-	}).Info("PushSum Command")
-	for _, boardName := range boardNames {
-		if strings.EqualFold(boardName, "allpost") {
-			return "推文數通知不支持 ALLPOST 板。"
-		}
-	}
-	err := update(commandActionMap[command], account, boardNames, inputs)
-	if msg, ok := checkBoardError(err); ok {
-		return msg
-	}
-	if err != nil {
-		log.WithError(err).Error("PushSum Command Failed")
-		return command + "失敗，請嘗試封鎖再解封鎖，並重新執行註冊步驟。\n若問題未解決，請至粉絲團或 LINE 首頁留言。"
-	}
-	return command + "成功"
+	return command + "成功", nil
 }
 
 func countUserArticles(account string) (cnt int) {
@@ -323,10 +445,6 @@ func checkBoardError(err error) (string, bool) {
 		return "板名錯誤，請確認拼字。可能板名：\n" + bErr.Suggestion, true
 	}
 	return "", false
-}
-
-func inputErrorTips() string {
-	return "指令格式錯誤。\n1. 需以空白分隔動作、板名、參數\n2. 板名欄位開頭與結尾不可有逗號\n3. 板名欄位間不允許空白字元。"
 }
 
 func checkRegexp(input string) bool {

@@ -31,6 +31,12 @@ func (ss *StringSlice) RemoveStringsSpace() {
 	}
 }
 
+func (ss *StringSlice) AppendNonRepeatStr(str string, caseSensitive bool) {
+	if ss.Index(str, caseSensitive) == -1 {
+		*ss = append(*ss, str)
+	}
+}
+
 func (ss *StringSlice) AppendNonRepeat(objectStrs []string, caseSensitive bool) {
 	for _, oStr := range objectStrs {
 		if ss.Index(oStr, caseSensitive) == -1 {
