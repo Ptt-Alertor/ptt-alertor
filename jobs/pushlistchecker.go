@@ -1,6 +1,7 @@
 package jobs
 
 import (
+	"sync"
 	"time"
 
 	log "github.com/meifamily/logrus"
@@ -15,6 +16,9 @@ import (
 
 const checkPushListDuration = 1 * time.Second
 
+var plcker *PushListChecker
+var plcOnce sync.Once
+
 // PushListChecker embedding Checker for checking pushlist
 type PushListChecker struct {
 	Checker
@@ -23,25 +27,40 @@ type PushListChecker struct {
 
 // NewPushListChecker return Empty PushChecker pointer
 func NewPushListChecker() *PushListChecker {
-	return &PushListChecker{}
+	plcOnce.Do(func() {
+		plcker = &PushListChecker{}
+		plcker.done = make(chan struct{})
+	})
+	return plcker
 }
 
-func (pc PushListChecker) String() string {
-	return fmt.Sprintf("推文@%s\n\n%s\n%s\n%s", pc.Article.Board, pc.Article.Title, pc.Article.Link, pc.Article.PushList.String())
+func (plc PushListChecker) String() string {
+	return fmt.Sprintf("推文@%s\n\n%s\n%s\n%s", plc.Article.Board, plc.Article.Title, plc.Article.Link, plc.Article.PushList.String())
+}
+
+func (plc PushListChecker) Stop() {
+	plc.done <- struct{}{}
+	plc.done <- struct{}{}
+	log.Info("Pushlist Checker Stop")
 }
 
 // Run start job
-func (pc PushListChecker) Run() {
+func (plc PushListChecker) Run() {
 
 	ach := make(chan article.Article)
 	pch := make(chan PushListChecker)
 
 	go func() {
 		for {
-			codes := new(article.Articles).List()
-			for _, code := range codes {
-				time.Sleep(checkPushListDuration)
-				go checkPushList(code, ach)
+			select {
+			case <-plc.done:
+				return
+			default:
+				codes := new(article.Articles).List()
+				for _, code := range codes {
+					time.Sleep(checkPushListDuration)
+					go checkPushList(code, ach)
+				}
 			}
 		}
 	}()
@@ -49,13 +68,14 @@ func (pc PushListChecker) Run() {
 	for {
 		select {
 		case a := <-ach:
-			pc.Article = a
-			pc.checkSubscribers(pch)
+			plc.Article = a
+			plc.checkSubscribers(pch)
 		case pc := <-pch:
 			ckCh <- pc
+		case <-plc.done:
+			return
 		}
 	}
-
 }
 
 func checkPushList(code string, c chan article.Article) {
@@ -93,23 +113,23 @@ func destroyPushList(a article.Article) {
 	}).Info("Destroy PushList")
 }
 
-func (pc PushListChecker) checkSubscribers(pch chan PushListChecker) {
-	subs, err := pc.Article.Subscribers()
+func (plc PushListChecker) checkSubscribers(pch chan PushListChecker) {
+	subs, err := plc.Article.Subscribers()
 	if err != nil {
 		log.WithError(err).Error("Get Subscribers Failed")
 	}
 
 	for _, account := range subs {
-		go send(account, pc, pch)
+		go send(account, plc, pch)
 	}
 }
 
-func send(account string, pc PushListChecker, pch chan PushListChecker) {
+func send(account string, plc PushListChecker, pch chan PushListChecker) {
 	u := user.User{}
 	u = u.Find(account)
-	pc.board = pc.Article.Board
-	pc.subType = "push"
-	pc.word = pc.Article.Code
-	pc.Profile = u.Profile
-	pch <- pc
+	plc.board = plc.Article.Board
+	plc.subType = "push"
+	plc.word = plc.Article.Code
+	plc.Profile = u.Profile
+	pch <- plc
 }

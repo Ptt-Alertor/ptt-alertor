@@ -2,6 +2,7 @@ package jobs
 
 import (
 	"fmt"
+	"sync"
 	"time"
 
 	"strings"
@@ -23,14 +24,19 @@ const checkPushSumDuration = 500 * time.Millisecond
 const pauseCheckPushSum = 3 * time.Minute
 
 var psckerCh = make(chan pushSumChecker)
-var boardFinish = make(map[string]bool)
+var psCker *pushSumChecker
+var pscOnce sync.Once
 
 type pushSumChecker struct {
 	Checker
 }
 
 func NewPushSumChecker() *pushSumChecker {
-	return &pushSumChecker{}
+	pscOnce.Do(func() {
+		psCker = &pushSumChecker{}
+		psCker.done = make(chan struct{})
+	})
+	return psCker
 }
 
 func (psc pushSumChecker) String() string {
@@ -47,26 +53,38 @@ type BoardArticles struct {
 	articles article.Articles
 }
 
+func (psc pushSumChecker) Stop() {
+	psc.done <- struct{}{}
+	psc.done <- struct{}{}
+	log.Info("Pushsum Checker Stop")
+}
+
 func (psc pushSumChecker) Run() {
+	boardFinish := make(map[string]bool)
 	baCh := make(chan BoardArticles)
 
 	go func() {
 		for {
-			boards := pushsum.List()
-			for _, board := range boards {
-				bl, ok := boardFinish[board]
-				if !ok {
-					boardFinish[board] = true
-					ok, bl = true, true
+			select {
+			case <-psc.done:
+				return
+			default:
+				boards := pushsum.List()
+				for _, board := range boards {
+					bl, ok := boardFinish[board]
+					if !ok {
+						boardFinish[board] = true
+						ok, bl = true, true
+					}
+					if bl && ok {
+						ba := BoardArticles{board: board}
+						boardFinish[board] = false
+						go psc.crawlArticles(ba, baCh)
+					}
+					time.Sleep(checkPushSumDuration)
 				}
-				if bl && ok {
-					ba := BoardArticles{board: board}
-					boardFinish[board] = false
-					go psc.crawlArticles(ba, baCh)
-				}
-				time.Sleep(checkPushSumDuration)
+				time.Sleep(pauseCheckPushSum)
 			}
-			time.Sleep(pauseCheckPushSum)
 		}
 	}()
 
@@ -80,6 +98,8 @@ func (psc pushSumChecker) Run() {
 			}
 		case pscker := <-psckerCh:
 			ckCh <- pscker
+		case <-psc.done:
+			return
 		}
 	}
 }

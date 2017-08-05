@@ -3,6 +3,7 @@ package jobs
 import (
 	"fmt"
 	"strings"
+	"sync"
 	"time"
 
 	log "github.com/meifamily/logrus"
@@ -37,9 +38,8 @@ func initHighBoards() {
 	}
 }
 
-func NewChecker() *Checker {
-	return &Checker{}
-}
+var cker *Checker
+var ckerOnce sync.Once
 
 type Checker struct {
 	board    string
@@ -49,27 +49,60 @@ type Checker struct {
 	subType  string
 	word     string
 	Profile  userProto.Profile
+	done     chan struct{}
 }
 
-func (cker Checker) String() string {
-	subType := "關鍵字"
-	if cker.author != "" {
-		subType = "作者"
-	}
-	return fmt.Sprintf("%s@%s\r\n看板：%s；%s：%s%s", cker.word, cker.board, cker.board, subType, cker.word, cker.articles.String())
-}
-
-// Self return Checker itself
-func (cker Checker) Self() Checker {
+// NewChecker gets a Checker instance
+func NewChecker() *Checker {
+	ckerOnce.Do(func() {
+		cker = &Checker{}
+		cker.done = make(chan struct{})
+	})
 	return cker
 }
 
+func (c Checker) String() string {
+	subType := "關鍵字"
+	if c.author != "" {
+		subType = "作者"
+	}
+	return fmt.Sprintf("%s@%s\r\n看板：%s；%s：%s%s", c.word, c.board, c.board, subType, c.word, c.articles.String())
+}
+
+// Self return Checker itself
+func (c Checker) Self() Checker {
+	return c
+}
+
 // Run is main in Job
-func (cker Checker) Run() {
+func (c Checker) Run() {
 	// step 1: check boards which one has new articles
+	c.runCheckBoards()
+
+	for {
+		select {
+		//step 2: check user who subscribes board
+		case bd := <-boardCh:
+			go checkKeywordSubscriber(bd, c)
+			go checkAuthorSubscriber(bd, c)
+		//step 3: send notification
+		case cker := <-ckerCh:
+			ckCh <- cker
+		case <-c.done:
+			return
+		}
+	}
+}
+
+func (c Checker) runCheckBoards() {
 	go func() {
 		for {
-			checkBoards(highBoards, checkHighBoardDuration)
+			select {
+			case <-c.done:
+				return
+			default:
+				checkBoards(highBoards, checkHighBoardDuration)
+			}
 		}
 	}()
 	offPeakCh := make(chan bool)
@@ -89,6 +122,8 @@ func (cker Checker) Run() {
 					}
 					offPeak = op
 				}
+			case <-c.done:
+				return
 			default:
 				checkBoards(new(board.Board).All(), duration)
 			}
@@ -96,30 +131,27 @@ func (cker Checker) Run() {
 	}(offPeakCh)
 
 	// check off peak
-	go func(offPeakCh chan<- bool) {
-		loc := time.FixedZone("CST", 8*60*60)
-		for {
-			t := time.Now().In(loc)
-			if t.Hour() >= 3 && t.Hour() < 7 {
-				offPeakCh <- true
-			} else {
-				offPeakCh <- false
-			}
-			time.Sleep(10 * time.Minute)
-		}
-	}(offPeakCh)
+	go c.checkOffPeak(offPeakCh)
+}
 
+func (c Checker) checkOffPeak(offPeakCh chan<- bool) {
+	loc := time.FixedZone("CST", 8*60*60)
 	for {
-		select {
-		//step 2: check user who subscribes board
-		case bd := <-boardCh:
-			go checkKeywordSubscriber(bd, cker)
-			go checkAuthorSubscriber(bd, cker)
-		//step 3: send notification
-		case cker := <-ckerCh:
-			ckCh <- cker
+		t := time.Now().In(loc)
+		if t.Hour() >= 3 && t.Hour() < 7 {
+			offPeakCh <- true
+		} else {
+			offPeakCh <- false
 		}
+		time.Sleep(10 * time.Minute)
 	}
+}
+
+func (c Checker) Stop() {
+	for i := 0; i < 3; i++ {
+		c.done <- struct{}{}
+	}
+	log.Info("Checker Stop")
 }
 
 func checkBoards(bds []*board.Board, duration time.Duration) {
