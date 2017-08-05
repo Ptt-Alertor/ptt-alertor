@@ -13,7 +13,7 @@ import (
 	user "github.com/meifamily/ptt-alertor/models/user/redis"
 )
 
-const checkPushListDuration = 3 * time.Second
+const checkPushListDuration = 1 * time.Second
 
 // PushListChecker embedding Checker for checking pushlist
 type PushListChecker struct {
