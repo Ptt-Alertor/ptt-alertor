@@ -17,11 +17,9 @@ import (
 	"github.com/meifamily/ptt-alertor/myutil"
 )
 
-const checkBoardDuration = 200 * time.Millisecond
 const checkHighBoardDuration = 1 * time.Second
 
 var boardCh = make(chan *board.Board, 700)
-var ckerCh = make(chan Checker)
 var highBoards []*board.Board
 
 func init() {
@@ -50,13 +48,18 @@ type Checker struct {
 	word     string
 	Profile  userProto.Profile
 	done     chan struct{}
+	ch       chan Checker
+	duration time.Duration
 }
 
 // NewChecker gets a Checker instance
 func NewChecker() *Checker {
 	ckerOnce.Do(func() {
-		cker = &Checker{}
+		cker = &Checker{
+			duration: 200 * time.Millisecond,
+		}
 		cker.done = make(chan struct{})
+		cker.ch = make(chan Checker)
 	})
 	return cker
 }
@@ -86,7 +89,7 @@ func (c Checker) Run() {
 			go checkKeywordSubscriber(bd, c)
 			go checkAuthorSubscriber(bd, c)
 		//step 3: send notification
-		case cker := <-ckerCh:
+		case cker := <-c.ch:
 			ckCh <- cker
 		case <-c.done:
 			return
@@ -108,17 +111,17 @@ func (c Checker) runCheckBoards() {
 	offPeakCh := make(chan bool)
 	go func(offPeakCh <-chan bool) {
 		var offPeak bool
-		duration := checkBoardDuration
+		duration := c.duration
 		for {
 			select {
 			case op := <-offPeakCh:
 				if offPeak != op {
 					if op {
 						log.Info("Switch to Slow Mode")
-						duration = checkBoardDuration * 2
+						duration = c.duration * 2
 					} else {
 						log.Info("Switch to Normal Mode")
-						duration = checkBoardDuration
+						duration = c.duration
 					}
 					offPeak = op
 				}
@@ -214,7 +217,7 @@ func checkKeyword(keyword string, bd *board.Board, cker Checker) {
 		cker.articles = keywordArticles
 		cker.subType = "keyword"
 		cker.word = keyword
-		ckerCh <- cker
+		cker.ch <- cker
 	}
 }
 
@@ -253,6 +256,6 @@ func checkAuthor(author string, bd *board.Board, cker Checker) {
 		cker.articles = authorArticles
 		cker.subType = "author"
 		cker.word = author
-		ckerCh <- cker
+		cker.ch <- cker
 	}
 }
