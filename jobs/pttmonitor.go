@@ -29,25 +29,25 @@ func (pm pttMonitor) Run() {
 		}
 		if err == nil && resp.StatusCode == http.StatusOK {
 			log.Info("Ptt is alive")
+			if errorCounter >= 3 {
+				log.Info("Ptt is back to life")
+				go NewChecker().Run()
+				go NewPushSumChecker().Run()
+				go NewPushListChecker().Run()
+			}
+			errorCounter = 0
 		}
 		if err == nil && resp.StatusCode != http.StatusOK {
 			if errorCounter < 3 {
 				log.Info("Ptt is dying")
 			}
+			if errorCounter == 3 {
+				log.Info("Ptt is Dead")
+				go NewChecker().Stop()
+				go NewPushSumChecker().Stop()
+				go NewPushListChecker().Stop()
+			}
 			errorCounter++
-		}
-		if err == nil && resp.StatusCode == http.StatusOK && errorCounter != 0 {
-			log.Info("Ptt is back to life")
-			errorCounter = 0
-			go NewChecker().Run()
-			go NewPushSumChecker().Run()
-			go NewPushListChecker().Run()
-		}
-		if errorCounter == 3 {
-			log.Info("Ptt is Dead")
-			go NewChecker().Stop()
-			go NewPushSumChecker().Stop()
-			go NewPushListChecker().Stop()
 		}
 		time.Sleep(pm.duration)
 	}
