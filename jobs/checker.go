@@ -3,6 +3,7 @@ package jobs
 import (
 	"fmt"
 	"strings"
+	"sync"
 	"time"
 
 	log "github.com/meifamily/logrus"
@@ -16,11 +17,9 @@ import (
 	"github.com/meifamily/ptt-alertor/myutil"
 )
 
-const checkBoardDuration = 200 * time.Millisecond
 const checkHighBoardDuration = 1 * time.Second
 
 var boardCh = make(chan *board.Board, 700)
-var ckerCh = make(chan Checker)
 var highBoards []*board.Board
 
 func init() {
@@ -37,9 +36,8 @@ func initHighBoards() {
 	}
 }
 
-func NewChecker() *Checker {
-	return &Checker{}
-}
+var cker *Checker
+var ckerOnce sync.Once
 
 type Checker struct {
 	board    string
@@ -49,46 +47,86 @@ type Checker struct {
 	subType  string
 	word     string
 	Profile  userProto.Profile
+	done     chan struct{}
+	ch       chan Checker
+	duration time.Duration
 }
 
-func (cker Checker) String() string {
-	subType := "關鍵字"
-	if cker.author != "" {
-		subType = "作者"
-	}
-	return fmt.Sprintf("%s@%s\r\n看板：%s；%s：%s%s", cker.word, cker.board, cker.board, subType, cker.word, cker.articles.String())
-}
-
-// Self return Checker itself
-func (cker Checker) Self() Checker {
+// NewChecker gets a Checker instance
+func NewChecker() *Checker {
+	ckerOnce.Do(func() {
+		cker = &Checker{
+			duration: 200 * time.Millisecond,
+		}
+		cker.done = make(chan struct{})
+		cker.ch = make(chan Checker)
+	})
 	return cker
 }
 
+func (c Checker) String() string {
+	subType := "關鍵字"
+	if c.author != "" {
+		subType = "作者"
+	}
+	return fmt.Sprintf("%s@%s\r\n看板：%s；%s：%s%s", c.word, c.board, c.board, subType, c.word, c.articles.String())
+}
+
+// Self return Checker itself
+func (c Checker) Self() Checker {
+	return c
+}
+
 // Run is main in Job
-func (cker Checker) Run() {
+func (c Checker) Run() {
 	// step 1: check boards which one has new articles
+	c.runCheckBoards()
+
+	for {
+		select {
+		//step 2: check user who subscribes board
+		case bd := <-boardCh:
+			go checkKeywordSubscriber(bd, c)
+			go checkAuthorSubscriber(bd, c)
+		//step 3: send notification
+		case cker := <-c.ch:
+			ckCh <- cker
+		case <-c.done:
+			return
+		}
+	}
+}
+
+func (c Checker) runCheckBoards() {
 	go func() {
 		for {
-			checkBoards(highBoards, checkHighBoardDuration)
+			select {
+			case <-c.done:
+				return
+			default:
+				checkBoards(highBoards, checkHighBoardDuration)
+			}
 		}
 	}()
 	offPeakCh := make(chan bool)
 	go func(offPeakCh <-chan bool) {
 		var offPeak bool
-		duration := checkBoardDuration
+		duration := c.duration
 		for {
 			select {
 			case op := <-offPeakCh:
 				if offPeak != op {
 					if op {
 						log.Info("Switch to Slow Mode")
-						duration = checkBoardDuration * 2
+						duration = c.duration * 2
 					} else {
 						log.Info("Switch to Normal Mode")
-						duration = checkBoardDuration
+						duration = c.duration
 					}
 					offPeak = op
 				}
+			case <-c.done:
+				return
 			default:
 				checkBoards(new(board.Board).All(), duration)
 			}
@@ -96,30 +134,27 @@ func (cker Checker) Run() {
 	}(offPeakCh)
 
 	// check off peak
-	go func(offPeakCh chan<- bool) {
-		loc := time.FixedZone("CST", 8*60*60)
-		for {
-			t := time.Now().In(loc)
-			if t.Hour() >= 3 && t.Hour() < 7 {
-				offPeakCh <- true
-			} else {
-				offPeakCh <- false
-			}
-			time.Sleep(10 * time.Minute)
-		}
-	}(offPeakCh)
+	go c.checkOffPeak(offPeakCh)
+}
 
+func (c Checker) checkOffPeak(offPeakCh chan<- bool) {
+	loc := time.FixedZone("CST", 8*60*60)
 	for {
-		select {
-		//step 2: check user who subscribes board
-		case bd := <-boardCh:
-			go checkKeywordSubscriber(bd, cker)
-			go checkAuthorSubscriber(bd, cker)
-		//step 3: send notification
-		case cker := <-ckerCh:
-			ckCh <- cker
+		t := time.Now().In(loc)
+		if t.Hour() >= 3 && t.Hour() < 7 {
+			offPeakCh <- true
+		} else {
+			offPeakCh <- false
 		}
+		time.Sleep(10 * time.Minute)
 	}
+}
+
+func (c Checker) Stop() {
+	for i := 0; i < 3; i++ {
+		c.done <- struct{}{}
+	}
+	log.Info("Checker Stop")
 }
 
 func checkBoards(bds []*board.Board, duration time.Duration) {
@@ -182,7 +217,7 @@ func checkKeyword(keyword string, bd *board.Board, cker Checker) {
 		cker.articles = keywordArticles
 		cker.subType = "keyword"
 		cker.word = keyword
-		ckerCh <- cker
+		cker.ch <- cker
 	}
 }
 
@@ -221,6 +256,6 @@ func checkAuthor(author string, bd *board.Board, cker Checker) {
 		cker.articles = authorArticles
 		cker.subType = "author"
 		cker.word = author
-		ckerCh <- cker
+		cker.ch <- cker
 	}
 }

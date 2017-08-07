@@ -2,6 +2,7 @@ package jobs
 
 import (
 	"fmt"
+	"sync"
 	"time"
 
 	"strings"
@@ -19,18 +20,24 @@ import (
 
 // change overdueHour must change cronjob replacepushsumkey in the mean time
 const overdueHour = 48 * time.Hour
-const checkPushSumDuration = 500 * time.Millisecond
 const pauseCheckPushSum = 3 * time.Minute
 
-var psckerCh = make(chan pushSumChecker)
-var boardFinish = make(map[string]bool)
+var psCker *pushSumChecker
+var pscOnce sync.Once
 
 type pushSumChecker struct {
 	Checker
+	ch chan pushSumChecker
 }
 
 func NewPushSumChecker() *pushSumChecker {
-	return &pushSumChecker{}
+	pscOnce.Do(func() {
+		psCker = &pushSumChecker{}
+		psCker.duration = 500 * time.Millisecond
+		psCker.done = make(chan struct{})
+		psCker.ch = make(chan pushSumChecker)
+	})
+	return psCker
 }
 
 func (psc pushSumChecker) String() string {
@@ -47,26 +54,38 @@ type BoardArticles struct {
 	articles article.Articles
 }
 
+func (psc pushSumChecker) Stop() {
+	psc.done <- struct{}{}
+	psc.done <- struct{}{}
+	log.Info("Pushsum Checker Stop")
+}
+
 func (psc pushSumChecker) Run() {
+	boardFinish := make(map[string]bool)
 	baCh := make(chan BoardArticles)
 
 	go func() {
 		for {
-			boards := pushsum.List()
-			for _, board := range boards {
-				bl, ok := boardFinish[board]
-				if !ok {
-					boardFinish[board] = true
-					ok, bl = true, true
+			select {
+			case <-psc.done:
+				return
+			default:
+				boards := pushsum.List()
+				for _, board := range boards {
+					bl, ok := boardFinish[board]
+					if !ok {
+						boardFinish[board] = true
+						ok, bl = true, true
+					}
+					if bl && ok {
+						ba := BoardArticles{board: board}
+						boardFinish[board] = false
+						go psc.crawlArticles(ba, baCh)
+					}
+					time.Sleep(psc.duration)
 				}
-				if bl && ok {
-					ba := BoardArticles{board: board}
-					boardFinish[board] = false
-					go psc.crawlArticles(ba, baCh)
-				}
-				time.Sleep(checkPushSumDuration)
+				time.Sleep(pauseCheckPushSum)
 			}
-			time.Sleep(pauseCheckPushSum)
 		}
 	}()
 
@@ -78,8 +97,10 @@ func (psc pushSumChecker) Run() {
 			if len(ba.articles) > 0 {
 				go psc.checkSubscribers(ba)
 			}
-		case pscker := <-psckerCh:
+		case pscker := <-psc.ch:
 			ckCh <- pscker
+		case <-psc.done:
+			return
 		}
 	}
 }
@@ -180,7 +201,7 @@ func (psc pushSumChecker) checkPushSum(u user.User, ba BoardArticles, checkFn ch
 	if len(articles) > 0 {
 		psc.articles = psc.toSendArticles(ids, articles)
 		if len(psc.articles) > 0 {
-			psckerCh <- psc
+			psc.ch <- psc
 		}
 	}
 }

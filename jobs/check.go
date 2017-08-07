@@ -30,6 +30,8 @@ func messageWorker(ckCh chan check) {
 type check interface {
 	String() string
 	Self() Checker
+	Stop()
+	Run()
 }
 
 func sendMessage(c check) {
