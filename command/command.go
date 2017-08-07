@@ -1,6 +1,7 @@
 package command
 
 import (
+	"bytes"
 	"errors"
 	"flag"
 	"regexp"
@@ -30,6 +31,7 @@ var inputErrorTips = []string{
 	"3. 板名欄位間不允許空白字元。",
 }
 
+// Commands is commands documents
 var Commands = map[string]map[string]string{
 	"一般": {
 		"指令": "可使用的指令清單",
@@ -72,6 +74,7 @@ var commandActionMap = map[string]updateAction{
 	"新增噓文數": updatePushDown,
 }
 
+// HandleCommand handles command from chatbot
 func HandleCommand(text string, userID string) string {
 	command := strings.ToLower(strings.Fields(strings.TrimSpace(text))[0])
 	log.WithFields(log.Fields{
@@ -81,21 +84,22 @@ func HandleCommand(text string, userID string) string {
 	switch command {
 	case "debug":
 		return handleDebug(userID)
-	case "清單":
+	case "清單", "list":
 		return handleList(userID)
-	case "指令":
+	case "指令", "help":
 		return stringCommands()
-	case "排行":
+	case "排行", "ranking":
 		return listTop()
 	case "新增", "刪除":
 		re := regexp.MustCompile("^(新增|刪除)\\s+([^,，][\\w-_,，\\.]*[^,，:\\s]):?\\s+(\\*|.*[^\\s])")
 		if matched := re.MatchString(text); !matched {
+			errorTips := inputErrorTips
 			additionalTips := []string{
 				"正確範例：",
 				command + " gossiping,lol 問卦,爆卦",
 			}
-			inputErrorTips = append(inputErrorTips, additionalTips...)
-			return strings.Join(inputErrorTips, "\n")
+			errorTips = append(errorTips, additionalTips...)
+			return strings.Join(errorTips, "\n")
 		}
 		args := re.FindStringSubmatch(text)
 		result, err := handleKeyword(command, userID, args[2], args[3])
@@ -104,16 +108,17 @@ func HandleCommand(text string, userID string) string {
 		}
 		return result
 	case "新增作者", "刪除作者":
-		re := regexp.MustCompile("^(新增作者|刪除作者)\\s+([^,，][\\w-_,，\\.]*[^,，:\\s]):?\\s+(\\*|[\\s,\\w]+)")
+		re := regexp.MustCompile("^(新增作者|刪除作者)\\s+([^,，][\\w-_,，\\.]*[^,，:\\s]):?\\s+(\\*|[\\s,\\w]+)$")
 		matched := re.MatchString(text)
 		if !matched {
+			errorTips := inputErrorTips
 			additionalTips := []string{
 				"4. 作者為半形英文與數字組成。",
 				"正確範例：",
 				command + " gossiping,lol ffaarr,obov",
 			}
-			inputErrorTips = append(inputErrorTips, additionalTips...)
-			return strings.Join(inputErrorTips, "\n")
+			errorTips = append(errorTips, additionalTips...)
+			return strings.Join(errorTips, "\n")
 		}
 		args := re.FindStringSubmatch(text)
 		result, err := handleAuthor(command, userID, args[2], args[3])
@@ -125,13 +130,14 @@ func HandleCommand(text string, userID string) string {
 		re := regexp.MustCompile("^(新增推文數|新增噓文數)\\s+([^,，][\\w-_,，\\.]*[^,，:\\s]):?\\s+(100|[1-9][0-9]|[0-9])$")
 		matched := re.MatchString(text)
 		if !matched {
+			errorTips := inputErrorTips
 			additionalTips := []string{
 				"4. 推噓文數需為介於 0-100 的數字",
 				"正確範例：",
 				command + " gossiping,beauty 100",
 			}
-			inputErrorTips = append(inputErrorTips, additionalTips...)
-			return strings.Join(inputErrorTips, "\n")
+			errorTips = append(errorTips, additionalTips...)
+			return strings.Join(errorTips, "\n")
 		}
 		args := re.FindStringSubmatch(text)
 		result, err := handlePushSum(command, userID, args[2], args[3])
@@ -143,14 +149,14 @@ func HandleCommand(text string, userID string) string {
 		re := regexp.MustCompile("^(新增推文|刪除推文)\\s+https?://www.ptt.cc/bbs/([\\w-_]*)/(M\\.\\d+.A.\\w*)\\.html$")
 		matched := re.MatchString(text)
 		if !matched {
-			inputErrorTips = []string{
+			errorTips := []string{
 				"指令格式錯誤。",
 				"1. 網址與指令需至少一個空白。",
 				"2. 網址錯誤格式。",
 				"正確範例：",
 				command + " https://www.ptt.cc/bbs/EZsoft/M.1497363598.A.74E.html",
 			}
-			return strings.Join(inputErrorTips, "\n")
+			return strings.Join(errorTips, "\n")
 		}
 		args := re.FindStringSubmatch(text)
 		result, err := handlePush(command, userID, args[2], args[3])
@@ -170,33 +176,51 @@ func HandleCommand(text string, userID string) string {
 
 func handleCommandLine(userID, text string) string {
 	var keywordStr, authorStr, push, boo string
-	cl := flag.NewFlagSet("cl", flag.ContinueOnError)
-	cl.StringVar(&keywordStr, "keyword", "", "keyword string seperate by comma")
-	cl.StringVar(&keywordStr, "k", "", "keyword string seperate by comma")
-	cl.StringVar(&authorStr, "author", "", "author string seperate by comma")
-	cl.StringVar(&authorStr, "a", "", "author string seperate by comma")
-	cl.StringVar(&push, "push", "", "push sum")
-	cl.StringVar(&push, "p", "", "push sum")
-	cl.StringVar(&boo, "boo", "", "boo sum")
-	cl.StringVar(&boo, "b", "", "boo sum")
+	cl := flag.NewFlagSet("Ptt Alertor: <add|del> <-flag <argument>> <board> [board...]\nexample: add -k ptt -a chodino -p 10 ezsoft", flag.ContinueOnError)
+	bf := new(bytes.Buffer)
+	cl.SetOutput(bf)
+	cl.StringVar(&keywordStr, "keyword", "", "keywords: <keyword>[,keyword...]")
+	cl.StringVar(&keywordStr, "k", "", "abbr. of keyword")
+	cl.StringVar(&authorStr, "author", "", "authors: <author>[,author...]")
+	cl.StringVar(&authorStr, "a", "", "abbr. of author")
+	cl.StringVar(&push, "push", "", "number of push's sum: <sum>")
+	cl.StringVar(&push, "p", "", "abbr. of push")
+	cl.StringVar(&boo, "boo", "", "number of boo's sum: <sum>")
+	cl.StringVar(&boo, "b", "", "abbr. of boo")
 
 	args := strings.Fields(text)
-	cl.Parse(args[1:])
-	boardStr := cl.Arg(0)
+	command := args[0]
+	err := cl.Parse(args[1:])
+	boardStrs := cl.Args()
+	for i := 0; i < len(boardStrs); i++ {
+		boardStrs[i] = strings.TrimSpace(strings.Trim(boardStrs[i], ","))
+	}
+	boardStr := strings.Join(boardStrs, ",")
+	if bf.Len() != 0 {
+		return bf.String()
+	}
+	if cl.NFlag() == 0 {
+		return "未指定參數。輸入 " + command + " -h 查看參數列表。"
+	}
 	if boardStr == "" {
-		return "未指定板名。"
+		errorTips := []string{
+			"未指定板名。",
+			"範例：add -k ptt -a chodino -p 10 ezsoft",
+			"輸入 " + command + " -h 查看提示訊息。",
+		}
+		return strings.Join(errorTips, "\n")
 	}
 
+	log.WithField("command", text).Info("Command Line Request")
+
 	var commandPrefix string
-	switch args[0] {
+	switch command {
 	case "add":
 		commandPrefix = "新增"
 	case "del":
 		commandPrefix = "刪除"
 	}
 
-	var command string
-	var err error
 	var errMsgs myutil.StringSlice
 	if keywordStr != "" {
 		command = commandPrefix
@@ -339,7 +363,7 @@ func handleKeyword(command, userID, board, keywordStr string) (string, error) {
 }
 
 func handleAuthor(command, userID, board, authorStr string) (string, error) {
-	if ok, _ := regexp.MatchString("\\*|[\\s,\\w]+", authorStr); !ok {
+	if ok, _ := regexp.MatchString("^(\\*|[\\s,\\w]+)$", authorStr); !ok {
 		return "", errors.New("作者為半形英文與數字組成。")
 	}
 	boardNames := splitParamString(board)
@@ -362,7 +386,7 @@ func handleAuthor(command, userID, board, authorStr string) (string, error) {
 }
 
 func handlePushSum(command, account, board, sumStr string) (string, error) {
-	if sum, _ := strconv.Atoi(sumStr); sum < 0 || sum > 100 {
+	if sum, err := strconv.Atoi(sumStr); err != nil || sum < 0 || sum > 100 {
 		return "", errors.New("推噓文數需為介於 0-100 的數字")
 	}
 	boardNames := splitParamString(board)
