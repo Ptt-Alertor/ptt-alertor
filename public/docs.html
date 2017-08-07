@@ -13,10 +13,10 @@
                 <a href="#advanced-comparison" aria-controls="advanced-comparison" role="tab" data-toggle="tab">進階比對</a>
             </li>
             <li role="presentation">
-                <a href="#batch-deletion" aria-controls="batch-deletion" role="tab" data-toggle="tab">批量刪除</a>
+                <a href="#batch-edit" aria-controls="batch-edit" role="tab" data-toggle="tab">批量編輯</a>
             </li>
             <li role="presentation">
-                <a href="#tricks" aria-controls="tricks" role="tab" data-toggle="tab">小技巧</a>
+                <a href="#commandline" aria-controls="commandline" role="tab" data-toggle="tab">指令列</a>
             </li>
         </ul>
         <div class="tab-content">
@@ -71,8 +71,20 @@
                         </dl>
                     </div>
                 </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">通知看板所有文章的三種方法</h3>
+                    </div>
+                    <div class="panel-body">
+                        <dl>
+                            <dd>新增 lifeismoney [</dd>
+                            <dd>新增 lifeismoney !嘂</dd>
+                            <dd>新增 lifeismoney regexp:.*</dd>
+                        </dl>
+                    </div>
+                </div>
             </div>
-            <div role="tabpanel" class="tab-pane" id="batch-deletion">
+            <div role="tabpanel" class="tab-pane" id="batch-edit">
                 <p></p>
                 <div class="panel panel-default">
                     <div class="panel-body">
@@ -137,21 +149,6 @@
                         </dl>
                     </div>
                 </div>
-            </div>
-            <div role="tabpanel" class="tab-pane" id="tricks">
-                <p></p>
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">通知看板所有文章的三種方法</h3>
-                    </div>
-                    <div class="panel-body">
-                        <dl>
-                            <dd>新增 lifeismoney [</dd>
-                            <dd>新增 lifeismoney !嘂</dd>
-                            <dd>新增 lifeismoney regexp:.*</dd>
-                        </dl>
-                    </div>
-                </div>
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <h3 class="panel-title">在已經追蹤的所有看板加入關鍵字、作者、推文數</h3>
@@ -162,6 +159,56 @@
                             <dd>新增 ** 尋人</dd>
                             <dd>新增作者 ** chodino</dd>
                             <dd>新增推文數 ** 100</dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+            <div role="tabpanel" class="tab-pane" id="commandline">
+                <p></p>
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <h4><code>&lt;add|del&gt; &lt;-flag &lt;argument&gt;&gt; &lt;board&gt; [board...]</code></h4>
+                        <code>add -k ptt -a chodino -p 10 -b 10 ezsoft gossiping</code>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">參數說明</h3>
+                    </div>
+                    <div class="panel-body">
+                        <dl>
+                            <dt>多看板以半形逗號或空白分開皆可</dt>
+                            <dd>-k, --keyword: 關鍵字</dd>
+                            <dd>-a, --author: 作者</dd>
+                            <dd>-p, --push: 推文數, 僅 add 有效</dd>
+                            <dd>-b, --boo: 噓文數, 僅 add 有效</dd>
+                        </dl>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">範例</h3>
+                    </div>
+                    <div class="panel-body">
+                        <dl>
+                            <dd>新增多看板：<code>add -k ptt -a chodino -p 10 -b 10 ezsoft gossiping</code></dd>
+                            <dd>新增多參數：<code>add -k ptt&amp;alertor,idea -a chodino,ronnywang ezsoft</code></dd>
+                            <dd>使用長旗標值：<code>del --keyword ptt --author chodino ezsoft gossiping</code></dd>
+                            <dd>等於可有可無：<code>del --keyword=ptt --author=chodino ezsoft gossiping</code></dd>
+                            <dd>結合批次刪除：<code>del -k * -a * **</code></dd>
+                            <dd>歸零所有推噓文：<code>add -p 0 -b 0 **</code></dd>
+                        </dl>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">其它</h3>
+                    </div>
+                    <div class="panel-body">
+                        <dl>
+                            <dd>list：清單</dd>
+                            <dd>help: 指令</dd>
+                            <dd>ranking: 排名</dd>
                         </dl>
                     </div>
                 </div>
