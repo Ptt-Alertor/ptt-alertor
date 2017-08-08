@@ -14,28 +14,7 @@ import (
 const prefix string = "board:"
 
 type Board struct {
-	// board.Board
 }
-
-// func (bd Board) Exist() bool {
-// 	names := bd.List()
-// 	for _, name := range names {
-// 		if bd.Name == name {
-// 			return true
-// 		}
-// 	}
-// 	return false
-// }
-
-// func (bd Board) All() (bds []*Board) {
-// 	boards := bd.List()
-// 	for _, board := range boards {
-// 		bd := new(Board)
-// 		bd.Name = board
-// 		bds = append(bds, bd)
-// 	}
-// 	return bds
-// }
 
 func (bd Board) List() []string {
 	conn := connections.Redis()
@@ -65,14 +44,6 @@ func (bd Board) GetArticles(boardName string) (articles article.Articles) {
 	}
 	return articles
 }
-
-// func (bd *Board) WithArticles() {
-// 	bd.Articles = bd.GetArticles()
-// }
-
-// func (bd *Board) WithNewArticles() {
-// 	bd.NewArticles, bd.OnlineArticles = board.NewArticles(bd)
-// }
 
 func (bd Board) Create(boardName string) error {
 	conn := connections.Redis()
@@ -113,38 +84,3 @@ func (bd Board) Delete(boardName string) error {
 	}
 	return err
 }
-
-// func (bd Board) SuggestBoardName() string {
-// 	names := bd.List()
-// 	boardWeight := map[string]int{}
-// 	chars := strings.Split(strings.ToLower(bd.Name), "")
-// 	for _, name := range names {
-// 		count := 0
-// 		for _, char := range chars {
-// 			if strings.Contains(name, char) {
-// 				count++
-// 			}
-// 		}
-// 		boardWeight[name] = count / (1 + int(math.Abs(float64(len(bd.Name)-len(name)))))
-// 	}
-// 	return maputil.FirstByValueInt(boardWeight)
-// }
-
-// func CheckBoardExist(boardName string) (bool, string) {
-// 	bd := new(Board)
-// 	bd.Name = boardName
-// 	if bd.Exist() {
-// 		return true, ""
-// 	}
-// 	if crawler.CheckBoardExist(boardName) {
-// 		bd.Create()
-// 		return true, ""
-// 	}
-
-// 	suggestBoard := bd.SuggestBoardName()
-// 	log.WithFields(log.Fields{
-// 		"inputBoard":   boardName,
-// 		"suggestBoard": suggestBoard,
-// 	}).Warning("Board Not Exist")
-// 	return false, suggestBoard
-// }
