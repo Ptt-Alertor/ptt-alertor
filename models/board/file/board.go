@@ -3,6 +3,7 @@ package file
 import (
 	"encoding/json"
 	"io/ioutil"
+	"os"
 
 	log "github.com/meifamily/logrus"
 
@@ -62,6 +63,14 @@ func (bd Board) Save(boardName string, articles article.Articles) error {
 		myutil.LogJSONEncode(err, articles)
 	}
 	err = ioutil.WriteFile(articlesDir+boardName+".json", articlesJSON, 0644)
+	if err != nil {
+		log.WithField("runtime", myutil.BasicRuntimeInfo()).WithError(err).Error()
+	}
+	return err
+}
+
+func (bd Board) Delete(boardName string) error {
+	err := os.Remove(articlesDir + boardName + ".json")
 	if err != nil {
 		log.WithField("runtime", myutil.BasicRuntimeInfo()).WithError(err).Error()
 	}
