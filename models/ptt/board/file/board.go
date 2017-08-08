@@ -7,36 +7,32 @@ import (
 	log "github.com/meifamily/logrus"
 
 	"github.com/meifamily/ptt-alertor/models/ptt/article"
-	"github.com/meifamily/ptt-alertor/models/ptt/board"
 	"github.com/meifamily/ptt-alertor/myutil"
 )
 
 type Board struct {
-	board.Board
 }
 
 var articlesDir string = myutil.StoragePath() + "/articles/"
 
-func (bd Board) All() []*Board {
+func (bd Board) List() []string {
 	files, err := ioutil.ReadDir(articlesDir)
 	if err != nil {
 		log.WithField("runtime", myutil.BasicRuntimeInfo()).WithError(err).Error()
 	}
-	bds := make([]*Board, 0)
+	var boardNames []string
 	for _, file := range files {
 		name, ok := myutil.JsonFile(file)
 		if !ok {
 			continue
 		}
-		bd := new(Board)
-		bd.Name = name
-		bds = append(bds, bd)
+		boardNames = append(boardNames, name)
 	}
-	return bds
+	return boardNames
 }
 
-func (bd Board) GetArticles() article.Articles {
-	file := articlesDir + bd.Name + ".json"
+func (bd Board) GetArticles(boardName string) article.Articles {
+	file := articlesDir + boardName + ".json"
 	articlesJSON, err := ioutil.ReadFile(file)
 	if err != nil {
 		log.WithFields(log.Fields{
@@ -52,28 +48,20 @@ func (bd Board) GetArticles() article.Articles {
 	return articles
 }
 
-func (bd *Board) WithArticles() {
-	bd.Articles = bd.GetArticles()
-}
-
-func (bd *Board) WithNewArticles() {
-	bd.NewArticles, _ = board.NewArticles(bd)
-}
-
-func (bd Board) Create() error {
-	err := ioutil.WriteFile(articlesDir+bd.Name+".json", []byte("[]"), 664)
+func (bd Board) Create(boardName string) error {
+	err := ioutil.WriteFile(articlesDir+boardName+".json", []byte("[]"), 664)
 	if err != nil {
 		log.WithField("runtime", myutil.BasicRuntimeInfo()).WithError(err).Error()
 	}
 	return err
 }
 
-func (bd Board) Save() error {
-	articlesJSON, err := json.Marshal(bd.Articles)
+func (bd Board) Save(boardName string, articles article.Articles) error {
+	articlesJSON, err := json.Marshal(articles)
 	if err != nil {
-		myutil.LogJSONEncode(err, bd.Articles)
+		myutil.LogJSONEncode(err, articles)
 	}
-	err = ioutil.WriteFile(articlesDir+bd.Name+".json", articlesJSON, 0644)
+	err = ioutil.WriteFile(articlesDir+boardName+".json", articlesJSON, 0644)
 	if err != nil {
 		log.WithField("runtime", myutil.BasicRuntimeInfo()).WithError(err).Error()
 	}

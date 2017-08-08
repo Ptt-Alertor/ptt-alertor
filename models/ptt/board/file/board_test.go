@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"reflect"
 	"testing"
-
-	"github.com/meifamily/ptt-alertor/models/ptt/board"
 )
 
 func TestBoard_GetArticles(t *testing.T) {
@@ -15,11 +13,11 @@ func TestBoard_GetArticles(t *testing.T) {
 		want string
 	}{
 		// TODO: Add test cases.
-		{"TestJoke", Board{board.Board{Name: "joke"}}, "article.Article"},
+		{"TestJoke", Board{}, "article.Article"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := tt.bd.GetArticles()
+			got := tt.bd.GetArticles("joke")
 			fmt.Println(reflect.TypeOf(got[0]))
 			if reflect.TypeOf(got[0]).String() != tt.want {
 				t.Errorf("Board.GetArticles() = %v, want %v", got, tt.want)

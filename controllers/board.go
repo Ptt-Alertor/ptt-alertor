@@ -8,12 +8,12 @@ import (
 
 	"github.com/julienschmidt/httprouter"
 	"github.com/meifamily/ptt-alertor/models/ptt/article"
-	board "github.com/meifamily/ptt-alertor/models/ptt/board/redis"
+	"github.com/meifamily/ptt-alertor/models/ptt/board"
 	"github.com/meifamily/ptt-alertor/myutil"
 )
 
 func BoardArticleIndex(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-	bd := new(board.Board)
+	bd := board.NewBoard()
 	bd.Name = strings.ToUpper(params.ByName("boardName"))
 	articles := bd.FetchArticles()
 	articlesJSON, err := json.Marshal(articles)
@@ -34,7 +34,7 @@ func BoardArticle(w http.ResponseWriter, r *http.Request, params httprouter.Para
 }
 
 func BoardIndex(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-	bds := new(board.Board).All()
+	bds := board.NewBoard().All()
 	fmt.Fprintf(w, "追蹤看板總數：%d", len(bds))
 	for _, bd := range bds {
 		fmt.Fprintf(w, "\n%s", bd.Name)

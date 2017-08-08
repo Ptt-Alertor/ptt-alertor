@@ -15,7 +15,7 @@ import (
 	log "github.com/meifamily/logrus"
 	"github.com/meifamily/ptt-alertor/crawler"
 	"github.com/meifamily/ptt-alertor/models/ptt/article"
-	boardproto "github.com/meifamily/ptt-alertor/models/ptt/board"
+	"github.com/meifamily/ptt-alertor/models/ptt/board"
 	"github.com/meifamily/ptt-alertor/models/subscription"
 	"github.com/meifamily/ptt-alertor/models/top"
 	user "github.com/meifamily/ptt-alertor/models/user/redis"
@@ -465,7 +465,7 @@ func initialArticle(a article.Article) error {
 }
 
 func checkBoardError(err error) (string, bool) {
-	if bErr, ok := err.(boardproto.BoardNotExistError); ok {
+	if bErr, ok := err.(board.BoardNotExistError); ok {
 		return "板名錯誤，請確認拼字。可能板名：\n" + bErr.Suggestion, true
 	}
 	return "", false

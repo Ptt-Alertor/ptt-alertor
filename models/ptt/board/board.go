@@ -1,11 +1,14 @@
 package board
 
 import (
+	"math"
 	"strings"
 
 	log "github.com/meifamily/logrus"
 	"github.com/meifamily/ptt-alertor/crawler"
 	"github.com/meifamily/ptt-alertor/models/ptt/article"
+	"github.com/meifamily/ptt-alertor/models/ptt/board/redis"
+	"github.com/meifamily/ptt-alertor/myutil/maputil"
 	"github.com/meifamily/ptt-alertor/rss"
 )
 
@@ -17,18 +20,76 @@ func (e BoardNotExistError) Error() string {
 	return "board is not exist"
 }
 
+var driver = new(redis.Board)
+
+type Drive interface {
+	List() []string
+	GetArticles(boardName string) article.Articles
+	Create(boardName string) error
+	Save(boardName string, articles article.Articles) error
+	Delete(boardName string) error
+}
+
 type Board struct {
 	Name           string
 	Articles       article.Articles
 	OnlineArticles article.Articles
 	NewArticles    article.Articles
+	driver         Drive
 }
 
-type BoardAction interface {
-	FetchArticles() article.Articles
-	GetArticles() article.Articles
-	WithArticles()
-	Create() error
+func NewBoard() *Board {
+	return &Board{
+		driver: driver,
+	}
+}
+
+func (bd Board) List() []string {
+	return bd.driver.List()
+}
+
+func (bd Board) Exist() bool {
+	names := bd.List()
+	for _, name := range names {
+		if bd.Name == name {
+			return true
+		}
+	}
+	return false
+}
+
+func (bd Board) All() (bds []*Board) {
+	boards := bd.List()
+	for _, board := range boards {
+		bd := NewBoard()
+		bd.Name = board
+		bds = append(bds, bd)
+	}
+	return bds
+}
+
+func (bd Board) GetArticles() (articles article.Articles) {
+	return bd.driver.GetArticles(bd.Name)
+}
+
+func (bd Board) Create() error {
+	return bd.driver.Create(bd.Name)
+}
+
+func (bd Board) Save() error {
+	return bd.driver.Save(bd.Name, bd.Articles)
+}
+
+func (bd Board) Delete() error {
+	return bd.driver.Delete(bd.Name)
+}
+
+func (bd *Board) WithArticles() {
+	bd.Articles = bd.GetArticles()
+}
+
+func (bd *Board) WithNewArticles() {
+	bd.NewArticles, bd.OnlineArticles = NewArticles(*bd)
 }
 
 func (bd Board) FetchArticles() (articles article.Articles) {
@@ -56,9 +117,9 @@ func fixLink(articles *article.Articles) {
 	}
 }
 
-func NewArticles(bd BoardAction) (newArticles, onlineArticles article.Articles) {
+func NewArticles(bd Board) (newArticles, onlineArticles article.Articles) {
 	newArticles = make(article.Articles, 0)
-	savedArticles := bd.GetArticles()
+	savedArticles := bd.driver.GetArticles(bd.Name)
 	onlineArticles = bd.FetchArticles()
 	if len(savedArticles) == 0 {
 		return nil, onlineArticles
@@ -74,4 +135,39 @@ func NewArticles(bd BoardAction) (newArticles, onlineArticles article.Articles) 
 		}
 	}
 	return newArticles, onlineArticles
+}
+
+func (bd Board) SuggestBoardName() string {
+	names := bd.List()
+	boardWeight := map[string]int{}
+	chars := strings.Split(strings.ToLower(bd.Name), "")
+	for _, name := range names {
+		count := 0
+		for _, char := range chars {
+			if strings.Contains(name, char) {
+				count++
+			}
+		}
+		boardWeight[name] = count / (1 + int(math.Abs(float64(len(bd.Name)-len(name)))))
+	}
+	return maputil.FirstByValueInt(boardWeight)
+}
+
+func CheckBoardExist(boardName string) (bool, string) {
+	bd := NewBoard()
+	bd.Name = boardName
+	if bd.Exist() {
+		return true, ""
+	}
+	if crawler.CheckBoardExist(boardName) {
+		bd.Create()
+		return true, ""
+	}
+
+	suggestBoard := bd.SuggestBoardName()
+	log.WithFields(log.Fields{
+		"inputBoard":   boardName,
+		"suggestBoard": suggestBoard,
+	}).Warning("Board Not Exist")
+	return false, suggestBoard
 }

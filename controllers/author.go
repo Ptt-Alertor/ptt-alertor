@@ -7,7 +7,7 @@ import (
 
 	"github.com/julienschmidt/httprouter"
 	"github.com/meifamily/ptt-alertor/models/author"
-	board "github.com/meifamily/ptt-alertor/models/ptt/board/redis"
+	"github.com/meifamily/ptt-alertor/models/ptt/board"
 )
 
 func AuthorBoards(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
@@ -16,7 +16,7 @@ func AuthorBoards(w http.ResponseWriter, r *http.Request, params httprouter.Para
 		count int
 	}
 	authorCounts := make([]authorCount, 0)
-	boards := new(board.Board).List()
+	boards := board.NewBoard().List()
 	for _, name := range boards {
 		cnt := len(author.Subscribers(name))
 		ac := authorCount{board: name, count: cnt}

@@ -11,13 +11,11 @@ import (
 	"github.com/line/line-bot-sdk-go/linebot"
 	log "github.com/meifamily/logrus"
 	"github.com/meifamily/ptt-alertor/command"
-	board "github.com/meifamily/ptt-alertor/models/ptt/board/redis"
 	user "github.com/meifamily/ptt-alertor/models/user/redis"
 	"github.com/meifamily/ptt-alertor/myutil"
 	"github.com/meifamily/ptt-alertor/shorturl"
 )
 
-var bd board.Board
 var bot *linebot.Client
 var err error
 var config map[string]string

@@ -4,8 +4,7 @@ import (
 	"sort"
 	"strings"
 
-	boardProto "github.com/meifamily/ptt-alertor/models/ptt/board"
-	board "github.com/meifamily/ptt-alertor/models/ptt/board/redis"
+	"github.com/meifamily/ptt-alertor/models/ptt/board"
 )
 
 type Subscriptions []Subscription
@@ -52,7 +51,7 @@ func (ss Subscriptions) StringPushList() string {
 func (ss *Subscriptions) Add(sub Subscription) error {
 	sub.Board = strings.ToLower(sub.Board)
 	if ok, suggestion := board.CheckBoardExist(sub.Board); !ok {
-		return boardProto.BoardNotExistError{Suggestion: suggestion}
+		return board.BoardNotExistError{Suggestion: suggestion}
 	}
 	sub.CleanUp()
 	for i, s := range *ss {
@@ -72,7 +71,7 @@ func (ss *Subscriptions) Add(sub Subscription) error {
 func (ss *Subscriptions) Remove(sub Subscription) error {
 	sub.Board = strings.ToLower(sub.Board)
 	if ok, suggestion := board.CheckBoardExist(sub.Board); !ok {
-		return boardProto.BoardNotExistError{Suggestion: suggestion}
+		return board.BoardNotExistError{Suggestion: suggestion}
 	}
 	sub.CleanUp()
 	for i := 0; i < len(*ss); i++ {
@@ -95,7 +94,7 @@ func (ss *Subscriptions) Remove(sub Subscription) error {
 func (ss *Subscriptions) Update(sub Subscription) error {
 	sub.Board = strings.ToLower(sub.Board)
 	if ok, suggestion := board.CheckBoardExist(sub.Board); !ok {
-		return boardProto.BoardNotExistError{Suggestion: suggestion}
+		return board.BoardNotExistError{Suggestion: suggestion}
 	}
 	for i := 0; i < len(*ss); i++ {
 		s := (*ss)[i]

@@ -11,7 +11,7 @@ import (
 	"github.com/meifamily/ptt-alertor/models/author"
 	"github.com/meifamily/ptt-alertor/models/keyword"
 	"github.com/meifamily/ptt-alertor/models/ptt/article"
-	board "github.com/meifamily/ptt-alertor/models/ptt/board/redis"
+	"github.com/meifamily/ptt-alertor/models/ptt/board"
 	userProto "github.com/meifamily/ptt-alertor/models/user"
 	user "github.com/meifamily/ptt-alertor/models/user/redis"
 	"github.com/meifamily/ptt-alertor/myutil"
@@ -30,7 +30,7 @@ func initHighBoards() {
 	boardcfg := myutil.Config("board")
 	highBoardNames := strings.Split(boardcfg["high"], ",")
 	for _, name := range highBoardNames {
-		bd := new(board.Board)
+		bd := board.NewBoard()
 		bd.Name = name
 		highBoards = append(highBoards, bd)
 	}
@@ -128,7 +128,7 @@ func (c Checker) runCheckBoards() {
 			case <-c.done:
 				return
 			default:
-				checkBoards(new(board.Board).All(), duration)
+				checkBoards(board.NewBoard().All(), duration)
 			}
 		}
 	}(offPeakCh)
