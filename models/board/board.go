@@ -24,6 +24,7 @@ var driver = new(redis.Board)
 
 type Drive interface {
 	List() []string
+	Exist(boardName string) bool
 	GetArticles(boardName string) article.Articles
 	Create(boardName string) error
 	Save(boardName string, articles article.Articles) error
@@ -49,13 +50,7 @@ func (bd Board) List() []string {
 }
 
 func (bd Board) Exist() bool {
-	names := bd.List()
-	for _, name := range names {
-		if bd.Name == name {
-			return true
-		}
-	}
-	return false
+	return bd.driver.Exist(bd.Name)
 }
 
 func (bd Board) All() (bds []*Board) {

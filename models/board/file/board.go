@@ -32,6 +32,15 @@ func (bd Board) List() []string {
 	return boardNames
 }
 
+func (bd Board) Exist(boardName string) bool {
+	file := articlesDir + boardName + ".json"
+	_, err := ioutil.ReadFile(file)
+	if err != nil {
+		return false
+	}
+	return true
+}
+
 func (bd Board) GetArticles(boardName string) article.Articles {
 	file := articlesDir + boardName + ".json"
 	articlesJSON, err := ioutil.ReadFile(file)

@@ -26,6 +26,16 @@ func (bd Board) List() []string {
 	return boards
 }
 
+func (bd Board) Exist(boardName string) bool {
+	conn := connections.Redis()
+	defer conn.Close()
+	bl, err := redis.Bool(conn.Do("SISMEMBER", "boards", boardName))
+	if err != nil {
+		log.WithField("runtime", myutil.BasicRuntimeInfo()).WithError(err).Error()
+	}
+	return bl
+}
+
 func (bd Board) GetArticles(boardName string) (articles article.Articles) {
 	conn := connections.Redis()
 	defer conn.Close()
