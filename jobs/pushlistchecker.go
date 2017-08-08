@@ -10,8 +10,7 @@ import (
 
 	"github.com/meifamily/ptt-alertor/crawler"
 	"github.com/meifamily/ptt-alertor/models/article"
-
-	user "github.com/meifamily/ptt-alertor/models/user/redis"
+	"github.com/meifamily/ptt-alertor/models/user"
 )
 
 var plcker *pushListChecker
@@ -125,8 +124,7 @@ func (plc pushListChecker) checkSubscribers() {
 }
 
 func send(account string, plc pushListChecker, pch chan pushListChecker) {
-	u := user.User{}
-	u = u.Find(account)
+	u := user.NewUser().Find(account)
 	plc.board = plc.Article.Board
 	plc.subType = "push"
 	plc.word = plc.Article.Code

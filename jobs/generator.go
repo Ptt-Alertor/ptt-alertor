@@ -8,7 +8,7 @@ import (
 	"github.com/meifamily/ptt-alertor/models/board"
 	"github.com/meifamily/ptt-alertor/models/pushsum"
 	"github.com/meifamily/ptt-alertor/models/subscription"
-	user "github.com/meifamily/ptt-alertor/models/user/redis"
+	"github.com/meifamily/ptt-alertor/models/user"
 )
 
 type Generator struct {
@@ -19,7 +19,7 @@ func NewGenerator() *Generator {
 }
 
 func (gb Generator) Run() {
-	users := new(user.User).All()
+	users := user.NewUser().All()
 	bds := board.NewBoard().All()
 	boardNameBool := make(map[string]bool)
 	for _, bd := range bds {

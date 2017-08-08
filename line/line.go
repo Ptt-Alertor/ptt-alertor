@@ -11,7 +11,7 @@ import (
 	"github.com/line/line-bot-sdk-go/linebot"
 	log "github.com/meifamily/logrus"
 	"github.com/meifamily/ptt-alertor/command"
-	user "github.com/meifamily/ptt-alertor/models/user/redis"
+	"github.com/meifamily/ptt-alertor/models/user"
 	"github.com/meifamily/ptt-alertor/myutil"
 	"github.com/meifamily/ptt-alertor/shorturl"
 )
@@ -95,7 +95,7 @@ func handleUnfollow(event *linebot.Event) {
 	log.WithFields(log.Fields{
 		"ID": userID,
 	}).Info("Line Unfollow")
-	u := new(user.User).Find(userID)
+	u := user.NewUser().Find(userID)
 	u.Enable = false
 	u.Update()
 }

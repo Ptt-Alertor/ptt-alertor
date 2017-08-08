@@ -3,7 +3,7 @@ package jobs
 import (
 	"errors"
 
-	user "github.com/meifamily/ptt-alertor/models/user/redis"
+	"github.com/meifamily/ptt-alertor/models/user"
 )
 
 var platforms = map[string]bool{
@@ -31,7 +31,7 @@ func (bc Broadcaster) Send(plfms []string) error {
 		platformBl[plfm] = true
 	}
 
-	users := new(user.User).All()
+	users := user.NewUser().All()
 	for _, u := range users {
 		bc.subType = "broadcast"
 		if platformBl["line"] {

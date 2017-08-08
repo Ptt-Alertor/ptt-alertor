@@ -18,7 +18,7 @@ import (
 	"github.com/meifamily/ptt-alertor/models/board"
 	"github.com/meifamily/ptt-alertor/models/subscription"
 	"github.com/meifamily/ptt-alertor/models/top"
-	user "github.com/meifamily/ptt-alertor/models/user/redis"
+	"github.com/meifamily/ptt-alertor/models/user"
 )
 
 const subArticlesLimit int = 25
@@ -259,12 +259,12 @@ func handleCommandLine(userID, text string) string {
 }
 
 func handleDebug(account string) string {
-	profile := new(user.User).Find(account).Profile
+	profile := user.NewUser().Find(account).Profile
 	return profile.Account
 }
 
 func handleList(account string) string {
-	subs := new(user.User).Find(account).Subscribes
+	subs := user.NewUser().Find(account).Subscribes
 	if len(subs) == 0 {
 		return "尚未建立清單。請打「指令」查看新增方法。"
 	}
@@ -272,7 +272,7 @@ func handleList(account string) string {
 }
 
 func cleanPushList(account string) string {
-	subs := new(user.User).Find(account).Subscribes
+	subs := user.NewUser().Find(account).Subscribes
 	var i int
 	for _, sub := range subs {
 		for _, code := range sub.Articles {
@@ -293,7 +293,7 @@ func cleanPushList(account string) string {
 }
 
 func handlePushList(account string) string {
-	subs := new(user.User).Find(account).Subscribes
+	subs := user.NewUser().Find(account).Subscribes
 	if len(subs) == 0 {
 		return "尚未建立清單。請打「指令」查看新增方法。"
 	}
@@ -434,7 +434,7 @@ func handlePush(command, userID, boardName, articleCode string) (string, error) 
 }
 
 func countUserArticles(account string) (cnt int) {
-	u := new(user.User).Find(account)
+	u := user.NewUser().Find(account)
 	for _, sub := range u.Subscribes {
 		cnt += len(sub.Articles)
 	}
@@ -507,7 +507,7 @@ func splitParamString(paramString string) (params []string) {
 }
 
 func update(action updateAction, account string, boardNames []string, inputs ...string) error {
-	u := new(user.User).Find(account)
+	u := user.NewUser().Find(account)
 	if boardNames[0] == "**" {
 		boardNames = nil
 		for _, uSub := range u.Subscribes {
@@ -532,7 +532,7 @@ func update(action updateAction, account string, boardNames []string, inputs ...
 }
 
 func HandleLineFollow(id string) error {
-	u := new(user.User).Find(id)
+	u := user.NewUser().Find(id)
 	u.Profile.Line = id
 	log.WithFields(log.Fields{
 		"id":       id,
@@ -542,7 +542,7 @@ func HandleLineFollow(id string) error {
 }
 
 func HandleMessengerFollow(id string) error {
-	u := new(user.User).Find(id)
+	u := user.NewUser().Find(id)
 	u.Profile.Messenger = id
 	log.WithFields(log.Fields{
 		"id":       id,
@@ -552,7 +552,7 @@ func HandleMessengerFollow(id string) error {
 }
 
 func HandleTelegramFollow(id string, chatID int64) error {
-	u := new(user.User).Find(id)
+	u := user.NewUser().Find(id)
 	u.Profile.Telegram = id
 	u.Profile.TelegramChat = chatID
 	log.WithFields(log.Fields{

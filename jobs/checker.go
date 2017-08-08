@@ -8,12 +8,12 @@ import (
 
 	log "github.com/meifamily/logrus"
 
-	"github.com/meifamily/ptt-alertor/models/author"
-	"github.com/meifamily/ptt-alertor/models/keyword"
 	"github.com/meifamily/ptt-alertor/models/article"
+	"github.com/meifamily/ptt-alertor/models/author"
 	"github.com/meifamily/ptt-alertor/models/board"
+	"github.com/meifamily/ptt-alertor/models/keyword"
+	"github.com/meifamily/ptt-alertor/models/user"
 	userProto "github.com/meifamily/ptt-alertor/models/user"
-	user "github.com/meifamily/ptt-alertor/models/user/redis"
 	"github.com/meifamily/ptt-alertor/myutil"
 )
 
@@ -182,7 +182,7 @@ func checkNewArticle(bd *board.Board, boardCh chan *board.Board) {
 }
 
 func checkKeywordSubscriber(bd *board.Board, cker Checker) {
-	u := new(user.User)
+	u := user.NewUser()
 	accounts := keyword.Subscribers(bd.Name)
 	for _, account := range accounts {
 		user := u.Find(account)
@@ -222,7 +222,7 @@ func checkKeyword(keyword string, bd *board.Board, cker Checker) {
 }
 
 func checkAuthorSubscriber(bd *board.Board, cker Checker) {
-	u := new(user.User)
+	u := user.NewUser()
 	accounts := author.Subscribers(bd.Name)
 	for _, account := range accounts {
 		user := u.Find(account)

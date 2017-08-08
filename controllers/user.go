@@ -7,12 +7,12 @@ import (
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
-	user "github.com/meifamily/ptt-alertor/models/user/redis"
+	"github.com/meifamily/ptt-alertor/models/user"
 	"github.com/meifamily/ptt-alertor/myutil"
 )
 
 func UserFind(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-	u := new(user.User).Find(params.ByName("account"))
+	u := user.NewUser().Find(params.ByName("account"))
 	uJSON, err := json.Marshal(u)
 	if err != nil {
 		myutil.LogJSONEncode(err, u)
@@ -21,7 +21,7 @@ func UserFind(w http.ResponseWriter, r *http.Request, params httprouter.Params) 
 }
 
 func UserAll(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-	us := new(user.User).All()
+	us := user.NewUser().All()
 
 	data := struct {
 		Total, Line, Messenger, Telegram, IdleUser, BlockUser         int
@@ -64,7 +64,7 @@ func UserAll(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 }
 
 func UserCreate(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-	u := new(user.User)
+	u := user.NewUser()
 	err := json.NewDecoder(r.Body).Decode(&u)
 	if err != nil {
 		myutil.LogJSONDecode(err, r.Body)
@@ -78,7 +78,7 @@ func UserCreate(w http.ResponseWriter, r *http.Request, params httprouter.Params
 
 func UserModify(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	account := params.ByName("account")
-	u := new(user.User)
+	u := user.NewUser()
 	err := json.NewDecoder(r.Body).Decode(&u)
 	if err != nil {
 		myutil.LogJSONDecode(err, r.Body)

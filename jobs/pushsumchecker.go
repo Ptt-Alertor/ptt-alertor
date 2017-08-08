@@ -15,7 +15,7 @@ import (
 	"github.com/meifamily/ptt-alertor/models/article"
 	"github.com/meifamily/ptt-alertor/models/pushsum"
 	"github.com/meifamily/ptt-alertor/models/subscription"
-	user "github.com/meifamily/ptt-alertor/models/user/redis"
+	"github.com/meifamily/ptt-alertor/models/user"
 )
 
 // change overdueHour must change cronjob replacepushsumkey in the mean time
@@ -152,7 +152,7 @@ Page:
 func (psc pushSumChecker) checkSubscribers(ba BoardArticles) {
 	subs := pushsum.ListSubscribers(ba.board)
 	for _, account := range subs {
-		u := new(user.User).Find(account)
+		u := user.NewUser().Find(account)
 		psc.Profile = u.Profile
 		go psc.checkPushSum(u, ba, checkUp)
 		go psc.checkPushSum(u, ba, checkDown)

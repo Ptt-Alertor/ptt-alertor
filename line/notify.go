@@ -15,7 +15,7 @@ import (
 	"github.com/julienschmidt/httprouter"
 	log "github.com/meifamily/logrus"
 
-	user "github.com/meifamily/ptt-alertor/models/user/redis"
+	"github.com/meifamily/ptt-alertor/models/user"
 	"github.com/meifamily/ptt-alertor/myutil"
 )
 
@@ -67,7 +67,7 @@ func CatchCallback(w http.ResponseWriter, r *http.Request, _ httprouter.Params) 
 	}
 	code := r.FormValue("code")
 	lineID := r.FormValue("state")
-	u := new(user.User).Find(lineID)
+	u := user.NewUser().Find(lineID)
 	accessToken, err := fetchAccessToken(code)
 	if err != nil {
 		log.WithError(err).Error("Fetch Access Token Failed")
