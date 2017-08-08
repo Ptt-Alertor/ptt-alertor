@@ -5,7 +5,7 @@ import (
 
 	"github.com/meifamily/ptt-alertor/models/author"
 	"github.com/meifamily/ptt-alertor/models/keyword"
-	"github.com/meifamily/ptt-alertor/models/ptt/board"
+	"github.com/meifamily/ptt-alertor/models/board"
 	"github.com/meifamily/ptt-alertor/models/pushsum"
 	"github.com/meifamily/ptt-alertor/models/subscription"
 	user "github.com/meifamily/ptt-alertor/models/user/redis"

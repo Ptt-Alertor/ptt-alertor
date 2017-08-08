@@ -10,8 +10,8 @@ import (
 
 	"github.com/meifamily/ptt-alertor/models/author"
 	"github.com/meifamily/ptt-alertor/models/keyword"
-	"github.com/meifamily/ptt-alertor/models/ptt/article"
-	"github.com/meifamily/ptt-alertor/models/ptt/board"
+	"github.com/meifamily/ptt-alertor/models/article"
+	"github.com/meifamily/ptt-alertor/models/board"
 	userProto "github.com/meifamily/ptt-alertor/models/user"
 	user "github.com/meifamily/ptt-alertor/models/user/redis"
 	"github.com/meifamily/ptt-alertor/myutil"

@@ -7,8 +7,8 @@ import (
 	"strings"
 
 	"github.com/julienschmidt/httprouter"
-	"github.com/meifamily/ptt-alertor/models/ptt/article"
-	"github.com/meifamily/ptt-alertor/models/ptt/board"
+	"github.com/meifamily/ptt-alertor/models/board"
+	"github.com/meifamily/ptt-alertor/models/article"
 	"github.com/meifamily/ptt-alertor/myutil"
 )
 

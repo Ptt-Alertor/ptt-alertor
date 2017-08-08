@@ -6,8 +6,8 @@ import (
 
 	log "github.com/meifamily/logrus"
 	"github.com/meifamily/ptt-alertor/crawler"
-	"github.com/meifamily/ptt-alertor/models/ptt/article"
-	"github.com/meifamily/ptt-alertor/models/ptt/board/redis"
+	"github.com/meifamily/ptt-alertor/models/article"
+	"github.com/meifamily/ptt-alertor/models/board/redis"
 	"github.com/meifamily/ptt-alertor/myutil/maputil"
 	"github.com/meifamily/ptt-alertor/rss"
 )

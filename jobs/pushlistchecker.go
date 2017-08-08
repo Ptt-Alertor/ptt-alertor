@@ -9,7 +9,7 @@ import (
 	"fmt"
 
 	"github.com/meifamily/ptt-alertor/crawler"
-	"github.com/meifamily/ptt-alertor/models/ptt/article"
+	"github.com/meifamily/ptt-alertor/models/article"
 
 	user "github.com/meifamily/ptt-alertor/models/user/redis"
 )

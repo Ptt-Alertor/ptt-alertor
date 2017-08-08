@@ -7,7 +7,7 @@ import (
 
 	"github.com/julienschmidt/httprouter"
 	"github.com/meifamily/ptt-alertor/models/keyword"
-	"github.com/meifamily/ptt-alertor/models/ptt/board"
+	"github.com/meifamily/ptt-alertor/models/board"
 )
 
 func KeywordBoards(w http.ResponseWriter, r *http.Request, params httprouter.Params) {

@@ -14,8 +14,8 @@ import (
 
 	log "github.com/meifamily/logrus"
 	"github.com/meifamily/ptt-alertor/crawler"
-	"github.com/meifamily/ptt-alertor/models/ptt/article"
-	"github.com/meifamily/ptt-alertor/models/ptt/board"
+	"github.com/meifamily/ptt-alertor/models/article"
+	"github.com/meifamily/ptt-alertor/models/board"
 	"github.com/meifamily/ptt-alertor/models/subscription"
 	"github.com/meifamily/ptt-alertor/models/top"
 	user "github.com/meifamily/ptt-alertor/models/user/redis"

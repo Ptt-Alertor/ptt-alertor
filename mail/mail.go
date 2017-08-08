@@ -5,7 +5,7 @@ import (
 
 	log "github.com/meifamily/logrus"
 
-	"github.com/meifamily/ptt-alertor/models/ptt/article"
+	"github.com/meifamily/ptt-alertor/models/article"
 	"github.com/meifamily/ptt-alertor/myutil"
 	"gopkg.in/mailgun/mailgun-go.v1"
 )

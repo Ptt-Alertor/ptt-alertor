@@ -7,7 +7,7 @@ import (
 
 	"time"
 
-	"github.com/meifamily/ptt-alertor/models/ptt/board"
+	"github.com/meifamily/ptt-alertor/models/board"
 )
 
 type Fetcher struct {
