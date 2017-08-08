@@ -304,14 +304,14 @@
     Send, 新增推文 https://www.ptt.cc/bbs/EZsoft/M.1497363598.A.74E.html 賣，買{Enter}
     Sleep, 1500
 
-    Send, 清單{Enter}
+    Send, 推文清單{Enter}
     Sleep, 1500
 
     ; 刪除推文
     Send, 刪除推文 https://www.ptt.cc/bbs/EZsoft/M.1497363598.A.74E.html{Enter}
     Sleep, 1500
 
-    Send, 清單{Enter}
+    Send, 推文清單{Enter}
     Sleep, 1500
 
 Escape::
