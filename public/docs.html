@@ -177,11 +177,11 @@
                     </div>
                     <div class="panel-body">
                         <dl>
-                            <dt>多看板以半形逗號或空白分開皆可</dt>
+                            <dt>多個看板以半形逗號(,)或空白( )分隔皆可</dt>
                             <dd>-k, --keyword: 關鍵字</dd>
                             <dd>-a, --author: 作者</dd>
-                            <dd>-p, --push: 推文數, 僅 add 有效</dd>
-                            <dd>-b, --boo: 噓文數, 僅 add 有效</dd>
+                            <dd>-p, --push: 推文數</dd>
+                            <dd>-b, --boo: 噓文數</dd>
                         </dl>
                     </div>
                 </div>
@@ -191,12 +191,22 @@
                     </div>
                     <div class="panel-body">
                         <dl>
-                            <dd>新增多看板：<code>add -k ptt -a chodino -p 10 -b 10 ezsoft gossiping</code></dd>
-                            <dd>新增多參數：<code>add -k ptt&amp;alertor,idea -a chodino,ronnywang ezsoft</code></dd>
-                            <dd>使用長旗標值：<code>del --keyword ptt --author chodino ezsoft gossiping</code></dd>
-                            <dd>等於可有可無：<code>del --keyword=ptt --author=chodino ezsoft gossiping</code></dd>
-                            <dd>結合批次刪除：<code>del -k * -a * **</code></dd>
-                            <dd>歸零所有推噓文：<code>add -p 0 -b 0 **</code></dd>
+                            <dt>新增關鍵字、作者、推噓文數</dt>
+                            <dd><code>add -k ptt -a chodino -p 10 -b 10 ezsoft gossiping</code></dd>
+                        </dl>
+                        <dl>
+                            <dt>結合進階比對</dt>
+                            <dd><code>add -k ptt&amp;alertor,idea -a chodino,ronnywang ezsoft</code></dd>
+                        </dl>
+                        <dl>
+                            <dt>使用長旗標值，等於符號可有可無</dt>
+                            <dd><code>del --keyword ptt --author chodino ezsoft gossiping</code></dd>
+                            <dd><code>del --keyword=ptt --author=chodino ezsoft gossiping</code></dd>
+                        </dl>
+                        <dl>
+                            <dt>結合批次編輯</dt>
+                            <dd><code>del -k * -a * **</code></dd>
+                            <dd><code>add -p 0 -b 0 **</code></dd>
                         </dl>
                     </div>
                 </div>

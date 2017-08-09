@@ -236,20 +236,24 @@ func handleCommandLine(userID, text string) string {
 			errMsgs.AppendNonRepeatStr(err.Error(), false)
 		}
 	}
-	if commandPrefix == "新增" {
-		if push != "" {
-			command = commandPrefix + "推文數"
-			_, err = handlePushSum(command, userID, boardStr, push)
-			if err != nil {
-				errMsgs.AppendNonRepeatStr(err.Error(), false)
-			}
+	if push != "" {
+		if commandPrefix == "刪除" {
+			push = "0"
 		}
-		if boo != "" {
-			command = commandPrefix + "噓文數"
-			_, err = handlePushSum(command, userID, boardStr, boo)
-			if err != nil {
-				errMsgs.AppendNonRepeatStr(err.Error(), false)
-			}
+		command = "新增推文數"
+		_, err = handlePushSum(command, userID, boardStr, push)
+		if err != nil {
+			errMsgs.AppendNonRepeatStr(err.Error(), false)
+		}
+	}
+	if boo != "" {
+		if commandPrefix == "刪除" {
+			boo = "0"
+		}
+		command = "新增噓文數"
+		_, err = handlePushSum(command, userID, boardStr, boo)
+		if err != nil {
+			errMsgs.AppendNonRepeatStr(err.Error(), false)
 		}
 	}
 	if len(errMsgs) != 0 {
