@@ -20,7 +20,7 @@
     <link rel="apple-touch-icon" type="image/png" href="https://s3-us-west-2.amazonaws.com/ptt-alertor-bucket/assets/alarmP.png">
     <meta name="msapplication-TileImage" content="https://s3-us-west-2.amazonaws.com/ptt-alertor-bucket/assets/alarmP.png">
     <meta name="msapplication-TileColor" content="#FFFFFF"/>
-    <link rel="alternate" href="https://pttalertor.dinolai.com" hreflang="zh-hant" />
+    <link rel="alternate" href="https://pttalertor.dinolai.com/{{.URI}}" hreflang="zh-hant" />
 
     <!-- Bootstrap -->
     <!-- Latest compiled and minified CSS -->
