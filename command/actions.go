@@ -24,7 +24,7 @@ func addKeywords(u *user.User, sub subscription.Subscription, inputs ...string) 
 		log.WithFields(log.Fields{
 			"board":   sub.Board,
 			"account": u.Profile.Account,
-		}).Debug("Add Board Subscriber")
+		}).Info("Add Board Subscriber")
 		err = keyword.AddSubscriber(sub.Board, u.Profile.Account)
 	}
 	return err
@@ -59,7 +59,7 @@ func addAuthors(u *user.User, sub subscription.Subscription, inputs ...string) e
 		log.WithFields(log.Fields{
 			"board":   sub.Board,
 			"account": u.Profile.Account,
-		}).Debug("Add Board Subscriber")
+		}).Info("Add Board Subscriber")
 		err = author.AddSubscriber(sub.Board, u.Profile.Account)
 	}
 	return err
