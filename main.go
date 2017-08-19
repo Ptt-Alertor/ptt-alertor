@@ -33,9 +33,11 @@ func (mr myRouter) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func newRouter() *myRouter {
-	return &myRouter{
+	r := &myRouter{
 		Router: *httprouter.New(),
 	}
+	r.NotFound = http.FileServer(http.Dir("public"))
+	return r
 }
 
 func basicAuth(handle httprouter.Handle) httprouter.Handle {
@@ -53,11 +55,8 @@ func basicAuth(handle httprouter.Handle) httprouter.Handle {
 func main() {
 	log.Info("Start Jobs")
 	startJobs()
-	// Web Server
-	log.Info("Web Server Start on Port 9090")
 
 	router := newRouter()
-	router.NotFound = http.FileServer(http.Dir("public"))
 	m := messenger.New()
 
 	router.GET("/", ctrlr.Index)
@@ -112,6 +111,8 @@ func main() {
 		log.Fatal(err)
 	}
 
+	// Web Server
+	log.Info("Web Server Start on Port 9090")
 	err := http.ListenAndServe(":9090", router)
 	if err != nil {
 		log.Fatal("ListenAndServer ", err)
