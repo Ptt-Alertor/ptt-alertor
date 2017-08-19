@@ -49,7 +49,6 @@ func (ss Subscriptions) StringPushList() string {
 }
 
 func (ss *Subscriptions) Add(sub Subscription) error {
-	sub.Board = strings.ToLower(sub.Board)
 	if ok, suggestion := board.CheckBoardExist(sub.Board); !ok {
 		return board.BoardNotExistError{Suggestion: suggestion}
 	}
@@ -69,7 +68,6 @@ func (ss *Subscriptions) Add(sub Subscription) error {
 }
 
 func (ss *Subscriptions) Remove(sub Subscription) error {
-	sub.Board = strings.ToLower(sub.Board)
 	if ok, suggestion := board.CheckBoardExist(sub.Board); !ok {
 		return board.BoardNotExistError{Suggestion: suggestion}
 	}
@@ -92,7 +90,6 @@ func (ss *Subscriptions) Remove(sub Subscription) error {
 }
 
 func (ss *Subscriptions) Update(sub Subscription) error {
-	sub.Board = strings.ToLower(sub.Board)
 	if ok, suggestion := board.CheckBoardExist(sub.Board); !ok {
 		return board.BoardNotExistError{Suggestion: suggestion}
 	}

@@ -137,6 +137,6 @@ func init() {
 	// for initial app
 	// jobs.NewTop().Run()
 	// jobs.NewCacheCleaner().Run()
-	// jobs.NewGenerator().Run()
+	jobs.NewGenerator().Run()
 	// jobs.NewFetcher().Run()
 }

@@ -520,7 +520,7 @@ func update(action updateAction, account string, boardNames []string, inputs ...
 	}
 	for _, boardName := range boardNames {
 		sub := subscription.Subscription{
-			Board: boardName,
+			Board: strings.ToLower(boardName),
 		}
 		err := action(&u, sub, inputs...)
 		if err != nil {

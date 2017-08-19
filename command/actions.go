@@ -4,8 +4,6 @@ import (
 	"strconv"
 	"strings"
 
-	log "github.com/meifamily/logrus"
-
 	"github.com/meifamily/ptt-alertor/models/article"
 	"github.com/meifamily/ptt-alertor/models/author"
 	"github.com/meifamily/ptt-alertor/models/keyword"
@@ -21,10 +19,6 @@ func addKeywords(u *user.User, sub subscription.Subscription, inputs ...string) 
 	sub.Keywords = inputs
 	err := u.Subscribes.Add(sub)
 	if err == nil {
-		log.WithFields(log.Fields{
-			"board":   sub.Board,
-			"account": u.Profile.Account,
-		}).Info("Add Board Subscriber")
 		err = keyword.AddSubscriber(sub.Board, u.Profile.Account)
 	}
 	return err
@@ -56,10 +50,6 @@ func addAuthors(u *user.User, sub subscription.Subscription, inputs ...string) e
 	sub.Authors = inputs
 	err := u.Subscribes.Add(sub)
 	if err == nil {
-		log.WithFields(log.Fields{
-			"board":   sub.Board,
-			"account": u.Profile.Account,
-		}).Info("Add Board Subscriber")
 		err = author.AddSubscriber(sub.Board, u.Profile.Account)
 	}
 	return err
