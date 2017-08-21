@@ -22,7 +22,7 @@ func (e BoardNotExistError) Error() string {
 
 var driver = new(redis.Board)
 
-type Drive interface {
+type Driver interface {
 	List() []string
 	Exist(boardName string) bool
 	GetArticles(boardName string) article.Articles
@@ -36,7 +36,7 @@ type Board struct {
 	Articles       article.Articles
 	OnlineArticles article.Articles
 	NewArticles    article.Articles
-	driver         Drive
+	driver         Driver
 }
 
 func NewBoard() *Board {

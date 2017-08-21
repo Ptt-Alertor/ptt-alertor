@@ -14,7 +14,7 @@ type User struct {
 	UpdateTime time.Time `json:"updateTime"`
 	Profile    `json:"Profile"`
 	Subscribes subscription.Subscriptions
-	driver     Drive
+	driver     Driver
 }
 
 type Profile struct {
@@ -27,7 +27,7 @@ type Profile struct {
 	TelegramChat    int64  `json:"telegramChat"`
 }
 
-type Drive interface {
+type Driver interface {
 	List() (accounts []string)
 	Exist(account string) bool
 	Save(account string, user interface{}) error

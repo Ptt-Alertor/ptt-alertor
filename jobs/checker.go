@@ -13,7 +13,6 @@ import (
 	"github.com/meifamily/ptt-alertor/models/board"
 	"github.com/meifamily/ptt-alertor/models/keyword"
 	"github.com/meifamily/ptt-alertor/models/user"
-	userProto "github.com/meifamily/ptt-alertor/models/user"
 	"github.com/meifamily/ptt-alertor/myutil"
 )
 
@@ -46,7 +45,7 @@ type Checker struct {
 	articles article.Articles
 	subType  string
 	word     string
-	Profile  userProto.Profile
+	Profile  user.Profile
 	done     chan struct{}
 	ch       chan Checker
 	duration time.Duration
