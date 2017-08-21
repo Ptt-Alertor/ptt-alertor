@@ -136,7 +136,7 @@ func init() {
 	telegramToken = myutil.Config("telegram")["token"]
 	// for initial app
 	// jobs.NewTop().Run()
-	// jobs.NewCacheCleaner().Run()
-	jobs.NewGenerator().Run()
+	jobs.NewCacheCleaner().Run()
+	// jobs.NewGenerator().Run()
 	// jobs.NewFetcher().Run()
 }
