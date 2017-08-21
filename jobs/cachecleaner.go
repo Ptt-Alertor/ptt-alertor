@@ -16,12 +16,15 @@ func NewCacheCleaner() *cacheCleaner {
 type cacheCleaner struct {
 }
 
-// TODO: clean keyword, author, pushsum, pushlist keys
 func (c *cacheCleaner) Run() {
 	conn := connections.Redis()
 	defer conn.Close()
-	// c.cleanBoardKeys(conn)
-	c.cleanUpperCaseKeys(conn)
+	c.cleanBoardKeys(conn)
+	c.cleanKeywordKeys(conn)
+	c.cleanAuthorKeys(conn)
+	c.cleanPushsumKeys(conn)
+	c.cleanPushlistKeys(conn)
+	// c.cleanUpperCaseKeys(conn)
 	log.Info("Clean Up Cache")
 }
 
@@ -35,6 +38,58 @@ func (c *cacheCleaner) cleanBoardKeys(conn redis.Conn) {
 		log.WithField("runtime", myutil.BasicRuntimeInfo()).WithError(err).Error()
 	}
 	log.Info("Clean Up Board Keys")
+}
+
+func (c *cacheCleaner) cleanKeywordKeys(conn redis.Conn) {
+	keys, _ := redis.Strings(conn.Do("KEYS", "keyword:*:subs"))
+	for _, key := range keys {
+		_, err := conn.Do("DEL", key)
+		if err == nil {
+			log.Info("Delete Key: ", key)
+		} else {
+			log.WithField("runtime", myutil.BasicRuntimeInfo()).WithError(err).Error()
+		}
+	}
+	log.Info("Clean Up Keyword Keys")
+}
+
+func (c *cacheCleaner) cleanAuthorKeys(conn redis.Conn) {
+	keys, _ := redis.Strings(conn.Do("KEYS", "author:*:subs"))
+	for _, key := range keys {
+		_, err := conn.Do("DEL", key)
+		if err == nil {
+			log.Info("Delete Key: ", key)
+		} else {
+			log.WithField("runtime", myutil.BasicRuntimeInfo()).WithError(err).Error()
+		}
+	}
+	log.Info("Clean Up Author Keys")
+}
+
+func (c *cacheCleaner) cleanPushsumKeys(conn redis.Conn) {
+	keys, _ := redis.Strings(conn.Do("KEYS", "keyword:*:subs"))
+	for _, key := range keys {
+		_, err := conn.Do("DEL", key)
+		if err == nil {
+			log.Info("Delete Key: ", key)
+		} else {
+			log.WithField("runtime", myutil.BasicRuntimeInfo()).WithError(err).Error()
+		}
+	}
+	log.Info("Clean Up Pushsum Keys")
+}
+
+func (c *cacheCleaner) cleanPushlistKeys(conn redis.Conn) {
+	keys, _ := redis.Strings(conn.Do("KEYS", "article:*:subs"))
+	for _, key := range keys {
+		_, err := conn.Do("DEL", key)
+		if err == nil {
+			log.Info("Delete Key: ", key)
+		} else {
+			log.WithField("runtime", myutil.BasicRuntimeInfo()).WithError(err).Error()
+		}
+	}
+	log.Info("Clean Up Pushlist Keys")
 }
 
 func (c *cacheCleaner) cleanUpperCaseKeys(conn redis.Conn) {
