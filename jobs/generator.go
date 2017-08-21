@@ -3,6 +3,7 @@ package jobs
 import (
 	log "github.com/meifamily/logrus"
 
+	"github.com/meifamily/ptt-alertor/models/article"
 	"github.com/meifamily/ptt-alertor/models/author"
 	"github.com/meifamily/ptt-alertor/models/board"
 	"github.com/meifamily/ptt-alertor/models/keyword"
@@ -30,41 +31,54 @@ func (gb Generator) Run() {
 	for _, u := range users {
 		for _, sub := range u.Subscribes {
 			if !boardNameBool[sub.Board] {
-				createBoard(sub.Board)
+				addBoard(sub.Board)
 			}
 			if sub.PushSum != emptyPushSum {
-				createPushSumKeys(u.Profile.Account, sub.Board)
+				addPushsumSub(u.Profile.Account, sub.Board)
 			}
 			if len(sub.Keywords) > 0 {
-				createKeyword(u.Profile.Account, sub.Board)
+				addKeywordSub(u.Profile.Account, sub.Board)
 			}
 			if len(sub.Authors) > 0 {
-				createAuthor(u.Profile.Account, sub.Board)
+				addAuthorSub(u.Profile.Account, sub.Board)
+			}
+			if len(sub.Articles) > 0 {
+				for _, a := range sub.Articles {
+					addArticleSub(u.Profile.Account, a)
+				}
 			}
 		}
 	}
 	log.Info("Generated Done")
 }
 
-func createBoard(boardName string) {
+func addBoard(boardName string) {
 	bd := board.NewBoard()
 	bd.Name = boardName
 	bd.Create()
 	log.WithField("board", bd.Name).Info("Added Board")
 }
 
-func createPushSumKeys(account, board string) {
+func addPushsumSub(account, board string) {
 	pushsum.Add(board)
 	pushsum.AddSubscriber(board, account)
 	log.WithField("board", board).Info("Added PushSum Board and Subscriber")
 }
 
-func createKeyword(account, board string) {
+func addKeywordSub(account, board string) {
 	keyword.AddSubscriber(board, account)
 	log.WithField("board", board).Info("Added Keyword Subscriber")
 }
 
-func createAuthor(account, board string) {
+func addAuthorSub(account, board string) {
 	author.AddSubscriber(board, account)
 	log.WithField("board", board).Info("Added Author Subscriber")
+}
+
+func addArticleSub(account, articleID string) {
+	a := article.Article{
+		Code: articleID,
+	}
+	a.AddSubscriber(account)
+	log.WithField("article", articleID).Info("Added Article Subscriber")
 }
