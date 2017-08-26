@@ -79,17 +79,31 @@ func handleCallbackQuery(update tgbotapi.Update) {
 	SendTextMessage(update.CallbackQuery.Message.Chat.ID, responseText)
 }
 
+// help - 所有指令清單
+// list - 設定清單
+// ranking - 熱門關鍵字、作者、推文數
+// add - 新增看板關鍵字、作者、推文數
+// del - 刪除看板關鍵字、作者、推文數
+// showkeyboard - 顯示快捷小鍵盤
+// hidekeyboard - 隱藏快捷小鍵盤
 func handleCommand(update tgbotapi.Update) {
 	var responseText string
 	userID := strconv.Itoa(update.Message.From.ID)
 	chatID := update.Message.Chat.ID
 
 	switch update.Message.Command() {
+	case "add", "del":
+		text := update.Message.Command() + " " + update.Message.CommandArguments()
+		responseText = command.HandleCommand(text, userID)
 	case "start":
 		command.HandleTelegramFollow(userID, chatID)
 		responseText = "歡迎使用 Ptt Alertor\n輸入「指令」查看相關功能。\n\n觀看Demo:\nhttps://media.giphy.com/media/3ohzdF6vidM6I49lQs/giphy.gif"
 	case "help":
-		responseText = command.HandleCommand("指令", userID)
+		responseText = command.HandleCommand("help", userID)
+	case "list":
+		responseText = command.HandleCommand("list", userID)
+	case "ranking":
+		responseText = command.HandleCommand("ranking", userID)
 	case "showkeyboard":
 		showReplyKeyboard(chatID)
 		return
