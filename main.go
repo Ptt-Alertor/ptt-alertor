@@ -107,7 +107,7 @@ func main() {
 	router.POST("/telegram/"+telegramToken, telegram.HandleRequest)
 
 	// gops agent
-	if err := agent.Listen(&agent.Options{Addr: ":6060", NoShutdownCleanup: false}); err != nil {
+	if err := agent.Listen(agent.Options{Addr: ":6060", ShutdownCleanup: true}); err != nil {
 		log.Fatal(err)
 	}
 
