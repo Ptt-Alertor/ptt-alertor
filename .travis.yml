@@ -8,9 +8,10 @@ services:
 - docker
 before_install:
 - docker --version
-install:
 - pip install --user awscli
 - export PATH=$PATH:$HOME/.local/bin
+install:
+- go get
 before_script:
 - aws s3 cp s3://ptt-alertor-bucket/config/mailgun.json config/
 - aws s3 cp s3://ptt-alertor-bucket/config/redis.json config/
@@ -22,12 +23,9 @@ before_script:
 - aws s3 cp s3://ptt-alertor-bucket/config/telegram.json config/
 - ls -al config/
 script:
-- docker build -t meifamily/ptt-alertor-src -f DockerfileSrc .
-- docker run --name ptt-alertor-src -d meifamily/ptt-alertor-src
-- docker ps -a
-- docker cp ptt-alertor-src:/go/bin/ptt-alertor ./
-- docker build -t meifamily/ptt-alertor -f DockerfileBin .
 before_deploy:
+- GOOS=linux GOARCH=amd64 go build
+- docker build -t meifamily/ptt-alertor .
 - eval $(aws ecr get-login --region us-west-2)
 - docker tag meifamily/ptt-alertor:latest $AWS_Docker_Repo:latest
 - docker push $AWS_Docker_Repo:latest
