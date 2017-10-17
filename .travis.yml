@@ -23,13 +23,15 @@ before_script:
 - aws s3 cp s3://ptt-alertor-bucket/config/telegram.json config/
 - ls -al config/
 script:
+- go test -race -coverprofile=coverage.txt -covermode=atomic
+after_success:
+- bash <(curl -s https://codecov.io/bash)
 before_deploy:
 - GOOS=linux GOARCH=amd64 go build
 - docker build -t meifamily/ptt-alertor .
 - eval $(aws ecr get-login --region us-west-2)
 - docker tag meifamily/ptt-alertor:latest $AWS_Docker_Repo:latest
 - docker push $AWS_Docker_Repo:latest
-
 deploy:
 - provider: script
   script:
