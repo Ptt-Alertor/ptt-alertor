@@ -55,6 +55,16 @@ func Add(board string) error {
 	return err
 }
 
+func Remove(board string) error {
+	conn := connections.Redis()
+	defer conn.Close()
+	_, err := conn.Do("SREM", prefix+"boards", board)
+	if err != nil {
+		log.WithField("runtime", myutil.BasicRuntimeInfo()).WithError(err).Error()
+	}
+	return err
+}
+
 func AddSubscriber(board, account string) error {
 	conn := connections.Redis()
 	defer conn.Close()
@@ -83,6 +93,17 @@ func ListSubscribers(board string) []string {
 		log.WithField("runtime", myutil.BasicRuntimeInfo()).WithError(err).Error()
 	}
 	return subs
+}
+
+func Destroy(board string) error {
+	key := prefix + board + ":subs"
+	conn := connections.Redis()
+	defer conn.Close()
+	_, err := conn.Do("DEL", key)
+	if err != nil {
+		log.WithField("runtime", myutil.BasicRuntimeInfo()).WithError(err).Error()
+	}
+	return err
 }
 
 func DiffList(account, board, kind string, ids ...int) []int {

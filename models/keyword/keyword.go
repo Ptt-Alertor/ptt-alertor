@@ -42,3 +42,14 @@ func RemoveSubscriber(board, account string) error {
 	}
 	return err
 }
+
+func Destroy(board string) error {
+	key := prefix + board + ":subs"
+	conn := connections.Redis()
+	defer conn.Close()
+	_, err := conn.Do("DEL", key)
+	if err != nil {
+		log.WithField("runtime", myutil.BasicRuntimeInfo()).WithError(err).Error()
+	}
+	return err
+}
