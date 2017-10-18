@@ -23,7 +23,7 @@ before_script:
 - aws s3 cp s3://ptt-alertor-bucket/config/telegram.json config/
 - ls -al config/
 script:
-- go test -race -coverprofile=coverage.txt -covermode=atomic ./myutil/collection/
+- ./test.sh
 after_success:
 - bash <(curl -s https://codecov.io/bash)
 before_deploy:
