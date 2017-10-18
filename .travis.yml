@@ -27,11 +27,15 @@ script:
 after_success:
 - bash <(curl -s https://codecov.io/bash)
 before_deploy:
-- GOOS=linux GOARCH=amd64 go build
-- docker build -t meifamily/ptt-alertor .
+- docker build -t meifamily/ptt-alertor-src -f DockerfileSrc .
+- docker run --name ptt-alertor-src -d meifamily/ptt-alertor-src
+- docker ps -a
+- docker cp ptt-alertor-src:/go/bin/ptt-alertor ./
+- docker build -t meifamily/ptt-alertor -f DockerfileBin .
 - eval $(aws ecr get-login --region us-west-2)
 - docker tag meifamily/ptt-alertor:latest $AWS_Docker_Repo:latest
 - docker push $AWS_Docker_Repo:latest
+
 deploy:
 - provider: script
   script:
