@@ -14,25 +14,14 @@ before_install:
 install:
 - go get
 before_script:
-- aws s3 cp s3://ptt-alertor-bucket/config/mailgun.json config/
-- aws s3 cp s3://ptt-alertor-bucket/config/redis.json config/
-- aws s3 cp s3://ptt-alertor-bucket/config/auth.json config/
-- aws s3 cp s3://ptt-alertor-bucket/config/line.json config/
-- aws s3 cp s3://ptt-alertor-bucket/config/messenger.json config/
-- aws s3 cp s3://ptt-alertor-bucket/config/app.json config/
-- aws s3 cp s3://ptt-alertor-bucket/config/board.json config/
-- aws s3 cp s3://ptt-alertor-bucket/config/telegram.json config/
+- aws s3 cp s3://ptt-alertor-bucket/config/ config/ --recursive
 - ls -al config/
 script:
 - ./test.sh
 after_success:
 - bash <(curl -s https://codecov.io/bash)
 before_deploy:
-- docker build -t meifamily/ptt-alertor-src -f DockerfileSrc .
-- docker run --name ptt-alertor-src -d meifamily/ptt-alertor-src
-- docker ps -a
-- docker cp ptt-alertor-src:/go/bin/ptt-alertor ./
-- docker build -t meifamily/ptt-alertor -f DockerfileBin .
+- docker build -t meifamily/ptt-alertor .
 - eval $(aws ecr get-login --region us-west-2)
 - docker tag meifamily/ptt-alertor:latest $AWS_Docker_Repo:latest
 - docker push $AWS_Docker_Repo:latest
