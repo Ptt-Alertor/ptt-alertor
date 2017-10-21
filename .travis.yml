@@ -11,7 +11,7 @@ before_install:
 - sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce
 - docker --version
 - chmod +x ./test.sh
-- pip install --user awscli
+- pip install --user --upgrade awscli
 - export PATH=$PATH:$HOME/.local/bin
 install:
 - go get
@@ -24,7 +24,7 @@ after_success:
 - bash <(curl -s https://codecov.io/bash)
 before_deploy:
 - docker build -t meifamily/ptt-alertor .
-- eval $(aws ecr get-login --region us-west-2)
+- eval $(aws ecr get-login --region us-west-2 --no-include-email)
 - docker tag meifamily/ptt-alertor:latest $AWS_Docker_Repo:latest
 - docker push $AWS_Docker_Repo:latest
 
