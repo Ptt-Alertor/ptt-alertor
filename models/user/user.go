@@ -35,7 +35,10 @@ type Driver interface {
 	Find(account string, user interface{})
 }
 
-var driver = new(redis.User)
+var (
+	driver       = new(redis.User)
+	AccountEmpty = errors.New("account can not be empty")
+)
 
 func NewUser() *User {
 	return &User{
@@ -59,7 +62,7 @@ func (u User) Save() error {
 	}
 
 	if u.Profile.Account == "" {
-		return errors.New("account can not be empty")
+		return AccountEmpty
 	}
 
 	if u.Profile.Email == "" && u.Profile.Line == "" && u.Profile.Messenger == "" && u.Profile.Telegram == "" {
@@ -78,7 +81,7 @@ func (u User) Update() error {
 	}
 
 	if u.Profile.Account == "" {
-		return errors.New("account can not be empty")
+		return AccountEmpty
 	}
 
 	u.UpdateTime = time.Now()

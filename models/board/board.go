@@ -145,7 +145,7 @@ func (bd Board) SuggestBoardName() string {
 		}
 		boardWeight[name] = count / (1 + int(math.Abs(float64(len(bd.Name)-len(name)))))
 	}
-	return maputil.FirstByValueInt(boardWeight)
+	return maputil.MaxIntKey(boardWeight)
 }
 
 func CheckBoardExist(boardName string) (bool, string) {
