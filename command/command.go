@@ -226,14 +226,14 @@ func handleCommandLine(userID, text string) string {
 		command = commandPrefix
 		_, err = handleKeyword(command, userID, boardStr, keywordStr)
 		if err != nil {
-			errMsgs.AppendNonRepeatStr(err.Error(), false)
+			errMsgs.AppendNonRepeatElement(err.Error(), false)
 		}
 	}
 	if authorStr != "" {
 		command = commandPrefix + "作者"
 		_, err = handleAuthor(command, userID, boardStr, authorStr)
 		if err != nil {
-			errMsgs.AppendNonRepeatStr(err.Error(), false)
+			errMsgs.AppendNonRepeatElement(err.Error(), false)
 		}
 	}
 	if push != "" {
@@ -243,7 +243,7 @@ func handleCommandLine(userID, text string) string {
 		command = "新增推文數"
 		_, err = handlePushSum(command, userID, boardStr, push)
 		if err != nil {
-			errMsgs.AppendNonRepeatStr(err.Error(), false)
+			errMsgs.AppendNonRepeatElement(err.Error(), false)
 		}
 	}
 	if boo != "" {
@@ -253,7 +253,7 @@ func handleCommandLine(userID, text string) string {
 		command = "新增噓文數"
 		_, err = handlePushSum(command, userID, boardStr, boo)
 		if err != nil {
-			errMsgs.AppendNonRepeatStr(err.Error(), false)
+			errMsgs.AppendNonRepeatElement(err.Error(), false)
 		}
 	}
 	if len(errMsgs) != 0 {

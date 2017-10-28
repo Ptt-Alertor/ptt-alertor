@@ -23,7 +23,7 @@ func (u User) List() (accounts []string) {
 		}).WithError(err).Error("Read Directory Error")
 	}
 	for _, file := range files {
-		_, ok := myutil.JsonFile(file)
+		_, ok := myutil.JSONFile(file)
 		if !ok {
 			continue
 		}

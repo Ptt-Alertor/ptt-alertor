@@ -12,8 +12,7 @@ func TestFileNameAndExtension(t *testing.T) {
 		want  string
 		want1 string
 	}{
-		// TODO: Add test cases.
-		{"test", args{"abc.cde.json"}, "abc.cde", "json"},
+		{"abc.cde.json", args{"abc.cde.json"}, "abc.cde", "json"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

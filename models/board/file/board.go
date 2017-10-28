@@ -23,7 +23,7 @@ func (bd Board) List() []string {
 	}
 	var boardNames []string
 	for _, file := range files {
-		name, ok := myutil.JsonFile(file)
+		name, ok := myutil.JSONFile(file)
 		if !ok {
 			continue
 		}

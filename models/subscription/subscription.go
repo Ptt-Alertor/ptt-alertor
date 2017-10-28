@@ -69,13 +69,13 @@ func (s *Subscription) CleanUp() {
 }
 
 func (s *Subscription) DeleteKeywords(keywords myutil.StringSlice) {
-	s.Keywords.DeleteSlice(keywords, false)
+	s.Keywords.Delete(keywords, false)
 }
 
 func (s *Subscription) DeleteAuthors(authors myutil.StringSlice) {
-	s.Authors.DeleteSlice(authors, false)
+	s.Authors.Delete(authors, false)
 }
 
 func (s *Subscription) DeleteArticles(articles myutil.StringSlice) {
-	s.Articles.DeleteSlice(articles, false)
+	s.Articles.Delete(articles, false)
 }
