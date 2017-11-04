@@ -30,8 +30,8 @@ before_deploy:
 deploy:
 - provider: script
   script:
-  - bash ./deploy/ecs-deploy -r us-west-2 -c Production-Cluster -n Ptt-Aletor -i
-    $AWS_Docker_Repo -m 0 -M 100 -t 600 -D 1
+  - bash ./deploy/ecs-deploy -r us-west-2 -c Production-Cluster -n Ptt-Aletor -i $AWS_Docker_Repo
+    -m 0 -M 100 -t 600 -D 1
   on:
     branch: master
 notifications:
@@ -40,4 +40,4 @@ env:
   global:
   - AWS_ACCESS_KEY_ID=AKIAJETASPZ4NVARC3IA
   - AWS_Docker_Repo=833648024955.dkr.ecr.us-west-2.amazonaws.com/ptt-alertor-repo
-  - secure: nL7+ZzVPWihES7ryK/gLkPfcr9WewjCGSYrDFbczV22bIxUk+3cSL/F4I3r80rBoN5gDboHPP6MmM4N3tPrvObxh8CbVDE6mgcTlrCESrQwORjO4NpwrwWiE60sDNlse5pCR/6eLRINdV4GoWEMaNLwBxJUBovYnnRWsSWOcxuGEE/C2WThzjdIOXGDbQ6NhEperEIW1DhkVMHxDlcMiiOeixAyUGDM4o/3vXxWYHkv+t3OZSuwsGyC624xotXCJlYZc2y2DDpXDj2L9I0ybHdmUBXmfn/6d/ExB0yHQhs/jMWRiSuinIsb3r79u4aiiUm8Oq1ETKLClcHcmueqxY6tb41LJmzWfy55GEEYWe7ziCA8CSTNWjOokOhor79P2tzXlkGLJWW+87ErglXJQbEHU+lGhtnIGYmQvXcQnRIPMyeIT62ADx9XCQxnUwhavuXstDy7AYQ/zq9h5yXZXnUgSricTnlpSeyi5T1RdML7ne5Fs1kV6KtcVbmxhcwbndiR5ZwjvAvC5fMkUj4iB4W8U+RnmVAuJp1/x/f7DqGL9ONtX2zs00Zc2s6qAtgyLwV4nQC62WaqikvKSQAq3EYwtwqsZvC91veavD8+qEF/dw3rTDpPHKWdg153qydPjnSsWC74gclcHxXnW41mt0EYQcMh3Y+b/iEiUq4myrbg=
+  - secure: mT8vyNqYv2z4JTmL4fUxf3tlBiAmkbgoTmxEKHf7yj02Uf4/vU5v+V2j9Seq4/9/9D4YSPmsOriyK86xfvK04bgO66mDp2saEbNalnfyEWoclKCR7kZ5GQtmhXh17ZUp6rFGANqvmHDE4D6hiVBKBJpYNPTAd2XsEeFR+QrqIjYlucMCTNmzOfEOqxoc4/vTKeI1J8LLAfJiSlpgMb33Sbo3evgRlO05j0geN+f9S1yWZPr5UoaqTGiZDbxpmJ1PXGoopmKXwv8TmGxYh9CLPNWx1LGXJ23Mp+CJT1h7UmXrtZ83qjDt0tsYGUTUbShjoBL1IALHcmtHEgM6WGEA4Y1cYBZaiHpthNO8SBpmi0niYSoOTJEAu2gJrt4/R5wfBagP9JcyVRO6Vey3OWEEK1j3+BWc4lxbKEfSJ9u1z4M/mxuTNL5lF5YYSVsIqyH8lmT1ONEnzsI1cU3S/T1+ahOtbKcFPbrlqIMNt9FHu28pfXa5qFqBXnHNbYc6XtOUQU3NQ+9XarZMRKZUw+wIDp/s51K0JVZIMzWiO8fBhRo9aN5N42HK7ozWxngdsmtbYoJPQaQEAPnMhtYtYXJjk1Ef32M43jRKzVljCcbcMCwJZICXLuXleVGeagXKfQu/nAILZ+JO/zqoPNXHfwDUHitAp+d3wf3+FcoNDxkask4=
