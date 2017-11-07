@@ -2,6 +2,7 @@ package line
 
 import (
 	"net/http"
+	"unicode/utf8"
 
 	"strings"
 
@@ -47,11 +48,6 @@ func HandleRequest(_ http.ResponseWriter, r *http.Request, _ httprouter.Params) 
 	}
 }
 
-/**
- * TODO: check board exist or not
- * 1. hotboard
- * 2. allboard
- **/
 func handleMessage(event *linebot.Event) {
 	var responseText string
 	userID := event.Source.UserID
@@ -68,7 +64,41 @@ func handleMessage(event *linebot.Event) {
 			responseText = command.HandleCommand(text, userID)
 		}
 	}
+	if utf8.RuneCountInString(responseText) > 2000 {
+		replyLongMessage(event.ReplyToken, responseText)
+		return
+	}
 	replyMessage(event.ReplyToken, linebot.NewTextMessage(responseText))
+}
+
+// TODO: refactor to general function for dealing all bot text limit
+func replyLongMessage(token, responseText string) {
+	limit := 2000
+	var runeCount, index, lineBreak int
+	var seps []int
+	copyText := responseText
+	for len(copyText) > 0 {
+		r, size := utf8.DecodeRuneInString(copyText)
+		index = index + size
+		runeCount++
+
+		if runeCount > limit {
+			runeCount = 0
+			seps = append(seps, lineBreak)
+		}
+
+		if string(r) == "\n" {
+			lineBreak = index
+		}
+		copyText = copyText[size:]
+	}
+
+	start := 0
+	for _, sep := range seps {
+		replyMessage(token, linebot.NewTextMessage(responseText[start:sep]))
+		start = sep
+	}
+	replyMessage(token, linebot.NewTextMessage(responseText[start:]))
 }
 
 func handleFollow(event *linebot.Event) {
