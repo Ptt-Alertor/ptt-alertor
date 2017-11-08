@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func Test_splitTextByLineBreak(t *testing.T) {
+func Test_SplitTextByLineBreak(t *testing.T) {
 	type args struct {
 		text  string
 		limit int
@@ -22,7 +22,7 @@ func Test_splitTextByLineBreak(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if gotTexts := splitTextByLineBreak(tt.args.text, tt.args.limit); !reflect.DeepEqual(gotTexts, tt.wantTexts) {
+			if gotTexts := SplitTextByLineBreak(tt.args.text, tt.args.limit); !reflect.DeepEqual(gotTexts, tt.wantTexts) {
 				for i, v := range gotTexts {
 					if strings.TrimSpace(v) != tt.wantTexts[i] {
 						t.Errorf("splitTextByLineBreak() = %v, want %v", v, tt.wantTexts[i])
