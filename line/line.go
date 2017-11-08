@@ -65,17 +65,16 @@ func handleMessage(event *linebot.Event) {
 		}
 	}
 	if utf8.RuneCountInString(responseText) > 2000 {
-		replyLongMessage(event.ReplyToken, responseText)
+		replyMessage(event.ReplyToken, splitMessage(responseText)...)
 		return
 	}
 	replyMessage(event.ReplyToken, linebot.NewTextMessage(responseText))
 }
 
 // TODO: refactor to general function for dealing all bot text limit
-func replyLongMessage(token, responseText string) {
+func splitMessage(responseText string) (messages []linebot.Message) {
 	limit := 2000
-	var runeCount, index, lineBreak int
-	var seps []int
+	var runeCount, index, lineBreak, start int
 	copyText := responseText
 	for len(copyText) > 0 {
 		r, size := utf8.DecodeRuneInString(copyText)
@@ -84,21 +83,16 @@ func replyLongMessage(token, responseText string) {
 
 		if runeCount > limit {
 			runeCount = 0
-			seps = append(seps, lineBreak)
+			messages = append(messages, linebot.NewTextMessage(responseText[start:lineBreak]))
+			start = lineBreak
 		}
-
 		if string(r) == "\n" {
 			lineBreak = index
 		}
 		copyText = copyText[size:]
 	}
-
-	start := 0
-	for _, sep := range seps {
-		replyMessage(token, linebot.NewTextMessage(responseText[start:sep]))
-		start = sep
-	}
-	replyMessage(token, linebot.NewTextMessage(responseText[start:]))
+	messages = append(messages, linebot.NewTextMessage(responseText[start:]))
+	return messages
 }
 
 func handleFollow(event *linebot.Event) {
@@ -175,8 +169,8 @@ func genConfirmMessage(command string) *linebot.TemplateMessage {
 	return message
 }
 
-func replyMessage(token string, message linebot.Message) {
-	_, err := bot.ReplyMessage(token, message).Do()
+func replyMessage(token string, message ...linebot.Message) {
+	_, err := bot.ReplyMessage(token, message...).Do()
 	if err != nil {
 		log.WithError(err).Error("Line Reply Message Failed")
 	}
