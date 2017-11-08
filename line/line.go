@@ -17,6 +17,8 @@ import (
 	"github.com/meifamily/ptt-alertor/shorturl"
 )
 
+const maxCharacters = 2000
+
 var bot *linebot.Client
 var err error
 var config map[string]string
@@ -64,35 +66,16 @@ func handleMessage(event *linebot.Event) {
 			responseText = command.HandleCommand(text, userID)
 		}
 	}
-	if utf8.RuneCountInString(responseText) > 2000 {
-		replyMessage(event.ReplyToken, splitMessage(responseText)...)
+	if utf8.RuneCountInString(responseText) > maxCharacters {
+		msgs := myutil.SplitTextByLineBreak(responseText, maxCharacters)
+		var lineMsg []linebot.Message
+		for _, msg := range msgs {
+			lineMsg = append(lineMsg, linebot.NewTextMessage(msg))
+		}
+		replyMessage(event.ReplyToken, lineMsg...)
 		return
 	}
 	replyMessage(event.ReplyToken, linebot.NewTextMessage(responseText))
-}
-
-// TODO: refactor to general function for dealing all bot text limit
-func splitMessage(responseText string) (messages []linebot.Message) {
-	limit := 2000
-	var runeCount, index, lineBreak, start int
-	copyText := responseText
-	for len(copyText) > 0 {
-		r, size := utf8.DecodeRuneInString(copyText)
-		index = index + size
-		runeCount++
-
-		if runeCount > limit {
-			runeCount = 0
-			messages = append(messages, linebot.NewTextMessage(responseText[start:lineBreak]))
-			start = lineBreak
-		}
-		if string(r) == "\n" {
-			lineBreak = index
-		}
-		copyText = copyText[size:]
-	}
-	messages = append(messages, linebot.NewTextMessage(responseText[start:]))
-	return messages
 }
 
 func handleFollow(event *linebot.Event) {

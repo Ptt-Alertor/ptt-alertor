@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"regexp"
 	"strings"
+	"unicode/utf8"
 
 	"encoding/json"
 
@@ -15,8 +16,9 @@ import (
 )
 
 const (
-	SendAPIURL = "https://graph.facebook.com/v2.6/me/messages?access_token="
-	ProfileURL = "https://graph.facebook.com/v2.6/me/messenger_profile?access_token="
+	SendAPIURL    = "https://graph.facebook.com/v2.6/me/messages?access_token="
+	ProfileURL    = "https://graph.facebook.com/v2.6/me/messenger_profile?access_token="
+	maxCharacters = 640
 )
 
 type Messenger struct {
@@ -118,6 +120,17 @@ func (m *Messenger) handlePostback(id string, payload string) {
 }
 
 func (m *Messenger) SendTextMessage(id string, message string) {
+	if utf8.RuneCountInString(message) > maxCharacters {
+		msgs := myutil.SplitTextByLineBreak(message, maxCharacters)
+		for _, msg := range msgs {
+			body := Request{
+				Recipient{id},
+				Message{Text: msg},
+			}
+			m.callSendAPI(body)
+		}
+		return
+	}
 	body := Request{
 		Recipient{id},
 		Message{Text: message},

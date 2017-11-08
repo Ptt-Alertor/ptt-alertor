@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"regexp"
+	"unicode/utf8"
 
 	log "github.com/meifamily/logrus"
 
@@ -143,8 +144,21 @@ func sendConfirmation(chatID int64, cmd string) {
 	}
 }
 
+const maxCharacters = 4096
+
 // SendTextMessage sends text message to chatID
 func SendTextMessage(chatID int64, text string) {
+	if utf8.RuneCountInString(text) > maxCharacters {
+		msgs := myutil.SplitTextByLineBreak(text, maxCharacters)
+		for _, msg := range msgs {
+			sendTextMessage(chatID, msg)
+		}
+		return
+	}
+	sendTextMessage(chatID, text)
+}
+
+func sendTextMessage(chatID int64, text string) {
 	msg := tgbotapi.NewMessage(chatID, text)
 	msg.DisableWebPagePreview = true
 	_, err := bot.Send(msg)
