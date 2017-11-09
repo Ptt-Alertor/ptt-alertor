@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"regexp"
 	"strings"
-	"unicode/utf8"
 
 	"encoding/json"
 
@@ -120,22 +119,13 @@ func (m *Messenger) handlePostback(id string, payload string) {
 }
 
 func (m *Messenger) SendTextMessage(id string, message string) {
-	if utf8.RuneCountInString(message) > maxCharacters {
-		msgs := myutil.SplitTextByLineBreak(message, maxCharacters)
-		for _, msg := range msgs {
-			body := Request{
-				Recipient{id},
-				Message{Text: msg},
-			}
-			m.callSendAPI(body)
+	for _, msg := range myutil.SplitTextByLineBreak(message, maxCharacters) {
+		body := Request{
+			Recipient{id},
+			Message{Text: msg},
 		}
-		return
+		m.callSendAPI(body)
 	}
-	body := Request{
-		Recipient{id},
-		Message{Text: message},
-	}
-	m.callSendAPI(body)
 }
 
 func (m *Messenger) SendConfirmation(id string, cmd string) {

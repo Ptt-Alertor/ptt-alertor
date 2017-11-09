@@ -5,7 +5,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"regexp"
-	"unicode/utf8"
 
 	log "github.com/meifamily/logrus"
 
@@ -148,14 +147,9 @@ const maxCharacters = 4096
 
 // SendTextMessage sends text message to chatID
 func SendTextMessage(chatID int64, text string) {
-	if utf8.RuneCountInString(text) > maxCharacters {
-		msgs := myutil.SplitTextByLineBreak(text, maxCharacters)
-		for _, msg := range msgs {
-			sendTextMessage(chatID, msg)
-		}
-		return
+	for _, msg := range myutil.SplitTextByLineBreak(text, maxCharacters) {
+		sendTextMessage(chatID, msg)
 	}
-	sendTextMessage(chatID, text)
 }
 
 func sendTextMessage(chatID int64, text string) {

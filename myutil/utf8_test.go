@@ -16,15 +16,14 @@ func Test_SplitTextByLineBreak(t *testing.T) {
 		args      args
 		wantTexts []string
 	}{
-		{"pass", args{
-			`你好
-			阿`, 5}, []string{"你好", "阿"}},
+		{"pass", args{`你好阿
+			你好喔喔`, 5}, []string{"你好阿\n", "你好喔喔"}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if gotTexts := SplitTextByLineBreak(tt.args.text, tt.args.limit); !reflect.DeepEqual(gotTexts, tt.wantTexts) {
+			if gotTexts := SplitTextByLineBreak(strings.Replace(tt.args.text, "\t", "", -1), tt.args.limit); !reflect.DeepEqual(gotTexts, tt.wantTexts) {
 				for i, v := range gotTexts {
-					if strings.TrimSpace(v) != tt.wantTexts[i] {
+					if v != tt.wantTexts[i] {
 						t.Errorf("splitTextByLineBreak() = %v, want %v", v, tt.wantTexts[i])
 					}
 				}

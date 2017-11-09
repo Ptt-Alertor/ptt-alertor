@@ -2,7 +2,6 @@ package line
 
 import (
 	"net/http"
-	"unicode/utf8"
 
 	"strings"
 
@@ -66,16 +65,11 @@ func handleMessage(event *linebot.Event) {
 			responseText = command.HandleCommand(text, userID)
 		}
 	}
-	if utf8.RuneCountInString(responseText) > maxCharacters {
-		msgs := myutil.SplitTextByLineBreak(responseText, maxCharacters)
-		var lineMsg []linebot.Message
-		for _, msg := range msgs {
-			lineMsg = append(lineMsg, linebot.NewTextMessage(msg))
-		}
-		replyMessage(event.ReplyToken, lineMsg...)
-		return
+	var lineMsg []linebot.Message
+	for _, msg := range myutil.SplitTextByLineBreak(responseText, maxCharacters) {
+		lineMsg = append(lineMsg, linebot.NewTextMessage(msg))
 	}
-	replyMessage(event.ReplyToken, linebot.NewTextMessage(responseText))
+	replyMessage(event.ReplyToken, lineMsg...)
 }
 
 func handleFollow(event *linebot.Event) {
