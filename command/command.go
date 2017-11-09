@@ -21,7 +21,7 @@ import (
 	"github.com/meifamily/ptt-alertor/models/user"
 )
 
-const subArticlesLimit int = 25
+const subArticlesLimit int = 50
 const updateFailedMsg string = "失敗，請嘗試封鎖再解封鎖，並重新執行註冊步驟。\n若問題未解決，請至粉絲團或 LINE 首頁留言。"
 
 var inputErrorTips = []string{
@@ -301,7 +301,7 @@ func handlePushList(account string) string {
 	if len(subs) == 0 {
 		return "尚未建立清單。請打「指令」查看新增方法。"
 	}
-	return "推文追蹤清單，上限 25 篇：\n" + subs.StringPushList() + "\n輸入「清理推文」，可刪除無效連結。"
+	return "推文追蹤清單，上限 50 篇：\n" + subs.StringPushList() + "\n輸入「清理推文」，可刪除無效連結。"
 }
 
 func stringCommands() string {
@@ -426,8 +426,8 @@ func handlePush(command, userID, boardName, articleCode string) (string, error) 
 	if !checkArticleExist(boardName, articleCode) {
 		return "", errors.New("文章不存在")
 	}
-	if strings.EqualFold("新增推文", command) && countUserArticles(userID) > subArticlesLimit {
-		return "", errors.New("推文追蹤最多 25 篇，輸入「推文清單」，整理追蹤列表。")
+	if strings.EqualFold("新增推文", command) && countUserArticles(userID) >= subArticlesLimit {
+		return "", errors.New("推文追蹤最多 50 篇，輸入「推文清單」，整理追蹤列表。")
 	}
 	err := update(commandActionMap[command], userID, []string{boardName}, articleCode)
 	if err != nil {
