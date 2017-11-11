@@ -166,3 +166,28 @@ func ReplaceBaseKeys() error {
 	}
 	return err
 }
+
+func RenameDiffListKeys(preBoard, postBoard string) error {
+	keyTemplate := prefix + "*:" + preBoard + ":*"
+	conn := connections.Redis()
+	defer conn.Close()
+	keys, err := redis.Strings(conn.Do("KEYS", keyTemplate))
+	for _, key := range keys {
+		newKey := strings.Replace(key, preBoard, postBoard, -1)
+		bl, err := redis.Bool(conn.Do("EXISTS", newKey))
+		if err == nil {
+			if bl {
+				_, err = conn.Do("DEL", key)
+			} else {
+				conn.Send("WATCH", key)
+				conn.Send("MULTI")
+				conn.Send("RENAME", key, newKey)
+				_, err = conn.Do("EXEC")
+			}
+		}
+		if err != nil {
+			log.WithField("runtime", myutil.BasicRuntimeInfo()).WithError(err).Error()
+		}
+	}
+	return err
+}
