@@ -107,6 +107,7 @@ func (a Article) Find(code string) Article {
 	a.Board = aMap["board"]
 	err = json.Unmarshal([]byte(aMap["content"]), &a)
 	if err != nil {
+		log.WithField("code", code).Error("Article Content Unmarshal Failed")
 		myutil.LogJSONDecode(err, aMap["content"])
 	}
 	return a
