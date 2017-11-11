@@ -18,7 +18,6 @@ func LogJSONEncode(err error, obj interface{}) {
 }
 
 func LogJSONDecode(err error, data interface{}) {
-
 	var bytes []byte
 
 	if d, ok := data.(io.ReadCloser); ok {

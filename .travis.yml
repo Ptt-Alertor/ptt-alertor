@@ -3,45 +3,41 @@ go:
 - 1.8.x
 cache:
   directories:
-    - $HOME/.local
+  - "$HOME/.local"
 services:
 - docker
 before_install:
+- sudo apt-get update
+- sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce
 - docker --version
-install:
-- pip install --user awscli
+- chmod +x ./test.sh
+- pip install --user --upgrade awscli
 - export PATH=$PATH:$HOME/.local/bin
+install:
+- go get
 before_script:
-- aws s3 cp s3://ptt-alertor-bucket/config/mailgun.json config/
-- aws s3 cp s3://ptt-alertor-bucket/config/redis.json config/
-- aws s3 cp s3://ptt-alertor-bucket/config/auth.json config/
-- aws s3 cp s3://ptt-alertor-bucket/config/line.json config/
-- aws s3 cp s3://ptt-alertor-bucket/config/messenger.json config/
-- aws s3 cp s3://ptt-alertor-bucket/config/app.json config/
-- aws s3 cp s3://ptt-alertor-bucket/config/board.json config/
-- aws s3 cp s3://ptt-alertor-bucket/config/telegram.json config/
+- aws s3 cp s3://ptt-alertor-2-bucket/config/ config/ --recursive
 - ls -al config/
 script:
-- docker build -t meifamily/ptt-alertor-src -f DockerfileSrc .
-- docker run --name ptt-alertor-src -d meifamily/ptt-alertor-src
-- docker ps -a
-- docker cp ptt-alertor-src:/go/bin/ptt-alertor ./
-- docker build -t meifamily/ptt-alertor -f DockerfileBin .
+- "./test.sh"
+after_success:
+- bash <(curl -s https://codecov.io/bash)
 before_deploy:
-- eval $(aws ecr get-login --region us-west-2)
+- docker build -t meifamily/ptt-alertor .
+- eval $(aws ecr get-login --region us-west-2 --no-include-email)
 - docker tag meifamily/ptt-alertor:latest $AWS_Docker_Repo:latest
 - docker push $AWS_Docker_Repo:latest
-
 deploy:
 - provider: script
   script:
-     - bash ./deploy/ecs-deploy -r us-west-2 -c ptt-alertor-cluster -n ptt-alertor -i $AWS_Docker_Repo -m 0 -M 100 -t 600 -D 1
+  - bash ./deploy/ecs-deploy -r us-west-2 -c Production-Cluster -n Ptt-Aletor -i $AWS_Docker_Repo
+    -m 0 -M 100 -t 600 -D 1
   on:
     branch: master
 notifications:
   slack: meifamily:9oYnHKf0nlRn8QafX4PRZ1lC
 env:
   global:
-  - AWS_ACCESS_KEY_ID=AKIAIE4PWSIS5SCEF3TA
-  - AWS_Docker_Repo=896146012256.dkr.ecr.us-west-2.amazonaws.com/ptt-alertor-repo
-  - secure: pcK6KNugqPILq29+pgPfbPNue+iK8w+4OtiZZwHBhsJ9bsggqBHfDRhGJd7PH/AecNkz4rYuBUea80BQcB/seRKtiHiBYrGPq+Bh+6KFTSoocBeRRB1gxVMonaAUd36FNdbvozIimA1GCCjWzaUe/BfwESmmuBIzEqf1wys9qV7F3YRASDeeG377CTDgAgBw7ClFofqyh4KXK8CmbIgOGW/+fsatxdA8dGB9ATWPzKICY8qJIjU/BXFuQuRQhv48d5ePRzVUNcx1qxTKbc9XHT3gmpxoBcNB6nPDUY9/MFfq0hz7RGAUl2RQRKtVvN3Hi3iVwwSoQXV8NDJS8Rbns2XX3KbjfT5UN91J7tBh13sYM6z25UTX3/R/d+wrJS4B63Lfs0UxpzIzLMlj/jnzEN1l6At4p2SPpNscGikORbEQ+AO9bjN3CTN9Zdy4PVA10rjOv+ejd+6Ta/Khi4MjsWGx388xvcfM7Cf8CGHJz1EiNpbWsGnea/p1mdmGHzzRSSNKV410PjWwgj5o0qk3lQFppbnDJmcXGhiQobvZ7oDryt9fabzz68jZ1BWzPnRyjmlcJQc3boyyMzuXT/v+u8QbqJkKXM5CjfqP+9mL0UGT+KULBZC7V2oDAnj9LDGyYSVDyT+KgEDkyU16AMUTvF2gtzlH2jkcMk/eNdhzFi0=
+  - AWS_ACCESS_KEY_ID=AKIAJETASPZ4NVARC3IA
+  - AWS_Docker_Repo=833648024955.dkr.ecr.us-west-2.amazonaws.com/ptt-alertor-repo
+  - secure: mT8vyNqYv2z4JTmL4fUxf3tlBiAmkbgoTmxEKHf7yj02Uf4/vU5v+V2j9Seq4/9/9D4YSPmsOriyK86xfvK04bgO66mDp2saEbNalnfyEWoclKCR7kZ5GQtmhXh17ZUp6rFGANqvmHDE4D6hiVBKBJpYNPTAd2XsEeFR+QrqIjYlucMCTNmzOfEOqxoc4/vTKeI1J8LLAfJiSlpgMb33Sbo3evgRlO05j0geN+f9S1yWZPr5UoaqTGiZDbxpmJ1PXGoopmKXwv8TmGxYh9CLPNWx1LGXJ23Mp+CJT1h7UmXrtZ83qjDt0tsYGUTUbShjoBL1IALHcmtHEgM6WGEA4Y1cYBZaiHpthNO8SBpmi0niYSoOTJEAu2gJrt4/R5wfBagP9JcyVRO6Vey3OWEEK1j3+BWc4lxbKEfSJ9u1z4M/mxuTNL5lF5YYSVsIqyH8lmT1ONEnzsI1cU3S/T1+ahOtbKcFPbrlqIMNt9FHu28pfXa5qFqBXnHNbYc6XtOUQU3NQ+9XarZMRKZUw+wIDp/s51K0JVZIMzWiO8fBhRo9aN5N42HK7ozWxngdsmtbYoJPQaQEAPnMhtYtYXJjk1Ef32M43jRKzVljCcbcMCwJZICXLuXleVGeagXKfQu/nAILZ+JO/zqoPNXHfwDUHitAp+d3wf3+FcoNDxkask4=

@@ -15,8 +15,9 @@ import (
 )
 
 const (
-	SendAPIURL = "https://graph.facebook.com/v2.6/me/messages?access_token="
-	ProfileURL = "https://graph.facebook.com/v2.6/me/messenger_profile?access_token="
+	SendAPIURL    = "https://graph.facebook.com/v2.6/me/messages?access_token="
+	ProfileURL    = "https://graph.facebook.com/v2.6/me/messenger_profile?access_token="
+	maxCharacters = 640
 )
 
 type Messenger struct {
@@ -118,11 +119,13 @@ func (m *Messenger) handlePostback(id string, payload string) {
 }
 
 func (m *Messenger) SendTextMessage(id string, message string) {
-	body := Request{
-		Recipient{id},
-		Message{Text: message},
+	for _, msg := range myutil.SplitTextByLineBreak(message, maxCharacters) {
+		body := Request{
+			Recipient{id},
+			Message{Text: msg},
+		}
+		m.callSendAPI(body)
 	}
-	m.callSendAPI(body)
 }
 
 func (m *Messenger) SendConfirmation(id string, cmd string) {

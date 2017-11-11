@@ -16,6 +16,8 @@ import (
 	"github.com/meifamily/ptt-alertor/shorturl"
 )
 
+const maxCharacters = 2000
+
 var bot *linebot.Client
 var err error
 var config map[string]string
@@ -47,11 +49,6 @@ func HandleRequest(_ http.ResponseWriter, r *http.Request, _ httprouter.Params) 
 	}
 }
 
-/**
- * TODO: check board exist or not
- * 1. hotboard
- * 2. allboard
- **/
 func handleMessage(event *linebot.Event) {
 	var responseText string
 	userID := event.Source.UserID
@@ -68,7 +65,11 @@ func handleMessage(event *linebot.Event) {
 			responseText = command.HandleCommand(text, userID)
 		}
 	}
-	replyMessage(event.ReplyToken, linebot.NewTextMessage(responseText))
+	var lineMsg []linebot.Message
+	for _, msg := range myutil.SplitTextByLineBreak(responseText, maxCharacters) {
+		lineMsg = append(lineMsg, linebot.NewTextMessage(msg))
+	}
+	replyMessage(event.ReplyToken, lineMsg...)
 }
 
 func handleFollow(event *linebot.Event) {
@@ -145,8 +146,8 @@ func genConfirmMessage(command string) *linebot.TemplateMessage {
 	return message
 }
 
-func replyMessage(token string, message linebot.Message) {
-	_, err := bot.ReplyMessage(token, message).Do()
+func replyMessage(token string, message ...linebot.Message) {
+	_, err := bot.ReplyMessage(token, message...).Do()
 	if err != nil {
 		log.WithError(err).Error("Line Reply Message Failed")
 	}

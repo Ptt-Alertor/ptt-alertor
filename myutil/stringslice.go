@@ -5,21 +5,13 @@ import "strings"
 // StringSlice is a type []string
 type StringSlice []string
 
-// ToStringSlice converts type []string to type StringSlice
-func ToStringSlice(strs []string) StringSlice {
-	ss := make(StringSlice, len(strs))
-	for i, s := range strs {
-		ss[i] = s
-	}
-	return ss
-}
-
 // Clean Removes "" and "*" in Slice
 func (ss *StringSlice) Clean() {
 	if *ss != nil {
 		for i := 0; i < len(*ss); i++ {
 			if (*ss)[i] == "" || (*ss)[i] == "*" {
 				*ss = append((*ss)[:i], (*ss)[i+1:]...)
+				i--
 			}
 		}
 	}
@@ -31,7 +23,7 @@ func (ss *StringSlice) RemoveStringsSpace() {
 	}
 }
 
-func (ss *StringSlice) AppendNonRepeatStr(str string, caseSensitive bool) {
+func (ss *StringSlice) AppendNonRepeatElement(str string, caseSensitive bool) {
 	if ss.Index(str, caseSensitive) == -1 {
 		*ss = append(*ss, str)
 	}
@@ -45,15 +37,15 @@ func (ss *StringSlice) AppendNonRepeat(objectStrs []string, caseSensitive bool) 
 	}
 }
 
-func (ss *StringSlice) DeleteSlice(sDels []string, caseSensitive bool) {
-	for _, v := range sDels {
-		ss.Delete(v, caseSensitive)
+func (ss *StringSlice) DeleteElement(s string, caseSensitive bool) {
+	if i := ss.Index(s, caseSensitive); i != -1 {
+		*ss = append((*ss)[:i], (*ss)[i+1:]...)
 	}
 }
 
-func (ss *StringSlice) Delete(s string, caseSensitive bool) {
-	if i := ss.Index(s, caseSensitive); i != -1 {
-		*ss = append((*ss)[:i], (*ss)[i+1:]...)
+func (ss *StringSlice) Delete(sDels []string, caseSensitive bool) {
+	for _, v := range sDels {
+		ss.DeleteElement(v, caseSensitive)
 	}
 }
 

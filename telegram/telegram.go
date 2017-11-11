@@ -143,8 +143,16 @@ func sendConfirmation(chatID int64, cmd string) {
 	}
 }
 
+const maxCharacters = 4096
+
 // SendTextMessage sends text message to chatID
 func SendTextMessage(chatID int64, text string) {
+	for _, msg := range myutil.SplitTextByLineBreak(text, maxCharacters) {
+		sendTextMessage(chatID, msg)
+	}
+}
+
+func sendTextMessage(chatID int64, text string) {
 	msg := tgbotapi.NewMessage(chatID, text)
 	msg.DisableWebPagePreview = true
 	_, err := bot.Send(msg)

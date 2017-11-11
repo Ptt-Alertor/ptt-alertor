@@ -1,7 +1,6 @@
 package maputil
 
-func FirstByValueInt(strs map[string]int) string {
-	var first string
+func MaxIntKey(strs map[string]int) (first string) {
 	var max int
 	for str, cnt := range strs {
 		if cnt > max {
@@ -11,8 +10,7 @@ func FirstByValueInt(strs map[string]int) string {
 	return first
 }
 
-func FirstByValueFloat(strs map[string]float64) string {
-	var first string
+func MaxFloatKey(strs map[string]float64) (first string) {
 	var max float64
 	for str, result := range strs {
 		if result > max {
