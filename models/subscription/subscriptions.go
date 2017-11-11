@@ -68,9 +68,6 @@ func (ss *Subscriptions) Add(sub Subscription) error {
 }
 
 func (ss *Subscriptions) Remove(sub Subscription) error {
-	if ok, suggestion := board.CheckBoardExist(sub.Board); !ok {
-		return board.BoardNotExistError{Suggestion: suggestion}
-	}
 	sub.CleanUp()
 	for i := 0; i < len(*ss); i++ {
 		s := (*ss)[i]
@@ -106,6 +103,18 @@ func (ss *Subscriptions) Update(sub Subscription) error {
 		}
 	}
 	*ss = append(*ss, sub)
+	return nil
+}
+
+func (ss *Subscriptions) Delete(sub Subscription) error {
+	for i := 0; i < len(*ss); i++ {
+		s := (*ss)[i]
+		if strings.EqualFold(s.Board, sub.Board) {
+			*ss = append((*ss)[:i], (*ss)[i+1:]...)
+			i--
+			return nil
+		}
+	}
 	return nil
 }
 

@@ -13,6 +13,8 @@ import (
 	"github.com/meifamily/ptt-alertor/models/user"
 )
 
+// TODO: rename to commentList
+
 var plcker *pushListChecker
 var plcOnce sync.Once
 

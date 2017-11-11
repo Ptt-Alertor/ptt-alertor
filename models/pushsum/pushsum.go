@@ -55,6 +55,16 @@ func Add(board string) error {
 	return err
 }
 
+func Remove(board string) error {
+	conn := connections.Redis()
+	defer conn.Close()
+	_, err := conn.Do("SREM", prefix+"boards", board)
+	if err != nil {
+		log.WithField("runtime", myutil.BasicRuntimeInfo()).WithError(err).Error()
+	}
+	return err
+}
+
 func AddSubscriber(board, account string) error {
 	conn := connections.Redis()
 	defer conn.Close()
@@ -83,6 +93,17 @@ func ListSubscribers(board string) []string {
 		log.WithField("runtime", myutil.BasicRuntimeInfo()).WithError(err).Error()
 	}
 	return subs
+}
+
+func Destroy(board string) error {
+	key := prefix + board + ":subs"
+	conn := connections.Redis()
+	defer conn.Close()
+	_, err := conn.Do("DEL", key)
+	if err != nil {
+		log.WithField("runtime", myutil.BasicRuntimeInfo()).WithError(err).Error()
+	}
+	return err
 }
 
 func DiffList(account, board, kind string, ids ...int) []int {
@@ -139,6 +160,31 @@ func ReplaceBaseKeys() error {
 		conn.Send("MULTI")
 		conn.Send("RENAME", key, basekey)
 		_, err = conn.Do("EXEC")
+		if err != nil {
+			log.WithField("runtime", myutil.BasicRuntimeInfo()).WithError(err).Error()
+		}
+	}
+	return err
+}
+
+func RenameDiffListKeys(preBoard, postBoard string) error {
+	keyTemplate := prefix + "*:" + preBoard + ":*"
+	conn := connections.Redis()
+	defer conn.Close()
+	keys, err := redis.Strings(conn.Do("KEYS", keyTemplate))
+	for _, key := range keys {
+		newKey := strings.Replace(key, preBoard, postBoard, -1)
+		bl, err := redis.Bool(conn.Do("EXISTS", newKey))
+		if err == nil {
+			if bl {
+				_, err = conn.Do("DEL", key)
+			} else {
+				conn.Send("WATCH", key)
+				conn.Send("MULTI")
+				conn.Send("RENAME", key, newKey)
+				_, err = conn.Do("EXEC")
+			}
+		}
 		if err != nil {
 			log.WithField("runtime", myutil.BasicRuntimeInfo()).WithError(err).Error()
 		}
