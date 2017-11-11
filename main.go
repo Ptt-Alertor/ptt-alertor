@@ -121,7 +121,7 @@ func main() {
 }
 
 func startJobs() {
-	// go jobs.NewMigrateBoard().Run()
+	go jobs.NewMigrateBoard().Run()
 	go jobs.NewChecker().Run()
 	go jobs.NewPushSumChecker().Run()
 	go jobs.NewPushListChecker().Run()
