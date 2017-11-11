@@ -135,7 +135,17 @@ func init() {
 	auth = myutil.Config("auth")
 	telegramToken = myutil.Config("telegram")["token"]
 	// for initial app
-	jobs.NewMigrateBoard().Run()
+	boards := map[string]string{
+		"pd101boys":     "WannaOne",
+		"gosipping":     "gossiping",
+		"hardwaresales": "hardwaresale",
+		"lifeismony":    "lifeismoney",
+		"give/":         "give",
+		"rg":            "g-rex",
+	}
+	for pre, post := range boards {
+		jobs.NewMigrateBoard().Run(pre, post)
+	}
 	// jobs.NewTop().Run()
 	// jobs.NewCacheCleaner().Run()
 	// jobs.NewGenerator().Run()
