@@ -108,6 +108,7 @@ func (m *Messenger) handlePostback(id string, payload string) {
 		responseText = command.HandleCommand("清單", id)
 	case "TOP_PAYLOAD":
 		responseText = command.HandleCommand("排行", id)
+	// TODO: change to COMMENTS_PAYLOAD
 	case "PUSHLIST_PAYLOAD":
 		responseText = command.HandleCommand("推文清單", id)
 	case "CANCEL":

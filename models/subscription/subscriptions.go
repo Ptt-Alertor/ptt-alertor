@@ -38,7 +38,7 @@ func (ss Subscriptions) String() string {
 	return str
 }
 
-func (ss Subscriptions) StringPushList() string {
+func (ss Subscriptions) StringCommentList() string {
 	var str string
 	for _, sub := range ss {
 		if sub.StringArticle() != "" {

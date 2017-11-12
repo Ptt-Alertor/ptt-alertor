@@ -23,7 +23,7 @@ func (c *cacheCleaner) Run() {
 	c.cleanKeywordKeys(conn)
 	c.cleanAuthorKeys(conn)
 	c.cleanPushsumKeys(conn)
-	c.cleanPushlistKeys(conn)
+	c.cleanCommentKeys(conn)
 	// c.cleanUpperCaseKeys(conn)
 	log.Info("Clean Up Cache")
 }
@@ -79,7 +79,7 @@ func (c *cacheCleaner) cleanPushsumKeys(conn redis.Conn) {
 	log.Info("Clean Up Pushsum Keys")
 }
 
-func (c *cacheCleaner) cleanPushlistKeys(conn redis.Conn) {
+func (c *cacheCleaner) cleanCommentKeys(conn redis.Conn) {
 	keys, _ := redis.Strings(conn.Do("KEYS", "article:*:subs"))
 	for _, key := range keys {
 		_, err := conn.Do("DEL", key)
@@ -89,7 +89,7 @@ func (c *cacheCleaner) cleanPushlistKeys(conn redis.Conn) {
 			log.WithField("runtime", myutil.BasicRuntimeInfo()).WithError(err).Error()
 		}
 	}
-	log.Info("Clean Up Pushlist Keys")
+	log.Info("Clean Up Comment Keys")
 }
 
 func (c *cacheCleaner) cleanUpperCaseKeys(conn redis.Conn) {

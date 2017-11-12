@@ -159,15 +159,15 @@ func HandleCommand(text string, userID string) string {
 			return strings.Join(errorTips, "\n")
 		}
 		args := re.FindStringSubmatch(text)
-		result, err := handlePush(command, userID, args[2], args[3])
+		result, err := handleComment(command, userID, args[2], args[3])
 		if err != nil {
 			return err.Error()
 		}
 		return result
 	case "清理推文":
-		return cleanPushList(userID)
+		return cleanCommentList(userID)
 	case "推文清單":
-		return handlePushList(userID)
+		return handleCommentList(userID)
 	case "add", "del":
 		return handleCommandLine(userID, text)
 	}
@@ -275,7 +275,7 @@ func handleList(account string) string {
 	return subs.String()
 }
 
-func cleanPushList(account string) string {
+func cleanCommentList(account string) string {
 	subs := user.NewUser().Find(account).Subscribes
 	var i int
 	for _, sub := range subs {
@@ -296,12 +296,12 @@ func cleanPushList(account string) string {
 	return fmt.Sprintf("清理 %d 則推文", i)
 }
 
-func handlePushList(account string) string {
+func handleCommentList(account string) string {
 	subs := user.NewUser().Find(account).Subscribes
 	if len(subs) == 0 {
 		return "尚未建立清單。請打「指令」查看新增方法。"
 	}
-	return "推文追蹤清單，上限 50 篇：\n" + subs.StringPushList() + "\n輸入「清理推文」，可刪除無效連結。"
+	return "推文追蹤清單，上限 50 篇：\n" + subs.StringCommentList() + "\n輸入「清理推文」，可刪除無效連結。"
 }
 
 func stringCommands() string {
@@ -416,13 +416,13 @@ func handlePushSum(command, account, board, sumStr string) (string, error) {
 	return command + "成功", nil
 }
 
-func handlePush(command, userID, boardName, articleCode string) (string, error) {
+func handleComment(command, userID, boardName, articleCode string) (string, error) {
 	log.WithFields(log.Fields{
 		"id":      userID,
 		"command": command,
 		"boards":  boardName,
 		"words":   articleCode,
-	}).Info("Push Command")
+	}).Info("Comment Command")
 	if strings.EqualFold(command, "新增推文") {
 		if !checkArticleExist(boardName, articleCode) {
 			return "", errors.New("文章不存在")
@@ -433,7 +433,7 @@ func handlePush(command, userID, boardName, articleCode string) (string, error) 
 	}
 	err := update(commandActionMap[command], userID, []string{boardName}, articleCode)
 	if err != nil {
-		log.WithError(err).Error("Pushlist Command Failed")
+		log.WithError(err).Error("Comment Command Failed")
 		return "", errors.New(command + updateFailedMsg)
 	}
 	return command + "成功", nil

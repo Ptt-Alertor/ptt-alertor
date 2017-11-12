@@ -33,7 +33,7 @@ func (pm pttMonitor) Run() {
 				log.Info("Ptt is back to life")
 				go NewChecker().Run()
 				go NewPushSumChecker().Run()
-				go NewPushListChecker().Run()
+				go NewCommentChecker().Run()
 			}
 			errorCounter = 0
 		}
@@ -45,7 +45,7 @@ func (pm pttMonitor) Run() {
 				log.Info("Ptt is Dead")
 				go NewChecker().Stop()
 				go NewPushSumChecker().Stop()
-				go NewPushListChecker().Stop()
+				go NewCommentChecker().Stop()
 			}
 			errorCounter++
 		}

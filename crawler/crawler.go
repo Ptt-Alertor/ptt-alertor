@@ -156,7 +156,7 @@ func BuildArticle(board, articleCode string) (article.Article, error) {
 	}
 	atcl.ID = atcl.ParseID(reqURL)
 	pushBlocks := findNodes(htmlNodes, findPushBlocks)
-	pushes := make([]article.Push, len(pushBlocks))
+	pushes := make([]article.Comment, len(pushBlocks))
 	for index, pushBlock := range pushBlocks {
 		for _, pushTag := range findNodes(pushBlock, findPushTag) {
 			pushes[index].Tag = pushTag.FirstChild.Data
@@ -198,7 +198,7 @@ func BuildArticle(board, articleCode string) (article.Article, error) {
 			}
 		}
 	}
-	atcl.PushList = pushes
+	atcl.Comments = pushes
 	return atcl, nil
 }
 

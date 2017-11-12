@@ -28,29 +28,29 @@ type Article struct {
 	Link             string
 	Date             string    `json:"Date,omitempty"`
 	Author           string    `json:"Author,omitempty"`
-	PushList         PushList  `json:"pushList,omitempty"`
+	Comments         Comments  `json:"pushList,omitempty"` // rename json key to comments
 	LastPushDateTime time.Time `json:"lastPushDateTime,omitempty"`
 	Board            string    `json:"board,omitempty"`
 	PushSum          int       `json:"pushSum,omitempty"`
 }
 
-type Push struct {
+type Comment struct {
 	Tag      string
 	UserID   string
 	Content  string
 	DateTime time.Time
 }
 
-func (p Push) String() string {
+func (c Comment) String() string {
 	// 推 ChoDino: 推文推文
-	return fmt.Sprintf("%s %s%s", p.Tag, p.UserID, p.Content)
+	return fmt.Sprintf("%s %s%s", c.Tag, c.UserID, c.Content)
 }
 
-type PushList []Push
+type Comments []Comment
 
-func (pl PushList) String() string {
+func (cs Comments) String() string {
 	var content string
-	for _, p := range pl {
+	for _, p := range cs {
 		content += "\n" + p.String()
 	}
 	return content
