@@ -61,9 +61,13 @@ func (a Article) ParseID(Link string) (id int) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	id, err = strconv.Atoi(reg.FindStringSubmatch(Link)[1])
+	strs := reg.FindStringSubmatch(Link)
+	if len(strs) < 2 {
+		return 0
+	}
+	id, err = strconv.Atoi(strs[1])
 	if err != nil {
-		id = 0
+		return 0
 	}
 	return id
 }
