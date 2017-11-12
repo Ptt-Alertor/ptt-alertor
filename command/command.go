@@ -423,11 +423,13 @@ func handlePush(command, userID, boardName, articleCode string) (string, error) 
 		"boards":  boardName,
 		"words":   articleCode,
 	}).Info("Push Command")
-	if !checkArticleExist(boardName, articleCode) {
-		return "", errors.New("文章不存在")
-	}
-	if strings.EqualFold("新增推文", command) && countUserArticles(userID) >= subArticlesLimit {
-		return "", errors.New("推文追蹤最多 50 篇，輸入「推文清單」，整理追蹤列表。")
+	if strings.EqualFold(command, "新增推文") {
+		if !checkArticleExist(boardName, articleCode) {
+			return "", errors.New("文章不存在")
+		}
+		if countUserArticles(userID) >= subArticlesLimit {
+			return "", errors.New("推文追蹤最多 50 篇，輸入「推文清單」，整理追蹤列表。")
+		}
 	}
 	err := update(commandActionMap[command], userID, []string{boardName}, articleCode)
 	if err != nil {
