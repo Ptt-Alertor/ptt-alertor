@@ -12,8 +12,8 @@ import (
 	"github.com/meifamily/ptt-alertor/models/user"
 )
 
-// const preBoard = "pd101boys"
-// const postBoard = "WannaOne"
+const preBoard = "pd101boys"
+const postBoard = "WannaOne"
 
 type migrateBoard struct{}
 
@@ -21,7 +21,7 @@ func NewMigrateBoard() *migrateBoard {
 	return &migrateBoard{}
 }
 
-func (migrateBoard) Run(preBoard, postBoard string) {
+func (migrateBoard) Run() {
 	// board list
 	addBoard(postBoard)
 	bd := board.NewBoard()
