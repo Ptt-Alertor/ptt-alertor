@@ -134,6 +134,7 @@ func Notify(accessToken string, message string) {
 	r, err := client.Do(pr)
 	if err != nil {
 		log.WithError(err).Error("Notify Request Failed")
+		return
 	}
 	defer r.Body.Close()
 	if r.StatusCode != http.StatusOK {
