@@ -12,8 +12,8 @@ import (
 	"github.com/meifamily/ptt-alertor/models/user"
 )
 
-const preBoard = "pd101boys"
-const postBoard = "WannaOne"
+const preBoard = "movies"
+const postBoard = "movie"
 
 type migrateBoard struct{}
 
