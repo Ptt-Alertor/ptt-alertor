@@ -138,14 +138,14 @@ func (c Checker) runCheckBoards() {
 
 func (c Checker) checkOffPeak(offPeakCh chan<- bool) {
 	loc := time.FixedZone("CST", 8*60*60)
-	for {
-		t := time.Now().In(loc)
+	ticker := time.NewTicker(10 * time.Minute)
+	for now := range ticker.C {
+		t := now.In(loc)
 		if t.Hour() >= 3 && t.Hour() < 7 {
 			offPeakCh <- true
 		} else {
 			offPeakCh <- false
 		}
-		time.Sleep(10 * time.Minute)
 	}
 }
 

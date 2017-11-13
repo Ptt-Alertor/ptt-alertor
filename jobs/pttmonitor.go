@@ -22,7 +22,8 @@ func (pm pttMonitor) Run() {
 
 	var errorCounter = 0
 	var url = "https://www.ptt.cc/index.html"
-	for {
+	ticker := time.NewTicker(pm.duration)
+	for _ = range ticker.C {
 		resp, err := http.Get(url)
 		if err != nil {
 			log.WithError(err).Error("HTTP Get Error")
@@ -49,6 +50,5 @@ func (pm pttMonitor) Run() {
 			}
 			errorCounter++
 		}
-		time.Sleep(pm.duration)
 	}
 }
