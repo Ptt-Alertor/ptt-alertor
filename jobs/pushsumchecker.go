@@ -1,6 +1,7 @@
 package jobs
 
 import (
+	"context"
 	"fmt"
 	"sync"
 	"time"
@@ -56,7 +57,6 @@ type BoardArticles struct {
 
 func (psc pushSumChecker) Stop() {
 	psc.done <- struct{}{}
-	psc.done <- struct{}{}
 	log.Info("Pushsum Checker Stop")
 }
 
@@ -64,10 +64,13 @@ func (psc pushSumChecker) Run() {
 	boardFinish := make(map[string]bool)
 	baCh := make(chan BoardArticles)
 
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
 	go func() {
 		for {
 			select {
-			case <-psc.done:
+			case <-ctx.Done():
 				return
 			default:
 				boards := pushsum.List()
@@ -100,6 +103,13 @@ func (psc pushSumChecker) Run() {
 		case pscker := <-psc.ch:
 			ckCh <- pscker
 		case <-psc.done:
+			cancel()
+			for len(baCh) > 0 {
+				<-baCh
+			}
+			for len(psc.ch) > 0 {
+				<-psc.ch
+			}
 			return
 		}
 	}
@@ -159,7 +169,7 @@ func (psc pushSumChecker) checkSubscribers(ba BoardArticles) {
 	}
 }
 
-type checkPushSum func(*pushSumChecker, subscription.Subscription, article.Articles) (article.Articles, []int)
+type checkPushSumFn func(*pushSumChecker, subscription.Subscription, article.Articles) (article.Articles, []int)
 
 func checkUp(psc *pushSumChecker, sub subscription.Subscription, articles article.Articles) (upArticles article.Articles, ids []int) {
 	psc.word = strconv.Itoa(sub.Up)
@@ -190,7 +200,7 @@ func checkDown(psc *pushSumChecker, sub subscription.Subscription, articles arti
 	return downArticles, ids
 }
 
-func (psc pushSumChecker) checkPushSum(u user.User, ba BoardArticles, checkFn checkPushSum) {
+func (psc pushSumChecker) checkPushSum(u user.User, ba BoardArticles, checkFn checkPushSumFn) {
 	var articles article.Articles
 	var ids []int
 	for _, sub := range u.Subscribes {

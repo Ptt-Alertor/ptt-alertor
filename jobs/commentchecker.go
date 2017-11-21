@@ -1,6 +1,7 @@
 package jobs
 
 import (
+	"context"
 	"sync"
 	"time"
 
@@ -40,19 +41,19 @@ func (cc commentChecker) String() string {
 
 func (cc commentChecker) Stop() {
 	cc.done <- struct{}{}
-	cc.done <- struct{}{}
 	log.Info("Comment Checker Stop")
 }
 
 // Run start job
 func (cc commentChecker) Run() {
-
 	ach := make(chan article.Article)
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
 	go func() {
 		for {
 			select {
-			case <-cc.done:
+			case <-ctx.Done():
 				return
 			default:
 				codes := new(article.Articles).List()
@@ -72,12 +73,16 @@ func (cc commentChecker) Run() {
 		case pc := <-cc.ch:
 			ckCh <- pc
 		case <-cc.done:
+			cancel()
+			for len(ach) > 0 {
+				<-ach
+			}
 			return
 		}
 	}
 }
 
-func (cc commentChecker) checkComments(code string, c chan article.Article) {
+func (cc commentChecker) checkComments(code string, ach chan article.Article) {
 	a := new(article.Article).Find(code)
 	new, err := crawler.BuildArticle(a.Board, a.Code)
 	if _, ok := err.(crawler.URLNotFoundError); ok {
@@ -100,7 +105,7 @@ func (cc commentChecker) checkComments(code string, c chan article.Article) {
 			"board": a.Board,
 			"code":  a.Code,
 		}).Info("Updated Comments")
-		c <- a
+		ach <- a
 	}
 }
 
@@ -119,15 +124,15 @@ func (cc commentChecker) checkSubscribers() {
 	}
 
 	for _, account := range subs {
-		go send(account, cc, cc.ch)
+		go cc.send(account)
 	}
 }
 
-func send(account string, cc commentChecker, pch chan commentChecker) {
+func (cc commentChecker) send(account string) {
 	u := user.NewUser().Find(account)
 	cc.board = cc.Article.Board
 	cc.subType = "push"
 	cc.word = cc.Article.Code
 	cc.Profile = u.Profile
-	pch <- cc
+	cc.ch <- cc
 }

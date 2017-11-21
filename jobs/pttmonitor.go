@@ -9,11 +9,13 @@ import (
 
 type pttMonitor struct {
 	duration time.Duration
+	retry    int
 }
 
 func NewPttMonitor() *pttMonitor {
 	return &pttMonitor{
 		duration: 1 * time.Minute,
+		retry:    3,
 	}
 }
 
@@ -30,7 +32,7 @@ func (pm pttMonitor) Run() {
 		}
 		if err == nil && resp.StatusCode == http.StatusOK {
 			log.Info("Ptt is alive")
-			if errorCounter >= 3 {
+			if errorCounter >= pm.retry {
 				log.Info("Ptt is back to life")
 				go NewChecker().Run()
 				go NewPushSumChecker().Run()
@@ -39,10 +41,10 @@ func (pm pttMonitor) Run() {
 			errorCounter = 0
 		}
 		if err == nil && resp.StatusCode != http.StatusOK {
-			if errorCounter < 3 {
+			if errorCounter < pm.retry {
 				log.Info("Ptt is dying")
 			}
-			if errorCounter == 3 {
+			if errorCounter == pm.retry {
 				log.Info("Ptt is Dead")
 				go NewChecker().Stop()
 				go NewPushSumChecker().Stop()

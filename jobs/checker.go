@@ -1,6 +1,7 @@
 package jobs
 
 import (
+	"context"
 	"fmt"
 	"strings"
 	"sync"
@@ -78,41 +79,36 @@ func (c Checker) Self() Checker {
 
 // Run is main in Job
 func (c Checker) Run() {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	// step 1: check boards which one has new articles
-	c.runCheckBoards()
-
-	for {
-		select {
-		//step 2: check user who subscribes board
-		case bd := <-boardCh:
-			go checkKeywordSubscriber(bd, c)
-			go checkAuthorSubscriber(bd, c)
-		//step 3: send notification
-		case cker := <-c.ch:
-			ckCh <- cker
-		case <-c.done:
-			return
-		}
-	}
-}
-
-func (c Checker) runCheckBoards() {
+	// check high boards
 	go func() {
 		for {
 			select {
-			case <-c.done:
+			case <-ctx.Done():
 				return
 			default:
 				checkBoards(highBoards, checkHighBoardDuration)
 			}
 		}
 	}()
+
+	// check off peak
 	offPeakCh := make(chan bool)
-	go func(offPeakCh <-chan bool) {
+	go c.checkOffPeak(ctx, offPeakCh)
+
+	// check normal boards, slow when off peak
+	go func() {
 		var offPeak bool
 		duration := c.duration
 		for {
 			select {
+			case <-ctx.Done():
+				for len(offPeakCh) > 0 {
+					<-offPeakCh
+				}
+				return
 			case op := <-offPeakCh:
 				if offPeak != op {
 					if op {
@@ -124,35 +120,55 @@ func (c Checker) runCheckBoards() {
 					}
 					offPeak = op
 				}
-			case <-c.done:
-				return
 			default:
 				checkBoards(board.NewBoard().All(), duration)
 			}
 		}
-	}(offPeakCh)
+	}()
 
-	// check off peak
-	go c.checkOffPeak(offPeakCh)
+	// main
+	for {
+		select {
+		//step 2: check user who subscribes board
+		case bd := <-boardCh:
+			go checkKeywordSubscriber(bd, c)
+			go checkAuthorSubscriber(bd, c)
+		//step 3: send notification
+		case cker := <-c.ch:
+			ckCh <- cker
+		case <-c.done:
+			cancel()
+			for len(boardCh) > 0 {
+				<-boardCh
+			}
+			for len(c.ch) > 0 {
+				<-c.ch
+			}
+			return
+		}
+	}
 }
 
-func (c Checker) checkOffPeak(offPeakCh chan<- bool) {
+func (c Checker) checkOffPeak(ctx context.Context, offPeakCh chan<- bool) {
 	loc := time.FixedZone("CST", 8*60*60)
 	ticker := time.NewTicker(10 * time.Minute)
-	for now := range ticker.C {
-		t := now.In(loc)
-		if t.Hour() >= 3 && t.Hour() < 7 {
-			offPeakCh <- true
-		} else {
-			offPeakCh <- false
+	for {
+		select {
+		case <-ctx.Done():
+			return
+		case now := <-ticker.C:
+			t := now.In(loc)
+			if t.Hour() >= 3 && t.Hour() < 7 {
+				offPeakCh <- true
+			} else {
+				offPeakCh <- false
+			}
 		}
 	}
 }
 
 func (c Checker) Stop() {
-	for i := 0; i < 3; i++ {
-		c.done <- struct{}{}
-	}
+	c.done <- struct{}{}
 	log.Info("Checker Stop")
 }
 
