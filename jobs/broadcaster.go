@@ -3,6 +3,7 @@ package jobs
 import (
 	"errors"
 
+	"github.com/meifamily/ptt-alertor/models"
 	"github.com/meifamily/ptt-alertor/models/user"
 )
 
@@ -31,8 +32,7 @@ func (bc Broadcaster) Send(plfms []string) error {
 		platformBl[plfm] = true
 	}
 
-	users := user.NewUser().All()
-	for _, u := range users {
+	for _, u := range models.User.All() {
 		bc.subType = "broadcast"
 		if platformBl["line"] {
 			go bc.sendLine(u)

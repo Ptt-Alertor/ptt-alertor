@@ -9,6 +9,7 @@ import (
 
 	log "github.com/meifamily/logrus"
 
+	"github.com/meifamily/ptt-alertor/models"
 	"github.com/meifamily/ptt-alertor/models/article"
 	"github.com/meifamily/ptt-alertor/models/author"
 	"github.com/meifamily/ptt-alertor/models/board"
@@ -197,7 +198,7 @@ func checkNewArticle(bd *board.Board, boardCh chan *board.Board) {
 }
 
 func checkKeywordSubscriber(bd *board.Board, cker Checker) {
-	u := user.NewUser()
+	u := models.User
 	accounts := keyword.Subscribers(bd.Name)
 	for _, account := range accounts {
 		user := u.Find(account)
@@ -237,7 +238,7 @@ func checkKeyword(keyword string, bd *board.Board, cker Checker) {
 }
 
 func checkAuthorSubscriber(bd *board.Board, cker Checker) {
-	u := user.NewUser()
+	u := models.User
 	accounts := author.Subscribers(bd.Name)
 	for _, account := range accounts {
 		user := u.Find(account)

@@ -8,8 +8,8 @@ import (
 
 	"strings"
 
+	"github.com/meifamily/ptt-alertor/models"
 	"github.com/meifamily/ptt-alertor/models/top"
-	"github.com/meifamily/ptt-alertor/models/user"
 )
 
 type Top struct{}
@@ -23,8 +23,7 @@ func (t Top) Run() {
 	keywordMap := make(map[top.BoardWord]int)
 	authorMap := make(map[top.BoardWord]int)
 	pushSumMap := make(map[top.BoardWord]int)
-	us := user.NewUser().All()
-	for _, u := range us {
+	for _, u := range models.User.All() {
 		for _, sub := range u.Subscribes {
 			for _, keyword := range sub.Keywords {
 				keyword = strings.ToLower(keyword)

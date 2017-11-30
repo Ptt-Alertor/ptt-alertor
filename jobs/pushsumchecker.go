@@ -13,6 +13,7 @@ import (
 	log "github.com/meifamily/logrus"
 
 	"github.com/meifamily/ptt-alertor/crawler"
+	"github.com/meifamily/ptt-alertor/models"
 	"github.com/meifamily/ptt-alertor/models/article"
 	"github.com/meifamily/ptt-alertor/models/pushsum"
 	"github.com/meifamily/ptt-alertor/models/subscription"
@@ -162,7 +163,7 @@ Page:
 func (psc pushSumChecker) checkSubscribers(ba BoardArticles) {
 	subs := pushsum.ListSubscribers(ba.board)
 	for _, account := range subs {
-		u := user.NewUser().Find(account)
+		u := models.User.Find(account)
 		psc.Profile = u.Profile
 		go psc.checkPushSum(u, ba, checkUp)
 		go psc.checkPushSum(u, ba, checkDown)

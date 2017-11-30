@@ -1,4 +1,6 @@
-package file
+//+build !test
+
+package user
 
 import (
 	"encoding/json"
@@ -9,12 +11,12 @@ import (
 	"github.com/meifamily/ptt-alertor/myutil"
 )
 
-type User struct {
+type File struct {
 }
 
 var usersDir string = myutil.StoragePath() + "/users/"
 
-func (u User) List() (accounts []string) {
+func (File) List() (accounts []string) {
 	files, err := ioutil.ReadDir(usersDir)
 	if err != nil {
 		log.WithFields(log.Fields{
@@ -32,16 +34,15 @@ func (u User) List() (accounts []string) {
 	return accounts
 }
 
-func (u User) Exist(account string) bool {
+func (File) Exist(account string) bool {
 	userFile := usersDir + account + ".json"
-	_, err := ioutil.ReadFile(userFile)
-	if err != nil {
+	if _, err := ioutil.ReadFile(userFile); err != nil {
 		return false
 	}
 	return true
 }
 
-func (u User) Save(account string, user interface{}) error {
+func (File) Save(account string, user interface{}) error {
 	userFile := usersDir + account + ".json"
 	uJSON, err := json.Marshal(user)
 	if err != nil {
@@ -49,8 +50,7 @@ func (u User) Save(account string, user interface{}) error {
 		return err
 	}
 
-	err = ioutil.WriteFile(userFile, uJSON, 664)
-	if err != nil {
+	if err := ioutil.WriteFile(userFile, uJSON, 664); err != nil {
 		log.WithFields(log.Fields{
 			"file":    userFile,
 			"doc":     uJSON,
@@ -61,15 +61,14 @@ func (u User) Save(account string, user interface{}) error {
 	return nil
 }
 
-func (u User) Update(account string, user interface{}) error {
+func (File) Update(account string, user interface{}) error {
 	userFile := usersDir + account + ".json"
 	uJSON, err := json.Marshal(user)
 	if err != nil {
 		myutil.LogJSONEncode(err, user)
 		return err
 	}
-	err = ioutil.WriteFile(userFile, uJSON, 664)
-	if err != nil {
+	if err := ioutil.WriteFile(userFile, uJSON, 664); err != nil {
 		log.WithFields(log.Fields{
 			"file":    userFile,
 			"doc":     uJSON,
@@ -80,7 +79,7 @@ func (u User) Update(account string, user interface{}) error {
 	return nil
 }
 
-func (u User) Find(account string, user interface{}) {
+func (File) Find(account string, user *User) {
 	userFile := usersDir + account + ".json"
 	uJSON, err := ioutil.ReadFile(userFile)
 	if err != nil {
@@ -89,8 +88,7 @@ func (u User) Find(account string, user interface{}) {
 			"runtime": myutil.BasicRuntimeInfo(),
 		}).WithError(err).Error("Read File Error")
 	}
-	err = json.Unmarshal(uJSON, &user)
-	if err != nil {
+	if err := json.Unmarshal(uJSON, &user); err != nil {
 		myutil.LogJSONDecode(err, uJSON)
 	}
 }

@@ -8,6 +8,8 @@ import (
 	"github.com/meifamily/ptt-alertor/myutil"
 )
 
+var EmptyPushSum = PushSum{}
+
 // Subscription is a struct show User Subscription
 type Subscription struct {
 	Board    string             `json:"board"`

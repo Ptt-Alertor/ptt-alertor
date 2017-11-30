@@ -10,8 +10,8 @@ import (
 	"fmt"
 
 	"github.com/meifamily/ptt-alertor/crawler"
+	"github.com/meifamily/ptt-alertor/models"
 	"github.com/meifamily/ptt-alertor/models/article"
-	"github.com/meifamily/ptt-alertor/models/user"
 )
 
 var cmtcker *commentChecker
@@ -110,7 +110,9 @@ func (cc commentChecker) checkComments(code string, ach chan article.Article) {
 }
 
 func (cc commentChecker) destroyComments(a article.Article) {
-	a.Destroy()
+	if err := a.Destroy(); err != nil {
+		log.WithError(err).Warning("Destroy Comment Failed")
+	}
 	log.WithFields(log.Fields{
 		"board": a.Board,
 		"code":  a.Code,
@@ -129,10 +131,9 @@ func (cc commentChecker) checkSubscribers() {
 }
 
 func (cc commentChecker) send(account string) {
-	u := user.NewUser().Find(account)
 	cc.board = cc.Article.Board
 	cc.subType = "push"
 	cc.word = cc.Article.Code
-	cc.Profile = u.Profile
+	cc.Profile = models.User.Find(account).Profile
 	cc.ch <- cc
 }

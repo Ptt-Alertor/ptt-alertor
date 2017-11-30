@@ -7,12 +7,13 @@ import (
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
+	"github.com/meifamily/ptt-alertor/models"
 	"github.com/meifamily/ptt-alertor/models/user"
 	"github.com/meifamily/ptt-alertor/myutil"
 )
 
 func UserFind(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-	u := user.NewUser().Find(params.ByName("account"))
+	u := models.User.Find(params.ByName("account"))
 	uJSON, err := json.Marshal(u)
 	if err != nil {
 		myutil.LogJSONEncode(err, u)
@@ -21,7 +22,7 @@ func UserFind(w http.ResponseWriter, r *http.Request, params httprouter.Params) 
 }
 
 func UserAll(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-	us := user.NewUser().All()
+	us := models.User.All()
 
 	data := struct {
 		Total, Line, Messenger, Telegram, IdleUser, BlockUser         int
@@ -64,23 +65,20 @@ func UserAll(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 }
 
 func UserCreate(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-	u := user.NewUser()
-	err := json.NewDecoder(r.Body).Decode(&u)
-	if err != nil {
+	u := models.User
+	if err := json.NewDecoder(r.Body).Decode(&u); err != nil {
 		myutil.LogJSONDecode(err, r.Body)
 		http.Error(w, "not a json valid format", 400)
 	}
-	err = u.Save()
-	if err != nil {
+	if err := u.Save(); err != nil {
 		http.Error(w, err.Error(), 400)
 	}
 }
 
 func UserModify(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	account := params.ByName("account")
-	u := user.NewUser()
-	err := json.NewDecoder(r.Body).Decode(&u)
-	if err != nil {
+	u := models.User
+	if err := json.NewDecoder(r.Body).Decode(&u); err != nil {
 		myutil.LogJSONDecode(err, r.Body)
 		http.Error(w, "not a json valid format", 400)
 	}
@@ -89,8 +87,7 @@ func UserModify(w http.ResponseWriter, r *http.Request, params httprouter.Params
 		http.Error(w, "account does not match", 400)
 	}
 
-	err = u.Update()
-	if err != nil {
+	if err := u.Update(); err != nil {
 		http.Error(w, err.Error(), 400)
 	}
 

@@ -3,13 +3,13 @@ package jobs
 import (
 	log "github.com/meifamily/logrus"
 
+	"github.com/meifamily/ptt-alertor/models"
 	"github.com/meifamily/ptt-alertor/models/article"
 	"github.com/meifamily/ptt-alertor/models/author"
 	"github.com/meifamily/ptt-alertor/models/board"
 	"github.com/meifamily/ptt-alertor/models/keyword"
 	"github.com/meifamily/ptt-alertor/models/pushsum"
 	"github.com/meifamily/ptt-alertor/models/subscription"
-	"github.com/meifamily/ptt-alertor/models/user"
 )
 
 type Generator struct {
@@ -20,20 +20,17 @@ func NewGenerator() *Generator {
 }
 
 func (gb Generator) Run() {
-	users := user.NewUser().All()
-	bds := board.NewBoard().All()
 	boardNameBool := make(map[string]bool)
-	for _, bd := range bds {
+	for _, bd := range board.NewBoard().All() {
 		boardNameBool[bd.Name] = true
 	}
 
-	emptyPushSum := subscription.PushSum{}
-	for _, u := range users {
+	for _, u := range models.User.All() {
 		for _, sub := range u.Subscribes {
 			if !boardNameBool[sub.Board] {
 				addBoard(sub.Board)
 			}
-			if sub.PushSum != emptyPushSum {
+			if sub.PushSum != subscription.EmptyPushSum {
 				addPushsumSub(u.Profile.Account, sub.Board)
 			}
 			if len(sub.Keywords) > 0 {

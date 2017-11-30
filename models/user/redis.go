@@ -1,4 +1,6 @@
-package redis
+//+build !test
+
+package user
 
 import (
 	"encoding/json"
@@ -12,12 +14,12 @@ import (
 	"github.com/meifamily/ptt-alertor/myutil"
 )
 
-type User struct {
+type Redis struct {
 }
 
 const prefix string = "user:"
 
-func (u User) List() (accounts []string) {
+func (Redis) List() (accounts []string) {
 	conn := connections.Redis()
 	defer conn.Close()
 	userKeys, err := redis.Strings(conn.Do("KEYS", "user:*"))
@@ -30,7 +32,7 @@ func (u User) List() (accounts []string) {
 	return accounts
 }
 
-func (u User) Exist(account string) bool {
+func (Redis) Exist(account string) bool {
 	conn := connections.Redis()
 	defer conn.Close()
 	key := prefix + account
@@ -41,7 +43,7 @@ func (u User) Exist(account string) bool {
 	return bl
 }
 
-func (u User) Save(account string, data interface{}) error {
+func (Redis) Save(account string, data interface{}) error {
 	conn := connections.Redis()
 	defer conn.Close()
 	key := prefix + account
@@ -59,7 +61,7 @@ func (u User) Save(account string, data interface{}) error {
 	return nil
 }
 
-func (u User) Update(account string, user interface{}) error {
+func (Redis) Update(account string, user interface{}) error {
 	conn := connections.Redis()
 	defer conn.Close()
 	key := prefix + account
@@ -77,7 +79,7 @@ func (u User) Update(account string, user interface{}) error {
 	return nil
 }
 
-func (u User) Find(account string, user interface{}) {
+func (Redis) Find(account string, user *User) {
 	conn := connections.Redis()
 	defer conn.Close()
 

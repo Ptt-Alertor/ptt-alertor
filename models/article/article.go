@@ -28,7 +28,7 @@ type Article struct {
 	Link             string
 	Date             string    `json:"Date,omitempty"`
 	Author           string    `json:"Author,omitempty"`
-	Comments         Comments  `json:"pushList,omitempty"` // rename json key to comments
+	Comments         Comments  `json:"pushList,omitempty"` // TODO: rename json key to comments
 	LastPushDateTime time.Time `json:"lastPushDateTime,omitempty"`
 	Board            string    `json:"board,omitempty"`
 	PushSum          int       `json:"pushSum,omitempty"`

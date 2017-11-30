@@ -4,12 +4,12 @@ import (
 	"strings"
 
 	log "github.com/meifamily/logrus"
+	"github.com/meifamily/ptt-alertor/models"
 	"github.com/meifamily/ptt-alertor/models/article"
 	"github.com/meifamily/ptt-alertor/models/author"
 	"github.com/meifamily/ptt-alertor/models/board"
 	"github.com/meifamily/ptt-alertor/models/keyword"
 	"github.com/meifamily/ptt-alertor/models/pushsum"
-	"github.com/meifamily/ptt-alertor/models/user"
 )
 
 const preBoard = "movies"
@@ -69,8 +69,7 @@ func (migrateBoard) Run() {
 	log.Info("Articles Migrated")
 
 	// user
-	users := user.NewUser().All()
-	for _, u := range users {
+	for _, u := range models.User.All() {
 		for _, sub := range u.Subscribes {
 			if strings.EqualFold(sub.Board, preBoard) {
 				u.Subscribes.Delete(sub)

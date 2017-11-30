@@ -15,7 +15,7 @@ import (
 	"github.com/julienschmidt/httprouter"
 	log "github.com/meifamily/logrus"
 
-	"github.com/meifamily/ptt-alertor/models/user"
+	"github.com/meifamily/ptt-alertor/models"
 	"github.com/meifamily/ptt-alertor/myutil"
 )
 
@@ -67,18 +67,15 @@ func CatchCallback(w http.ResponseWriter, r *http.Request, _ httprouter.Params) 
 	}
 	code := r.FormValue("code")
 	lineID := r.FormValue("state")
-	u := user.NewUser().Find(lineID)
+	u := models.User.Find(lineID)
 	accessToken, err := fetchAccessToken(code)
 	if err != nil {
 		log.WithError(err).Error("Fetch Access Token Failed")
 	}
 	u.Profile.LineAccessToken = accessToken
-	err = u.Update()
-	if err != nil {
-		log.WithError(err).Error("User Update Failed")
-	}
 
-	if err != nil {
+	if err := u.Update(); err != nil {
+		log.WithError(err).Error("User Update Failed")
 		Notify(accessToken, "\n連結 LINE Notify 失敗。\n請至 Ptt Alertor LINE 主頁回報區留言。")
 	} else {
 		Notify(accessToken, "\n請回到 Ptt Alertor 輸入「指令」查看相關功能。\nPtt Alertor: 設定看板、作者、關鍵字\nLINE Notify: 最新文章通知")

@@ -2,6 +2,7 @@ package main
 
 import (
 	"net/http"
+	"os"
 
 	"github.com/google/gops/agent"
 	"github.com/julienschmidt/httprouter"
@@ -134,6 +135,16 @@ func startJobs() {
 func init() {
 	auth = myutil.Config("auth")
 	telegramToken = myutil.Config("telegram")["token"]
+	if os.Getenv("Redis-EndPoint") == "" {
+		if err := os.Setenv("Redis-EndPoint", myutil.Config("redis")["host"]); err != nil {
+			panic(err)
+		}
+	}
+	if os.Getenv("Redis-Port") == "" {
+		if err := os.Setenv("Redis-Port", myutil.Config("redis")["port"]); err != nil {
+			panic(err)
+		}
+	}
 	// for initial app
 	// jobs.NewMigrateBoard().Run()
 	// jobs.NewTop().Run()

@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/meifamily/ptt-alertor/models/subscription"
-	"github.com/meifamily/ptt-alertor/models/user/redis"
 )
 
 type User struct {
@@ -14,7 +13,7 @@ type User struct {
 	UpdateTime time.Time `json:"updateTime"`
 	Profile    `json:"Profile"`
 	Subscribes subscription.Subscriptions
-	driver     Driver
+	drive      Driver
 }
 
 type Profile struct {
@@ -32,22 +31,19 @@ type Driver interface {
 	Exist(account string) bool
 	Save(account string, user interface{}) error
 	Update(account string, user interface{}) error
-	Find(account string, user interface{})
+	Find(account string, user *User)
 }
 
-var (
-	driver       = new(redis.User)
-	AccountEmpty = errors.New("account can not be empty")
-)
+var ErrAccountEmpty = errors.New("account can not be empty")
 
-func NewUser() *User {
+func NewUser(drive Driver) *User {
 	return &User{
-		driver: driver,
+		drive: drive,
 	}
 }
 
 func (u User) All() (us []*User) {
-	accounts := u.driver.List()
+	accounts := u.drive.List()
 	for _, account := range accounts {
 		user := u.Find(account)
 		us = append(us, &user)
@@ -57,12 +53,12 @@ func (u User) All() (us []*User) {
 
 func (u User) Save() error {
 
-	if u.driver.Exist(u.Profile.Account) {
+	if u.drive.Exist(u.Profile.Account) {
 		return errors.New("user already exist")
 	}
 
 	if u.Profile.Account == "" {
-		return AccountEmpty
+		return ErrAccountEmpty
 	}
 
 	if u.Profile.Email == "" && u.Profile.Line == "" && u.Profile.Messenger == "" && u.Profile.Telegram == "" {
@@ -71,24 +67,24 @@ func (u User) Save() error {
 	u.CreateTime = time.Now()
 	u.UpdateTime = time.Now()
 
-	return u.driver.Save(u.Profile.Account, u)
+	return u.drive.Save(u.Profile.Account, u)
 }
 
 func (u User) Update() error {
 
-	if !u.driver.Exist(u.Profile.Account) {
+	if !u.drive.Exist(u.Profile.Account) {
 		return errors.New("user not exist")
 	}
 
 	if u.Profile.Account == "" {
-		return AccountEmpty
+		return ErrAccountEmpty
 	}
 
 	u.UpdateTime = time.Now()
-	return u.driver.Update(u.Profile.Account, u)
+	return u.drive.Update(u.Profile.Account, u)
 }
 
 func (u User) Find(account string) User {
-	u.driver.Find(account, &u)
+	u.drive.Find(account, &u)
 	return u
 }
