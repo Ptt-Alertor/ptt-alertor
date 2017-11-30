@@ -1,8 +1,11 @@
 package main
 
 import (
+	"context"
 	"net/http"
 	"os"
+	"os/signal"
+	"time"
 
 	"github.com/google/gops/agent"
 	"github.com/julienschmidt/httprouter"
@@ -114,11 +117,27 @@ func main() {
 
 	// Web Server
 	log.Info("Web Server Start on Port 9090")
-	err := http.ListenAndServe(":9090", router)
-	if err != nil {
-		log.Fatal("ListenAndServer ", err)
+	srv := http.Server{
+		Addr:    ":9090",
+		Handler: router,
 	}
+	go func() {
+		if err := srv.ListenAndServe(); err != nil {
+			log.Fatal("ListenAndServer ", err)
+		}
+	}()
 
+	// graceful shotdown
+	quit := make(chan os.Signal)
+	signal.Notify(quit, os.Interrupt)
+	<-quit
+	log.Info("Shutdown Web Server...")
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	if err := srv.Shutdown(ctx); err != nil {
+		log.WithError(err).Fatal("Web Server Showdown Failed")
+	}
+	log.Info("Web Server Was Been Shutdown")
 }
 
 func startJobs() {
