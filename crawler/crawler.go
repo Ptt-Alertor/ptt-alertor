@@ -135,7 +135,6 @@ func convertPushCount(str string) int {
 
 // BuildArticle build article object from html
 func BuildArticle(board, articleCode string) (article.Article, error) {
-
 	reqURL := makeArticleURL(board, articleCode)
 	rsp, err := fetchHTML(reqURL)
 	if err != nil {
@@ -268,13 +267,14 @@ func (u URLNotFoundError) Error() string {
 	return "Fetched URL Not Found"
 }
 
-func fetchHTML(reqURL string) (response *http.Response, err error) {
+var client = &http.Client{
+	CheckRedirect: func(req *http.Request, via []*http.Request) error {
+		return errors.New("Redirect")
+	},
+	Timeout: 3 * time.Second,
+}
 
-	client := &http.Client{
-		CheckRedirect: func(req *http.Request, via []*http.Request) error {
-			return errors.New("Redirect")
-		},
-	}
+func fetchHTML(reqURL string) (response *http.Response, err error) {
 
 	response, err = client.Get(reqURL)
 
