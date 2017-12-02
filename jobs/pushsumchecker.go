@@ -35,7 +35,7 @@ type pushSumChecker struct {
 func NewPushSumChecker() *pushSumChecker {
 	pscOnce.Do(func() {
 		psCker = &pushSumChecker{}
-		psCker.duration = 500 * time.Millisecond
+		psCker.duration = 1 * time.Second
 		psCker.done = make(chan struct{})
 		psCker.ch = make(chan pushSumChecker)
 	})
