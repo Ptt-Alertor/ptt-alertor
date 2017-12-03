@@ -3,7 +3,6 @@ package jobs
 import (
 	"context"
 	"fmt"
-	"os"
 	"strings"
 	"sync"
 	"time"
@@ -16,15 +15,21 @@ import (
 	"github.com/meifamily/ptt-alertor/models/board"
 	"github.com/meifamily/ptt-alertor/models/keyword"
 	"github.com/meifamily/ptt-alertor/models/user"
+	"github.com/meifamily/ptt-alertor/myutil"
 )
 
 const checkHighBoardDuration = 1 * time.Second
 
 var boardCh = make(chan *board.Board, 700)
 var highBoards []*board.Board
-var highBoardNames = strings.Split(os.Getenv("BOARD_HIGH"), ",")
 
 func init() {
+	initHighBoards()
+}
+
+func initHighBoards() {
+	boardcfg := myutil.Config("board")
+	highBoardNames := strings.Split(boardcfg["high"], ",")
 	for _, name := range highBoardNames {
 		bd := board.NewBoard()
 		bd.Name = name

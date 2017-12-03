@@ -1,12 +1,12 @@
 package mail
 
 import (
-	"os"
 	"strconv"
 
 	log "github.com/meifamily/logrus"
 
 	"github.com/meifamily/ptt-alertor/models/article"
+	"github.com/meifamily/ptt-alertor/myutil"
 	"gopkg.in/mailgun/mailgun-go.v1"
 )
 
@@ -54,12 +54,16 @@ func (mail Mail) Send() {
 	}
 }
 
-var (
-	domain       = os.Getenv("MAILGUN_DOMAIN")
-	apiKey       = os.Getenv("MAILGUN_APIKEY")
-	publicAPIKey = os.Getenv("MAILGUN_PUBLIC_APIKEY")
-)
-
 func newMailgun() mailgun.Mailgun {
+	domain := config["domain"]
+	apiKey := config["apiKey"]
+	publicAPIKey := config["publicAPIKey"]
+
 	return mailgun.NewMailgun(domain, apiKey, publicAPIKey)
+}
+
+var config map[string]string
+
+func init() {
+	config = myutil.Config("mailgun")
 }

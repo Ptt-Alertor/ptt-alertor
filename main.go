@@ -16,14 +16,12 @@ import (
 	"github.com/meifamily/ptt-alertor/jobs"
 	"github.com/meifamily/ptt-alertor/line"
 	"github.com/meifamily/ptt-alertor/messenger"
+	"github.com/meifamily/ptt-alertor/myutil"
 	"github.com/meifamily/ptt-alertor/telegram"
 )
 
-var (
-	telegramToken = os.Getenv("TELEGRAM_TOKEN")
-	authUser      = os.Getenv("AUTH_USER")
-	authPassword  = os.Getenv("AUTH_PW")
-)
+var auth map[string]string
+var telegramToken string
 
 type myRouter struct {
 	httprouter.Router
@@ -49,7 +47,7 @@ func newRouter() *myRouter {
 func basicAuth(handle httprouter.Handle) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 		user, password, hasAuth := r.BasicAuth()
-		if hasAuth && user == authUser && password == authPassword {
+		if hasAuth && user == auth["user"] && password == auth["password"] {
 			handle(w, r, params)
 		} else {
 			w.Header().Set("WWW-Authenticate", "Basic realm=Restricted")
@@ -154,6 +152,18 @@ func startJobs() {
 }
 
 func init() {
+	auth = myutil.Config("auth")
+	telegramToken = myutil.Config("telegram")["token"]
+	if os.Getenv("Redis-EndPoint") == "" {
+		if err := os.Setenv("Redis-EndPoint", myutil.Config("redis")["host"]); err != nil {
+			panic(err)
+		}
+	}
+	if os.Getenv("Redis-Port") == "" {
+		if err := os.Setenv("Redis-Port", myutil.Config("redis")["port"]); err != nil {
+			panic(err)
+		}
+	}
 	// for initial app
 	// jobs.NewMigrateBoard().Run()
 	// jobs.NewTop().Run()

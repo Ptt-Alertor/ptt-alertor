@@ -2,7 +2,6 @@ package line
 
 import (
 	"net/http"
-	"os"
 
 	"strings"
 
@@ -19,15 +18,13 @@ import (
 
 const maxCharacters = 2000
 
-var (
-	bot                *linebot.Client
-	err                error
-	channelSecret      = os.Getenv("LINE_CHANNEL_SECRET")
-	channelAccessToken = os.Getenv("LINE_CHANNEL_ACCESSTOKEN")
-)
+var bot *linebot.Client
+var err error
+var config map[string]string
 
 func init() {
-	bot, err = linebot.New(channelSecret, channelAccessToken)
+	config = myutil.Config("line")
+	bot, err = linebot.New(config["channelSecret"], config["channelAccessToken"])
 	if err != nil {
 		log.Fatal(err)
 	}

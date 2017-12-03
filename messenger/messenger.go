@@ -3,7 +3,6 @@ package messenger
 import (
 	"fmt"
 	"net/http"
-	"os"
 	"regexp"
 	"strings"
 
@@ -21,20 +20,21 @@ const (
 	maxCharacters = 640
 )
 
-var (
-	accessToken = os.Getenv("MESSENGER_ACCESSTOKEN")
-	verifyToken = os.Getenv("MESSENGER_VERIFYTOKEN")
-)
-
 type Messenger struct {
 	VerifyToken string
 	AccessToken string
 }
 
+var config map[string]string
+
+func init() {
+	config = myutil.Config("messenger")
+}
+
 func New() Messenger {
 	return Messenger{
-		VerifyToken: verifyToken,
-		AccessToken: accessToken,
+		VerifyToken: config["verifyToken"],
+		AccessToken: config["accessToken"],
 	}
 }
 

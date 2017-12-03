@@ -45,6 +45,3 @@ terra_config/provider.tf
 
 # bin
 ptt-alertor
-
-# app
-.env*

@@ -3,7 +3,6 @@ package controllers
 import (
 	"html/template"
 	"net/http"
-	"os"
 	"strconv"
 
 	"strings"
@@ -13,6 +12,7 @@ import (
 	"github.com/meifamily/ptt-alertor/connections"
 	"github.com/meifamily/ptt-alertor/models/counter"
 	"github.com/meifamily/ptt-alertor/models/top"
+	"github.com/meifamily/ptt-alertor/myutil"
 	"github.com/meifamily/ptt-alertor/shorturl"
 	"golang.org/x/net/websocket"
 )
@@ -32,10 +32,9 @@ var tpls = []string{
 	"public/tpls/script.tpl",
 }
 
-var (
-	templates = template.Must(template.ParseFiles(tpls...))
-	wsHost    = os.Getenv("APP_WS_HOST")
-)
+var templates = template.Must(template.ParseFiles(tpls...))
+
+var wsHost = myutil.Config("app")["websocketHost"]
 
 // Index Handles router "/" request
 func Index(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
