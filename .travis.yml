@@ -16,8 +16,6 @@ before_install:
 install:
 - go get
 before_script:
-- aws s3 cp s3://ptt-alertor-2-bucket/config/ config/ --recursive
-- ls -al config/
 script:
 - "./test.sh"
 after_success:

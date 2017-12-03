@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
+	"os"
 	"regexp"
 
 	log "github.com/meifamily/logrus"
@@ -16,14 +17,14 @@ import (
 	"github.com/meifamily/ptt-alertor/myutil"
 )
 
-var bot *tgbotapi.BotAPI
-var err error
-
-var token string
+var (
+	bot   *tgbotapi.BotAPI
+	err   error
+	token = os.Getenv("TELEGRAM_TOKEN")
+	host  = os.Getenv("APP_HOST")
+)
 
 func init() {
-	token = myutil.Config("telegram")["token"]
-	host := myutil.Config("app")["host"]
 	bot, err = tgbotapi.NewBotAPI(token)
 	if err != nil {
 		log.WithError(err).Fatal("Telegram Bot Initialize Failed")

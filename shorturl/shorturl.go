@@ -3,6 +3,7 @@ package shorturl
 import (
 	"crypto/md5"
 	"fmt"
+	"os"
 	"time"
 
 	"github.com/garyburd/redigo/redis"
@@ -16,12 +17,7 @@ import (
 
 const redisPrefix = "sum:"
 
-var url = "https://pttalertor.dinolai.com/redirect/"
-
-func init() {
-	config := myutil.Config("app")
-	url = config["host"] + "/redirect/"
-}
+var url = os.Getenv("APP_HOST") + "/redirect/"
 
 func Gen(longURL string) string {
 	data := []byte(longURL)
