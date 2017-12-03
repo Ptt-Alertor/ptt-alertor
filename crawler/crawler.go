@@ -3,6 +3,7 @@ package crawler
 import (
 	"errors"
 	"net/http"
+	"net/url"
 	"time"
 
 	log "github.com/meifamily/logrus"
@@ -24,12 +25,10 @@ const pttHostURL = "https://www.ptt.cc"
 // CurrentPage find Board Last Page Number
 func CurrentPage(board string) (int, error) {
 	url := makeBoardURL(board, -1)
-	rsp, err := fetchHTML(url)
+	htmlNodes, err := fetchHTML(url)
 	if err != nil {
-		rsp.Body.Close()
 		return 0, err
 	}
-	htmlNodes := parseHTML(rsp)
 	paging := findNodes(htmlNodes, findPagingBlock)
 	for _, page := range paging {
 		anchors := findNodes(page, findAnchor)
@@ -51,13 +50,10 @@ func CurrentPage(board string) (int, error) {
 // BuildArticles makes board's index articles to a article slice
 func BuildArticles(board string, page int) (articles article.Articles, err error) {
 	reqURL := makeBoardURL(board, page)
-	rsp, err := fetchHTML(reqURL)
+	htmlNodes, err := fetchHTML(reqURL)
 	if err != nil {
-		rsp.Body.Close()
 		return nil, err
 	}
-	htmlNodes := parseHTML(rsp)
-
 	articleBlocks := findNodes(htmlNodes, findArticleBlocks)
 	for _, articleBlock := range articleBlocks {
 		article := article.Article{}
@@ -136,12 +132,10 @@ func convertPushCount(str string) int {
 // BuildArticle build article object from html
 func BuildArticle(board, articleCode string) (article.Article, error) {
 	reqURL := makeArticleURL(board, articleCode)
-	rsp, err := fetchHTML(reqURL)
+	htmlNodes, err := fetchHTML(reqURL)
 	if err != nil {
-		rsp.Body.Close()
 		return article.Article{}, err
 	}
-	htmlNodes := parseHTML(rsp)
 	atcl := article.Article{
 		Link:  reqURL,
 		Code:  articleCode,
@@ -225,23 +219,33 @@ func getYear(pushTime time.Time) int {
 // CheckBoardExist use for checking board exist or not
 func CheckBoardExist(board string) bool {
 	reqURL := makeBoardURL(board, -1)
-	rsp, err := fetchHTML(reqURL)
-	rsp.Body.Close()
-	if _, ok := err.(URLNotFoundError); ok {
+	resp, err := http.Get(reqURL)
+	if err != nil {
 		return false
 	}
-	return true
+	if resp != nil {
+		resp.Body.Close()
+		if resp.StatusCode == http.StatusOK {
+			return true
+		}
+	}
+	return false
 }
 
 // CheckArticleExist user for checking article exist or not
 func CheckArticleExist(board, articleCode string) bool {
 	reqURL := makeArticleURL(board, articleCode)
-	rsp, err := fetchHTML(reqURL)
-	rsp.Body.Close()
-	if _, ok := err.(URLNotFoundError); ok {
+	resp, err := http.Get(reqURL)
+	if err != nil {
 		return false
 	}
-	return true
+	if resp != nil {
+		resp.Body.Close()
+		if resp.StatusCode == http.StatusOK {
+			return true
+		}
+	}
+	return false
 }
 
 func makeBoardURL(board string, page int) string {
@@ -267,31 +271,42 @@ func (u URLNotFoundError) Error() string {
 	return "Fetched URL Not Found"
 }
 
+var errRedirect = errors.New("Redirect")
+
 var client = &http.Client{
 	CheckRedirect: func(req *http.Request, via []*http.Request) error {
-		return errors.New("Redirect")
+		return errRedirect
 	},
 	Timeout: 3 * time.Second,
 }
 
-func fetchHTML(reqURL string) (response *http.Response, err error) {
-
-	response, err = client.Get(reqURL)
-
-	if err == nil && response.StatusCode == http.StatusNotFound {
-		err = URLNotFoundError{reqURL}
-	}
-
-	if err != nil && response != nil && response.StatusCode == http.StatusFound {
-		req := passR18(reqURL)
-		response, err = client.Do(req)
-	}
-
-	if err != nil {
+func fetchHTML(reqURL string) (doc *html.Node, err error) {
+	resp, err := client.Get(reqURL)
+	if err != nil && resp == nil {
 		log.WithField("url", reqURL).WithError(err).Error("Fetch URL Failed")
+		return nil, err
 	}
 
-	return response, err
+	if err == nil && resp.StatusCode == http.StatusNotFound {
+		err = URLNotFoundError{reqURL}
+		return nil, err
+	}
+
+	if uerr, ok := err.(*url.Error); ok && uerr.Err == errRedirect {
+		req := passR18(reqURL)
+		resp, err = client.Do(req)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	doc, err = html.Parse(resp.Body)
+	resp.Body.Close()
+	if err != nil {
+		log.Error(err)
+		return nil, err
+	}
+	return doc, nil
 }
 
 func passR18(reqURL string) (req *http.Request) {
@@ -311,13 +326,4 @@ func passR18(reqURL string) (req *http.Request) {
 	req.AddCookie(&over18Cookie)
 
 	return req
-}
-
-func parseHTML(response *http.Response) *html.Node {
-	doc, err := html.Parse(response.Body)
-	response.Body.Close()
-	if err != nil {
-		log.Error(err)
-	}
-	return doc
 }
