@@ -20,9 +20,11 @@ FROM alpine:latest
 RUN set -eux; \
 	apk add --no-cache --virtual ca-certificates
 
+COPY .env .env
+COPY run.sh run.sh
 COPY public/ public/
 COPY --from=builder /go/bin/ptt-alertor .
 
-ENTRYPOINT /ptt-alertor
+ENTRYPOINT /run.sh
 
 EXPOSE 9090 6060
