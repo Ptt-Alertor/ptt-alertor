@@ -9,6 +9,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"os"
 	"sort"
 	"strconv"
 
@@ -16,23 +17,17 @@ import (
 	log "github.com/meifamily/logrus"
 
 	"github.com/meifamily/ptt-alertor/models"
-	"github.com/meifamily/ptt-alertor/myutil"
 )
 
 const notifyBotHost string = "https://notify-bot.line.me"
 const notifyAPIHost string = "https://notify-api.line.me"
 
-var params map[string]string
-var clientID string
-var clientSecret string
-var redirectURI string
-
-func init() {
-	clientID = config["clientID"]
-	clientSecret = config["clientSecret"]
-	appConfig := myutil.Config("app")
-	redirectURI = appConfig["host"] + "/line/notify/callback"
-}
+var (
+	params       map[string]string
+	clientID     = os.Getenv("LINE_CLIENT_ID")
+	clientSecret = os.Getenv("LINE_CLIENT_SECRET")
+	redirectURI  = os.Getenv("APP_HOST") + "/line/notify/callback"
+)
 
 func buildQueryString(params map[string]string) (query string) {
 	var keys []string
