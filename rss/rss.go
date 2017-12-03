@@ -28,7 +28,7 @@ func BuildArticles(board string) (articles article.Articles, err error) {
 
 var fp = gofeed.NewParser()
 var client = http.Client{
-	Timeout: 3 * time.Second,
+	Timeout: 30 * time.Second,
 }
 
 func parseURL(feedURL string) (feed *gofeed.Feed, err error) {

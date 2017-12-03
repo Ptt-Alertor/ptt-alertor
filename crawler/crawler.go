@@ -277,7 +277,7 @@ var client = &http.Client{
 	CheckRedirect: func(req *http.Request, via []*http.Request) error {
 		return errRedirect
 	},
-	Timeout: 3 * time.Second,
+	Timeout: 30 * time.Second,
 }
 
 func fetchHTML(reqURL string) (doc *html.Node, err error) {
