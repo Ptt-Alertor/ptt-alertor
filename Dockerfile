@@ -23,6 +23,6 @@ RUN set -eux; \
 COPY public/ public/
 COPY --from=builder /go/bin/ptt-alertor .
 
-ENTRYPOINT ptt-alertor
+ENTRYPOINT /ptt-alertor
 
 EXPOSE 9090 6060
