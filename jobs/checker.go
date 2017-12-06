@@ -177,7 +177,7 @@ func checkBoards(bds []*board.Board, duration time.Duration) {
 
 func checkNewArticle(bd *board.Board, boardCh chan *board.Board) {
 	bd.WithNewArticles()
-	if bd.NewArticles == nil {
+	if bd.NewArticles == nil && len(bd.OnlineArticles) > 0 {
 		bd.Articles = bd.OnlineArticles
 		log.WithField("board", bd.Name).Info("Created Articles")
 		bd.Save()
@@ -185,8 +185,7 @@ func checkNewArticle(bd *board.Board, boardCh chan *board.Board) {
 	if len(bd.NewArticles) != 0 {
 		bd.Articles = bd.OnlineArticles
 		log.WithField("board", bd.Name).Info("Updated Articles")
-		err := bd.Save()
-		if err == nil {
+		if err := bd.Save(); err == nil {
 			boardCh <- bd
 		}
 	}

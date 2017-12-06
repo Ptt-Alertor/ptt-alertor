@@ -84,12 +84,36 @@ func (bd *Board) WithArticles() {
 }
 
 func (bd *Board) WithNewArticles() {
-	bd.NewArticles, bd.OnlineArticles = NewArticles(*bd)
+	bd.NewArticles, bd.OnlineArticles = newArticles(*bd)
+}
+
+func newArticles(bd Board) (newArticles, onlineArticles article.Articles) {
+	newArticles = make(article.Articles, 0)
+	savedArticles := bd.driver.GetArticles(bd.Name)
+	onlineArticles = bd.FetchArticles()
+	if len(savedArticles) == 0 {
+		return nil, onlineArticles
+	}
+	for _, onlineArticle := range onlineArticles {
+		for index, savedArticle := range savedArticles {
+			if onlineArticle.ID <= savedArticle.ID {
+				break
+			}
+			if index == len(savedArticles)-1 {
+				newArticles = append(newArticles, onlineArticle)
+			}
+		}
+	}
+	return newArticles, onlineArticles
 }
 
 func (bd Board) FetchArticles() (articles article.Articles) {
 	articles, err := rss.BuildArticles(bd.Name)
 	if err != nil {
+		if err == rss.ErrTooManyRequests {
+			log.WithError(err).Warning("RSS Parse Failed")
+			return
+		}
 		log.WithField("board", bd.Name).WithError(err).Error("RSS Parse Failed, Switch to HTML Crawler")
 		articles, err = crawler.BuildArticles(bd.Name, -1)
 		if err != nil {
@@ -110,26 +134,6 @@ func fixLink(articles *article.Articles) {
 		a.Link = strings.Replace(a.Link, "ALLPOST", realBoard, -1)
 		(*articles)[i] = a
 	}
-}
-
-func NewArticles(bd Board) (newArticles, onlineArticles article.Articles) {
-	newArticles = make(article.Articles, 0)
-	savedArticles := bd.driver.GetArticles(bd.Name)
-	onlineArticles = bd.FetchArticles()
-	if len(savedArticles) == 0 {
-		return nil, onlineArticles
-	}
-	for _, onlineArticle := range onlineArticles {
-		for index, savedArticle := range savedArticles {
-			if onlineArticle.ID <= savedArticle.ID {
-				break
-			}
-			if index == len(savedArticles)-1 {
-				newArticles = append(newArticles, onlineArticle)
-			}
-		}
-	}
-	return newArticles, onlineArticles
 }
 
 func (bd Board) SuggestBoardName() string {

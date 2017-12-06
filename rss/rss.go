@@ -1,6 +1,7 @@
 package rss
 
 import (
+	"errors"
 	"net/http"
 	"time"
 
@@ -8,9 +9,14 @@ import (
 	"github.com/mmcdole/gofeed"
 )
 
+var ErrTooManyRequests = errors.New("Too Many Requests")
+
 func BuildArticles(board string) (articles article.Articles, err error) {
 	feed, err := parseURL("https://www.ptt.cc/atom/" + board + ".xml")
 	if err != nil {
+		if herr, ok := err.(gofeed.HTTPError); ok && herr.StatusCode == http.StatusTooManyRequests {
+			return nil, ErrTooManyRequests
+		}
 		return nil, err
 	}
 	for _, item := range feed.Items {
