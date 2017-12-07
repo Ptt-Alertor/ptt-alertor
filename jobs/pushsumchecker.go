@@ -29,13 +29,15 @@ var pscOnce sync.Once
 
 type pushSumChecker struct {
 	Checker
-	ch chan pushSumChecker
+	articleDuration time.Duration
+	ch              chan pushSumChecker
 }
 
 func NewPushSumChecker() *pushSumChecker {
 	pscOnce.Do(func() {
 		psCker = &pushSumChecker{}
 		psCker.duration = 1 * time.Second
+		psCker.articleDuration = 50 * time.Millisecond
 		psCker.done = make(chan struct{})
 		psCker.ch = make(chan pushSumChecker)
 	})
@@ -150,6 +152,7 @@ Page:
 			}
 			ba.articles = append(ba.articles, a)
 		}
+		time.Sleep(psc.articleDuration)
 	}
 
 	log.WithFields(log.Fields{
