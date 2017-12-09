@@ -152,7 +152,7 @@ Page:
 			}
 			ba.articles = append(ba.articles, a)
 		}
-		time.Sleep(psc.articleDuration)
+		// time.Sleep(psc.articleDuration)
 	}
 
 	log.WithFields(log.Fields{
