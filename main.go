@@ -144,7 +144,7 @@ func main() {
 
 func startJobs() {
 	go jobs.NewChecker().Run()
-	go jobs.NewPushSumChecker().Run()
+	// go jobs.NewPushSumChecker().Run()
 	go jobs.NewCommentChecker().Run()
 	go jobs.NewPttMonitor().Run()
 	c := cron.New()
