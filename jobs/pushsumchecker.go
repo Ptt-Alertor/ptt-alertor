@@ -22,22 +22,19 @@ import (
 
 // change overdueHour must change cronjob replacepushsumkey in the mean time
 const overdueHour = 48 * time.Hour
-const pauseCheckPushSum = 3 * time.Minute
+const pauseCheckPushSum = 1 * time.Minute
 
 var psCker *pushSumChecker
 var pscOnce sync.Once
 
 type pushSumChecker struct {
 	Checker
-	articleDuration time.Duration
-	ch              chan pushSumChecker
+	ch chan pushSumChecker
 }
 
 func NewPushSumChecker() *pushSumChecker {
 	pscOnce.Do(func() {
 		psCker = &pushSumChecker{}
-		psCker.duration = 1 * time.Second
-		psCker.articleDuration = 50 * time.Millisecond
 		psCker.done = make(chan struct{})
 		psCker.ch = make(chan pushSumChecker)
 	})
@@ -64,7 +61,6 @@ func (psc pushSumChecker) Stop() {
 }
 
 func (psc pushSumChecker) Run() {
-	boardFinish := make(map[string]bool)
 	baCh := make(chan BoardArticles)
 
 	ctx, cancel := context.WithCancel(context.Background())
@@ -78,17 +74,8 @@ func (psc pushSumChecker) Run() {
 			default:
 				boards := pushsum.List()
 				for _, board := range boards {
-					bl, ok := boardFinish[board]
-					if !ok {
-						boardFinish[board] = true
-						ok, bl = true, true
-					}
-					if bl && ok {
-						ba := BoardArticles{board: board}
-						boardFinish[board] = false
-						go psc.crawlArticles(ba, baCh)
-					}
-					time.Sleep(psc.duration)
+					ba := BoardArticles{board: board}
+					psc.crawlArticles(ba, baCh)
 				}
 				time.Sleep(pauseCheckPushSum)
 			}
@@ -99,7 +86,6 @@ func (psc pushSumChecker) Run() {
 		select {
 		case ba := <-baCh:
 			psc.board = ba.board
-			boardFinish[ba.board] = true
 			if len(ba.articles) > 0 {
 				go psc.checkSubscribers(ba)
 			}
@@ -152,7 +138,6 @@ Page:
 			}
 			ba.articles = append(ba.articles, a)
 		}
-		// time.Sleep(psc.articleDuration)
 	}
 
 	log.WithFields(log.Fields{
