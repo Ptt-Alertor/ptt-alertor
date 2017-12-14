@@ -111,10 +111,11 @@ func (psc pushSumChecker) crawlArticles(ba BoardArticles, baCh chan BoardArticle
 			"board": ba.board,
 		}).WithError(err).Error("Get CurrentPage Failed")
 		baCh <- ba
+		return
 	}
 
 Page:
-	for page := currentPage; ; page-- {
+	for page := currentPage; page > 0; page-- {
 		articles, _ := crawler.BuildArticles(ba.board, page)
 		for i := len(articles) - 1; i > 0; i-- {
 			a := articles[i]
