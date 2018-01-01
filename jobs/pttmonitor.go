@@ -23,7 +23,7 @@ func (pm pttMonitor) Run() {
 	log.Info("Start Ptt Monitor")
 
 	var errorCounter = 0
-	var url = "https://www.ptt.cc/index.html"
+	var url = "https://www.ptt.cc/bbs/index.html"
 	ticker := time.NewTicker(pm.duration)
 	for _ = range ticker.C {
 		resp, err := http.Get(url)
