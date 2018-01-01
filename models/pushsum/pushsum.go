@@ -121,6 +121,10 @@ func DiffList(account, board, kind string, ids ...int) []int {
 	conn.Send("SDIFF", nowKey, baseKey)
 	conn.Send("DEL", nowKey)
 	r, err := redis.Values(conn.Do("EXEC"))
+	if err != nil {
+		log.WithField("runtime", myutil.BasicRuntimeInfo()).WithError(err).Error()
+		return []int{}
+	}
 	ids, err = redis.Ints(r[1], err)
 	if len(ids) > 0 {
 		conn.Send("MULTI")
