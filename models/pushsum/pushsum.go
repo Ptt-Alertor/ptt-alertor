@@ -107,6 +107,9 @@ func Destroy(board string) error {
 }
 
 func DiffList(account, board, kind string, ids ...int) []int {
+	if len(ids) == 0 {
+		return []int{}
+	}
 	nowKey := prefix + account + ":" + board + ":" + kind + ":now"
 	baseKey := prefix + account + ":" + board + ":" + kind + ":base"
 	benchKey := prefix + account + ":" + board + ":" + kind + ":bench"
