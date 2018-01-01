@@ -126,7 +126,11 @@ Page:
 			t, err := time.ParseInLocation("1/02", a.Date, loc)
 			now := time.Now()
 			nowDate := now.Truncate(24 * time.Hour)
-			t = t.AddDate(now.Year(), 0, 0)
+			if t.Month() > now.Month() {
+				t = t.AddDate(now.Year()-1, 0, 0)
+			} else {
+				t = t.AddDate(now.Year(), 0, 0)
+			}
 			if err != nil {
 				log.WithFields(log.Fields{
 					"board": ba.board,
