@@ -25,19 +25,19 @@ func callAPI(url string, body interface{}) error {
 	if err != nil {
 		return err
 	}
-	res, err := http.Post(url, "application/json", bytes.NewBuffer(data))
+	resp, err := http.Post(url, "application/json", bytes.NewBuffer(data))
 	if err != nil {
 		return err
 	}
-	defer res.Body.Close()
-	if res.StatusCode != http.StatusOK {
-		body, _ := ioutil.ReadAll(res.Body)
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		body, _ := ioutil.ReadAll(resp.Body)
 		msgErr := &MsgErr{}
 		json.Unmarshal(body, &msgErr)
 		if msgErr.Code == 551 {
 			return nil
 		}
-		return fmt.Errorf("%s(%d): %s", res.Status, res.StatusCode, string(body))
+		return fmt.Errorf("%s(%d): %s", resp.Status, resp.StatusCode, string(body))
 	}
 	return nil
 }

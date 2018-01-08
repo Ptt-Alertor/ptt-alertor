@@ -218,32 +218,22 @@ func getYear(pushTime time.Time) int {
 
 // CheckBoardExist use for checking board exist or not
 func CheckBoardExist(board string) bool {
-	reqURL := makeBoardURL(board, -1)
-	resp, err := http.Get(reqURL)
-	if err != nil {
-		return false
-	}
-	if resp != nil {
-		resp.Body.Close()
-		if resp.StatusCode == http.StatusOK {
-			return true
-		}
-	}
-	return false
+	return checkURLExist(makeBoardURL(board, -1))
 }
 
 // CheckArticleExist user for checking article exist or not
 func CheckArticleExist(board, articleCode string) bool {
-	reqURL := makeArticleURL(board, articleCode)
-	resp, err := http.Get(reqURL)
+	return checkURLExist(makeArticleURL(board, articleCode))
+}
+
+func checkURLExist(url string) bool {
+	resp, err := http.Get(url)
 	if err != nil {
 		return false
 	}
-	if resp != nil {
-		resp.Body.Close()
-		if resp.StatusCode == http.StatusOK {
-			return true
-		}
+	defer resp.Body.Close()
+	if resp.StatusCode == http.StatusOK {
+		return true
 	}
 	return false
 }
@@ -286,6 +276,7 @@ func fetchHTML(reqURL string) (doc *html.Node, err error) {
 		log.WithField("url", reqURL).WithError(err).Error("Fetch URL Failed")
 		return nil, err
 	}
+	defer resp.Body.Close()
 
 	if err == nil && resp.StatusCode == http.StatusNotFound {
 		err = URLNotFoundError{reqURL}
@@ -301,7 +292,6 @@ func fetchHTML(reqURL string) (doc *html.Node, err error) {
 	}
 
 	doc, err = html.Parse(resp.Body)
-	resp.Body.Close()
 	if err != nil {
 		log.WithError(err).Error("Crawler Fetch HTML Failed")
 		return nil, err

@@ -42,15 +42,7 @@ func parseURL(feedURL string) (feed *gofeed.Feed, err error) {
 	if err != nil {
 		return nil, err
 	}
-
-	if resp != nil {
-		defer func() {
-			ce := resp.Body.Close()
-			if ce != nil {
-				err = ce
-			}
-		}()
-	}
+	defer resp.Body.Close()
 
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
 		return nil, gofeed.HTTPError{
