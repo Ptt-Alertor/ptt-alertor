@@ -303,7 +303,7 @@ func fetchHTML(reqURL string) (doc *html.Node, err error) {
 	doc, err = html.Parse(resp.Body)
 	resp.Body.Close()
 	if err != nil {
-		log.Error(err)
+		log.WithError(err).Error("Crawler Fetch HTML Failed")
 		return nil, err
 	}
 	return doc, nil

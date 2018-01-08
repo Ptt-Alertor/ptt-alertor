@@ -58,7 +58,11 @@ func getAuthorizeURL(lineID string) string {
 // CatchCallback accept line notify post request to get user code
 func CatchCallback(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	if r.FormValue("error") != "" {
-		log.Error(r.FormValue("state"), r.FormValue("error"), r.FormValue("error_description"))
+		log.WithFields(log.Fields{
+			"error":       r.FormValue("error"),
+			"state":       r.FormValue("state"),
+			"description": r.FormValue("error_description"),
+		}).Error("Get LINE Notify Callback Failed")
 	}
 	code := r.FormValue("code")
 	lineID := r.FormValue("state")
@@ -131,6 +135,9 @@ func Notify(accessToken string, message string) {
 	defer r.Body.Close()
 	if r.StatusCode != http.StatusOK {
 		data, _ := ioutil.ReadAll(r.Body)
-		log.Error(r.Status, string(data))
+		log.WithFields(log.Fields{
+			"status":   r.Status,
+			"response": string(data),
+		}).Error("LINE Notify Failed")
 	}
 }
