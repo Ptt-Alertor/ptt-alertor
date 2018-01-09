@@ -208,12 +208,10 @@ func parseDateTime(ipdatetime string) (time.Time, error) {
 	return t, nil
 }
 
-func getYear(pushTime time.Time) int {
+func getYear(commentTime time.Time) int {
 	t := time.Now()
-	if pushTime.Month() > t.Month() {
-		return t.Year() - 1
-	}
-	if pushTime.Month() == t.Month() && pushTime.Day() > t.Day() {
+	commentTime = commentTime.AddDate(t.Year(), 0, 0)
+	if commentTime.After(t) {
 		return t.Year() - 1
 	}
 	return t.Year()
