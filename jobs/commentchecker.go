@@ -92,21 +92,21 @@ func (cc commentChecker) checkComments(code string, ach chan article.Article) {
 		cc.destroyComments(a)
 	}
 	newComments := make([]article.Comment, 0)
-	if new.LastPushDateTime.After(a.LastPushDateTime) {
-		for _, push := range new.Comments {
-			if push.DateTime.After(a.LastPushDateTime) {
-				newComments = append(newComments, push)
-			}
-		}
-		a.LastPushDateTime = new.LastPushDateTime
-		a.Comments = newComments
-		a.Save()
-		log.WithFields(log.Fields{
-			"board": a.Board,
-			"code":  a.Code,
-		}).Info("Updated Comments")
-		ach <- a
+	// if new.LastPushDateTime.After(a.LastPushDateTime) {
+	for _, comment := range new.Comments {
+		// if comment.DateTime.After(a.LastPushDateTime) {
+		newComments = append(newComments, comment)
+		// }
 	}
+	a.LastPushDateTime = new.LastPushDateTime
+	a.Comments = newComments
+	a.Save()
+	log.WithFields(log.Fields{
+		"board": a.Board,
+		"code":  a.Code,
+	}).Info("Updated Comments")
+	// ach <- a
+	// }
 }
 
 func (cc commentChecker) destroyComments(a article.Article) {
