@@ -144,8 +144,10 @@ func (m *Messenger) SendConfirmation(id string, cmd string) {
 	}
 	body := Request{}
 	body.Recipient.ID = id
-	body.Message.Attachment = &attachment
-	m.callSendAPI(body)
+	body.Message.Attachment = attachment
+	if err := m.callSendAPI(body); err != nil {
+		log.WithError(err).Error("Messenger Send Confirmation Failed")
+	}
 }
 
 func (m *Messenger) SendQuickReplies(id string, payload string) {
@@ -157,7 +159,9 @@ func (m *Messenger) SendQuickReplies(id string, payload string) {
 		Recipient{id},
 		Message{Text: "確定" + payload, QuickReplies: &qrs},
 	}
-	m.callSendAPI(body)
+	if err := m.callSendAPI(body); err != nil {
+		log.WithError(err).Error("Messenger Send Quick Replies Failed")
+	}
 }
 
 func (m *Messenger) SendListMessage(id string, StringMap map[string]string) {
@@ -178,14 +182,13 @@ func (m *Messenger) SendListMessage(id string, StringMap map[string]string) {
 	}
 	body := Request{}
 	body.Recipient.ID = id
-	body.Message.Attachment = &attachment
-	m.callSendAPI(body)
+	body.Message.Attachment = attachment
+	if err := m.callSendAPI(body); err != nil {
+		log.WithError(err).Error("Messenger Send List Message Failed")
+	}
 }
 
-func (m *Messenger) callSendAPI(body Request) {
-	url := SendAPIURL + m.AccessToken
-	err := callAPI(url, body)
-	if err != nil {
-		log.WithError(err).Error("Call Send API Error")
-	}
+func (m *Messenger) callSendAPI(body Request) error {
+	url := sendAPIURL + m.AccessToken
+	return callAPI(url, body)
 }
