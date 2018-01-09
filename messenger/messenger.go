@@ -16,8 +16,8 @@ import (
 )
 
 const (
-	SendAPIURL    = "https://graph.facebook.com/v2.6/me/messages?access_token="
-	ProfileURL    = "https://graph.facebook.com/v2.6/me/messenger_profile?access_token="
+	sendAPIURL    = "https://graph.facebook.com/v2.6/me/messages?access_token="
+	profileURL    = "https://graph.facebook.com/v2.6/me/messenger_profile?access_token="
 	maxCharacters = 640
 )
 
@@ -108,8 +108,7 @@ func (m *Messenger) handlePostback(id string, payload string) {
 		responseText = command.HandleCommand("清單", id)
 	case "TOP_PAYLOAD":
 		responseText = command.HandleCommand("排行", id)
-	// TODO: change to COMMENTS_PAYLOAD
-	case "PUSHLIST_PAYLOAD":
+	case "COMMENTS_PAYLOAD":
 		responseText = command.HandleCommand("推文清單", id)
 	case "CANCEL":
 		responseText = "取消"
@@ -125,12 +124,14 @@ func (m *Messenger) SendTextMessage(id string, message string) {
 			Recipient{id},
 			Message{Text: msg},
 		}
-		m.callSendAPI(body)
+		if err := m.callSendAPI(body); err != nil {
+			log.WithError(err).WithField("message", message).Error("Messenger Send Text Message Failed")
+		}
 	}
 }
 
 func (m *Messenger) SendConfirmation(id string, cmd string) {
-	attachment := Attachment{
+	attachment := &Attachment{
 		Type: "template",
 		Payload: ButtonPayload{
 			TemplateType: "button",
@@ -167,7 +168,7 @@ func (m *Messenger) SendListMessage(id string, StringMap map[string]string) {
 			Subtitle: str,
 		})
 	}
-	attachment := Attachment{
+	attachment := &Attachment{
 		Type: "template",
 		Payload: ListPayload{
 			TemplateType:    "list",

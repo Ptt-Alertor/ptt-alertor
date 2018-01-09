@@ -26,6 +26,6 @@ func (m *Messenger) SetGetStartedButton(payload string) {
 }
 
 func (m *Messenger) callProfileAPI(body interface{}) {
-	url := ProfileURL + m.AccessToken
+	url := profileURL + m.AccessToken
 	callAPI(url, body)
 }
