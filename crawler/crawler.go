@@ -210,7 +210,10 @@ func parseDateTime(ipdatetime string) (time.Time, error) {
 
 func getYear(pushTime time.Time) int {
 	t := time.Now()
-	if t.Month() == 1 && pushTime.Month() == 12 {
+	if pushTime.Month() > t.Month() {
+		return t.Year() - 1
+	}
+	if pushTime.Month() == t.Month() && pushTime.Day() > t.Day() {
 		return t.Year() - 1
 	}
 	return t.Year()
