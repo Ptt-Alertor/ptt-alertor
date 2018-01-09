@@ -22,7 +22,7 @@ import (
 
 // change overdueHour must change cronjob replacepushsumkey in the mean time
 const overdueHour = 48 * time.Hour
-const pauseCheckPushSum = 1 * time.Minute
+const pauseCheckPushSum = 5 * time.Minute
 
 var psCker *pushSumChecker
 var pscOnce sync.Once
