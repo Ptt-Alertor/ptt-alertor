@@ -1,6 +1,7 @@
 package pushsum
 
 import (
+	"strconv"
 	"strings"
 
 	"github.com/garyburd/redigo/redis"
@@ -23,6 +24,19 @@ var NumTextMap = map[int]string{
 	-80:  "X8",
 	-90:  "X9",
 	-100: "XX",
+}
+
+func ConvertPushCount(str string) int {
+	for num, text := range NumTextMap {
+		if strings.EqualFold(str, text) {
+			return num
+		}
+	}
+	cnt, err := strconv.Atoi(str)
+	if err != nil {
+		cnt = 0
+	}
+	return cnt
 }
 
 func List() []string {

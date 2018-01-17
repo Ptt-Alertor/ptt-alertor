@@ -61,7 +61,7 @@ func BuildArticles(board string, page int) (articles article.Articles, err error
 			if child := pushCountDiv.FirstChild; child != nil {
 				if child := child.FirstChild; child != nil {
 					if err == nil {
-						article.PushSum = convertPushCount(child.Data)
+						article.PushSum = pushsum.ConvertPushCount(child.Data)
 					}
 				}
 			}
@@ -114,19 +114,6 @@ func isLastArticleBlock(articleBlock *html.Node) bool {
 		}
 	}
 	return false
-}
-
-func convertPushCount(str string) int {
-	for num, text := range pushsum.NumTextMap {
-		if strings.EqualFold(str, text) {
-			return num
-		}
-	}
-	cnt, err := strconv.Atoi(str)
-	if err != nil {
-		cnt = 0
-	}
-	return cnt
 }
 
 // BuildArticle build article object from html
