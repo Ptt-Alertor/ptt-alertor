@@ -14,7 +14,7 @@ before_install:
 - pip install --user --upgrade awscli
 - export PATH=$PATH:$HOME/.local/bin
 install:
-- go get
+- go get -t
 before_script:
 script:
 - "./test.sh"
