@@ -1,5 +1,3 @@
-//+build test
-
 package user
 
 type Mock struct{}

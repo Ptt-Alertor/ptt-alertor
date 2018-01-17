@@ -1,5 +1,3 @@
-//+build !test
-
 package models
 
 import "github.com/meifamily/ptt-alertor/models/user"

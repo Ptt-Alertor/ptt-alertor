@@ -9,6 +9,18 @@
 			"revisionTime": "2017-05-20T19:45:20Z"
 		},
 		{
+			"checksumSHA1": "6KydZM4kEdRy4d/1KXz/9tJtVMQ=",
+			"path": "github.com/alicebob/miniredis",
+			"revision": "955f929b3a68c092ee308c4b340b337e759f8288",
+			"revisionTime": "2017-12-07T15:02:40Z"
+		},
+		{
+			"checksumSHA1": "eId4JrLv77/Pt+aYgsbieWkHOzo=",
+			"path": "github.com/alicebob/miniredis/server",
+			"revision": "955f929b3a68c092ee308c4b340b337e759f8288",
+			"revisionTime": "2017-12-07T15:02:40Z"
+		},
+		{
 			"checksumSHA1": "Bgs5fKx4V8jxL/m/krOLmhS4az4=",
 			"path": "github.com/andybalholm/cascadia",
 			"revision": "349dd0209470eabd9514242c688c403c0926d266",

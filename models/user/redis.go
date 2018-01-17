@@ -1,5 +1,3 @@
-//+build !test
-
 package user
 
 import (
@@ -17,10 +15,12 @@ import (
 type Redis struct {
 }
 
+var connectRedis = connections.Redis
+
 const prefix string = "user:"
 
 func (Redis) List() (accounts []string) {
-	conn := connections.Redis()
+	conn := connectRedis()
 	defer conn.Close()
 	userKeys, err := redis.Strings(conn.Do("KEYS", "user:*"))
 	if err != nil {
@@ -33,7 +33,7 @@ func (Redis) List() (accounts []string) {
 }
 
 func (Redis) Exist(account string) bool {
-	conn := connections.Redis()
+	conn := connectRedis()
 	defer conn.Close()
 	key := prefix + account
 	bl, err := redis.Bool(conn.Do("EXISTS", key))
@@ -44,7 +44,7 @@ func (Redis) Exist(account string) bool {
 }
 
 func (Redis) Save(account string, data interface{}) error {
-	conn := connections.Redis()
+	conn := connectRedis()
 	defer conn.Close()
 	key := prefix + account
 	uJSON, err := json.Marshal(data)
@@ -62,7 +62,7 @@ func (Redis) Save(account string, data interface{}) error {
 }
 
 func (Redis) Update(account string, user interface{}) error {
-	conn := connections.Redis()
+	conn := connectRedis()
 	defer conn.Close()
 	key := prefix + account
 	uJSON, err := json.Marshal(user)
@@ -80,7 +80,7 @@ func (Redis) Update(account string, user interface{}) error {
 }
 
 func (Redis) Find(account string, user *User) {
-	conn := connections.Redis()
+	conn := connectRedis()
 	defer conn.Close()
 
 	key := prefix + account
