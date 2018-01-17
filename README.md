@@ -5,6 +5,7 @@
 [![Build Status](https://travis-ci.org/meifamily/ptt-alertor.svg?branch=master)](https://travis-ci.org/meifamily/ptt-alertor)
 [![codecov](https://codecov.io/gh/meifamily/ptt-alertor/branch/master/graph/badge.svg)](https://codecov.io/gh/meifamily/ptt-alertor)
 [![Go Report Card](https://goreportcard.com/badge/github.com/meifamily/ptt-alertor)](https://goreportcard.com/report/github.com/meifamily/ptt-alertor)
+[![Code Climate](https://api.codeclimate.com/v1/badges/f7047295fce56a0465dc/maintainability)](https://codeclimate.com/github/meifamily/ptt-alertor/maintainability)
 [![StackShare](https://img.shields.io/badge/tech-stack-0690fa.svg?style=flat)](https://stackshare.io/ptt-alertor/ptt-alertor)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
