@@ -255,6 +255,12 @@
 			"revisionTime": "2017-06-09T15:53:19Z"
 		},
 		{
+			"checksumSHA1": "/n45lREDd5Aqna9vhyKU2ED5J/c=",
+			"path": "gopkg.in/h2non/gock.v1",
+			"revision": "26775f23aa9da4cbd47bc2600a57ac07bbf3bd20",
+			"revisionTime": "2017-12-21T12:03:04Z"
+		},
+		{
 			"checksumSHA1": "njR1GW5phOGryMm6B/zxUBQMIMc=",
 			"path": "gopkg.in/mailgun/mailgun-go.v1",
 			"revision": "369a1fa57ce6fb314e627087b9fff0db5c266c0f",
