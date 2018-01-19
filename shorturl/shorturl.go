@@ -37,15 +37,9 @@ func Original(sum string) string {
 	conn := connections.Redis()
 	defer conn.Close()
 	key := redisPrefix + sum
-	conn.Send("MULTI")
-	conn.Send("GET", key)
-	conn.Send("DEL", key)
-	result, err := redis.Values(conn.Do("EXEC"))
+	u, err := redis.String(conn.Do("GET", key))
 	if err != nil {
 		log.WithField("runtime", myutil.BasicRuntimeInfo()).WithError(err).Error()
 	}
-	if result[0] == nil {
-		return ""
-	}
-	return string(result[0].([]byte))
+	return u
 }
