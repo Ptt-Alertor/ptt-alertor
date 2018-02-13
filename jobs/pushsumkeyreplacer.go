@@ -12,8 +12,7 @@ func NewPushSumKeyReplacer() *PushSumKeyReplacer {
 }
 
 func (r PushSumKeyReplacer) Run() {
-	err := pushsum.ReplaceBaseKeys()
-	if err != nil {
+	if err := pushsum.ReplaceBaseKeys(); err != nil {
 		log.WithError(err).Error("Replace Pushsum Key Failed")
 	}
 	log.Info("Replace Pushsum Key Done")

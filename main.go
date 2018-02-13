@@ -149,12 +149,13 @@ func startJobs() {
 	go jobs.NewPttMonitor().Run()
 	c := cron.New()
 	c.AddJob("@hourly", jobs.NewTop())
-	c.AddJob("@every 3d", jobs.NewPushSumKeyReplacer())
+	c.AddJob("@weekly", jobs.NewPushSumKeyReplacer())
 	c.Start()
 }
 
 func init() {
 	// for initial app
+	jobs.NewPushSumKeyReplacer().Run()
 	// jobs.NewMigrateBoard().Run()
 	// jobs.NewTop().Run()
 	// jobs.NewCacheCleaner().Run()
