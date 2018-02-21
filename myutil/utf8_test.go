@@ -18,6 +18,7 @@ func Test_SplitTextByLineBreak(t *testing.T) {
 	}{
 		{"pass", args{"你好阿", 5}, []string{"你好阿"}},
 		{"pass", args{"你好阿\n你好喔喔", 5}, []string{"你好阿\n", "你好喔喔"}},
+		{"pass", args{"你好阿\n你好喔喔喔喔喔喔喔\n你好喔喔", 5}, []string{"你好阿\n", "你好喔", "喔喔喔", "喔喔喔", "\n你好喔喔"}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
