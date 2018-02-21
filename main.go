@@ -155,7 +155,7 @@ func startJobs() {
 
 func init() {
 	// for initial app
-	jobs.NewPushSumKeyReplacer().Run()
+	// jobs.NewPushSumKeyReplacer().Run()
 	// jobs.NewMigrateBoard().Run()
 	// jobs.NewTop().Run()
 	// jobs.NewCacheCleaner().Run()
