@@ -125,7 +125,7 @@ func (m *Messenger) SendTextMessage(id string, message string) {
 			Message{Text: msg},
 		}
 		if err := m.callSendAPI(body); err != nil {
-			log.WithError(err).WithField("message", message).Error("Messenger Send Text Message Failed")
+			log.WithError(err).WithField("message", msg).Error("Messenger Send Text Message Failed")
 		}
 	}
 }
