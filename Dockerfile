@@ -7,6 +7,7 @@ RUN set -eux; \
 ENV GOPATH /go/
 ENV GO_WORKDIR $GOPATH/src/github.com/meifamily/ptt-alertor/
 ENV GO111MODULE=on
+ENV CGO_ENABLED=0
 
 WORKDIR $GO_WORKDIR
 
