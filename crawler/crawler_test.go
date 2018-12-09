@@ -180,6 +180,7 @@ func TestBuildArticle(t *testing.T) {
 	defer gock.Off()
 	gock.New("https://www.ptt.cc").Get("/bbs/TFSHS66th321/M.1498563199.A.35C.html").
 		Reply(200).BodyString(dummyArticle)
+	year := time.Now().Year()
 
 	type args struct {
 		board       string
@@ -196,14 +197,14 @@ func TestBuildArticle(t *testing.T) {
 			Code:             "M.1498563199.A.35C",
 			Title:            "[小葉] 公告測試",
 			Link:             "https://www.ptt.cc/bbs/TFSHS66th321/M.1498563199.A.35C.html",
-			LastPushDateTime: time.Date(2017, 07, 9, 13, 57, 0, 0, time.FixedZone("CST", 8*60*60)),
+			LastPushDateTime: time.Date(year, 07, 9, 13, 57, 0, 0, time.FixedZone("CST", 8*60*60)),
 			Board:            "TFSHS66th321",
 			PushSum:          0,
 			Comments: article.Comments{
-				article.Comment{Tag: "→ ", UserID: "ChoDino", Content: ": 快點好嗎", DateTime: time.Date(2017, 06, 30, 00, 55, 0, 0, time.FixedZone("CST", 8*60*60))},
-				article.Comment{Tag: "→ ", UserID: "ChoDino", Content: ": 好了~今天先做到這~預祝空軍今天賺飽飽~睡好覺@", DateTime: time.Date(2017, 07, 06, 10, 22, 0, 0, time.FixedZone("CST", 8*60*60))},
-				article.Comment{Tag: "→ ", UserID: "ChoDino", Content: ": 好了~今天先做到這~預祝空軍今天賺飽飽~睡好覺@", DateTime: time.Date(2017, 07, 06, 10, 26, 0, 0, time.FixedZone("CST", 8*60*60))},
-				article.Comment{Tag: "→ ", UserID: "ChoDino", Content: ": timezone testing", DateTime: time.Date(2017, 07, 9, 13, 57, 0, 0, time.FixedZone("CST", 8*60*60))}},
+				article.Comment{Tag: "→ ", UserID: "ChoDino", Content: ": 快點好嗎", DateTime: time.Date(year, 06, 30, 00, 55, 0, 0, time.FixedZone("CST", 8*60*60))},
+				article.Comment{Tag: "→ ", UserID: "ChoDino", Content: ": 好了~今天先做到這~預祝空軍今天賺飽飽~睡好覺@", DateTime: time.Date(year, 07, 06, 10, 22, 0, 0, time.FixedZone("CST", 8*60*60))},
+				article.Comment{Tag: "→ ", UserID: "ChoDino", Content: ": 好了~今天先做到這~預祝空軍今天賺飽飽~睡好覺@", DateTime: time.Date(year, 07, 06, 10, 26, 0, 0, time.FixedZone("CST", 8*60*60))},
+				article.Comment{Tag: "→ ", UserID: "ChoDino", Content: ": timezone testing", DateTime: time.Date(year, 07, 9, 13, 57, 0, 0, time.FixedZone("CST", 8*60*60))}},
 		}, false},
 	}
 	for _, tt := range tests {
