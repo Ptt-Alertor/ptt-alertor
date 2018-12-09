@@ -1,11 +1,12 @@
 # building binary
-FROM golang:alpine as builder
+FROM golang:1.11-alpine as builder
 
 RUN set -eux; \
 	apk add --no-cache --virtual git
 
 ENV GOPATH /go/
 ENV GO_WORKDIR $GOPATH/src/github.com/meifamily/ptt-alertor/
+ENV GO111MODULE=on
 
 WORKDIR $GO_WORKDIR
 

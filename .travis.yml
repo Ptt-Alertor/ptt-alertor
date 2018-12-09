@@ -1,6 +1,6 @@
 language: go
 go:
-- 1.9.x
+- 1.11.x
 cache:
   directories:
   - "$HOME/.local"
@@ -14,7 +14,7 @@ before_install:
 - pip install --user --upgrade awscli
 - export PATH=$PATH:$HOME/.local/bin
 install:
-- go get -t ./...
+- go get
 before_script:
 script:
 - "./test.sh"
@@ -36,6 +36,7 @@ notifications:
   slack: meifamily:9oYnHKf0nlRn8QafX4PRZ1lC
 env:
   global:
+  - GO111MODULE=on
   - AWS_ACCESS_KEY_ID=AKIAJJCK25OINZICDA6Q
   - AWS_Docker_Repo=471562619729.dkr.ecr.us-west-2.amazonaws.com/ptt-alertor-repo
   - secure: RDOWVhPXnM2pV9LvBHehI/IbhVciRttBo4nTmsat8yrM4eUCD+HBO0zZFkpxDboA591Xnj5MsMGNHnDXfEFFmx9uRIBBozyQkzubGm+ceDGIgyyXAiqapHHyBRVJb2mKg+QnUtXjOP1fUb8xrJ9HbEEpbxZA86ExDF4yFxFtsAZPrHOD5Ok23kgfGAlY3oryDLRheYzQ9CZqbPgcY5bNHDmTWvb/aKM1xRaIKIWwkiPrH27Rbp91gEWKR+ALvxU2MzscuuHe0SZlUoSnOd+kz1Phr0Xe9ZNFBNTJNzfB2zbfHGKJXPeGyvPxFurNoJNmWsy0g8bU+3I5vQaRSIigt7W4KFMlwsYlTe5VwThLmZZpl/+9D/nDvlNQ6ozPyqdIAxZHs3o77WktSq179+xHMa73+XmrJWnYKXwfxcCyTjv5uhL6OxYzH7FDZGH48Y3MjwCiakjfmmG9t7g6njZ9+bn/XfDZQDVsQe/rCHNr1IFi0fOpsoyka8yGQMDm8iUpHfeTzablFnSdnuXx6+08k31cB5uMb9yDZ2d0XXzjiUbg7msvuhCTq4bAlk0QwzHXlgOwl0g/j1b7StlV4MnoM0YIKsIkZKdKZHFjyP4VgDYPGsOxMrN3xCm6gx2mkXKIk02Us4tqyr+83+vz3VU5McKEGcK+mLlwleYc2QMa0lE=
