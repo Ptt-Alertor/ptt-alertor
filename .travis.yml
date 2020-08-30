@@ -1,42 +1,41 @@
 language: go
 go:
-- 1.11.x
+  - 1.15.x
 cache:
   directories:
-  - "$HOME/.local"
+    - "$HOME/.local"
 services:
-- docker
+  - docker
 before_install:
-- sudo apt-get update
-- sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce
-- docker --version
-- chmod +x ./test.sh
-- pip install --user --upgrade awscli
-- export PATH=$PATH:$HOME/.local/bin
+  - sudo apt-get update
+  - sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce
+  - docker --version
+  - chmod +x ./test.sh
+  - pip install --user --upgrade awscli
+  - export PATH=$PATH:$HOME/.local/bin
 install:
-- go get
+  - go get
 before_script:
 script:
-- "./test.sh"
+  - "./test.sh"
 after_success:
-- bash <(curl -s https://codecov.io/bash)
+  - bash <(curl -s https://codecov.io/bash)
 before_deploy:
-- docker build -t meifamily/ptt-alertor .
-- eval $(aws ecr get-login --region us-west-2 --no-include-email)
-- docker tag meifamily/ptt-alertor:latest $AWS_Docker_Repo:latest
-- docker push $AWS_Docker_Repo:latest
+  - docker build -t meifamily/ptt-alertor .
+  - eval $(aws ecr get-login --region us-west-2 --no-include-email)
+  - docker tag meifamily/ptt-alertor:latest $AWS_Docker_Repo:latest
+  - docker push $AWS_Docker_Repo:latest
 deploy:
-- provider: script
-  script:
-  - bash ./deploy/ecs-deploy -r us-west-2 -c Production-Cluster -n Ptt-Alertor -i
-    $AWS_Docker_Repo -m 0 -M 100 -t 600 -D 1
-  on:
-    branch: master
+  - provider: script
+    script:
+      - bash ./deploy/ecs-deploy -r us-west-2 -c Production-Cluster -n Ptt-Alertor -i $AWS_Docker_Repo -m 0 -M 100 -t 600 -D 1
+    on:
+      branch: master
 notifications:
   slack: meifamily:9oYnHKf0nlRn8QafX4PRZ1lC
 env:
   global:
-  - GO111MODULE=on
-  - AWS_ACCESS_KEY_ID=AKIAJJCK25OINZICDA6Q
-  - AWS_Docker_Repo=471562619729.dkr.ecr.us-west-2.amazonaws.com/ptt-alertor-repo
-  - secure: RDOWVhPXnM2pV9LvBHehI/IbhVciRttBo4nTmsat8yrM4eUCD+HBO0zZFkpxDboA591Xnj5MsMGNHnDXfEFFmx9uRIBBozyQkzubGm+ceDGIgyyXAiqapHHyBRVJb2mKg+QnUtXjOP1fUb8xrJ9HbEEpbxZA86ExDF4yFxFtsAZPrHOD5Ok23kgfGAlY3oryDLRheYzQ9CZqbPgcY5bNHDmTWvb/aKM1xRaIKIWwkiPrH27Rbp91gEWKR+ALvxU2MzscuuHe0SZlUoSnOd+kz1Phr0Xe9ZNFBNTJNzfB2zbfHGKJXPeGyvPxFurNoJNmWsy0g8bU+3I5vQaRSIigt7W4KFMlwsYlTe5VwThLmZZpl/+9D/nDvlNQ6ozPyqdIAxZHs3o77WktSq179+xHMa73+XmrJWnYKXwfxcCyTjv5uhL6OxYzH7FDZGH48Y3MjwCiakjfmmG9t7g6njZ9+bn/XfDZQDVsQe/rCHNr1IFi0fOpsoyka8yGQMDm8iUpHfeTzablFnSdnuXx6+08k31cB5uMb9yDZ2d0XXzjiUbg7msvuhCTq4bAlk0QwzHXlgOwl0g/j1b7StlV4MnoM0YIKsIkZKdKZHFjyP4VgDYPGsOxMrN3xCm6gx2mkXKIk02Us4tqyr+83+vz3VU5McKEGcK+mLlwleYc2QMa0lE=
+    - GO111MODULE=on
+    - AWS_ACCESS_KEY_ID=AKIAVDUITF6YSMX5ZSVN
+    - AWS_Docker_Repo=351400046513.dkr.ecr.us-west-2.amazonaws.com/ptt-alertor-repo
+    - secure: Ft0NQQUxY2Y7uHbH8Lhk736p6RCSkkXdm5j6pOX4/y9DL5WYnWEpBgi1H+4Z8WvmpDkYKiuXkFkqB+tjFGbL5pCa5jEEilMVRN638KQ8G43E4G6PVzLFpAe/di2gU3uVa2jnR3G8pOv/uSgbFTo6HXQc9Hf4/DH591sMDQNha7YAKMMIFDAw92zMZhOp+P/ulaL0PCZP3CvRdc+0cKBRZtZq8H9Gi5ZE7TfJqnh/7w40NWDoqaNE3lf0/DRpORiuWM1lQ91+LOSIPZm5MQeMhZig0NylGPEdhnOkhpS++pNWKI9LHhKXqCKVhJeAkQjt6Srl9SLIqPGNaRDhbUyKOZk948U/H4KOVa0CtVe/WL18WI6QLSjMs3EwtHDSJkBvUz9nvC1uGBvia716q9htekToRLJxPq8RsbIu6+S9WRXXXa9U2oaQQsueo3WPLwdrBsm+YKrP7yjeYzNeZZqsqhDpBZ7uyo9PLkOtIxdfiRSeSOuNdCLT+oIU6t0aCZWgm1Q/SIin6eTRreys4VGLdaWW4JhG6vUTd8bSP00LEbk8wlQ0C1/CIpwjDS2OUiXfmzyBXS5KujEz/MwmrwlLJYNVgWbUlR/czBPui8zfxqru5OGDpzY/QVpL/LE1dbxTUo18bq819VYPkqNJyETKjOjrSzKGlY56WSpLSJjyZ6U=
