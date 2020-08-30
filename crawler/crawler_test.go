@@ -30,9 +30,9 @@ func Test_getYear(t *testing.T) {
 		args args
 		want int
 	}{
-		{"same", args{time.Date(0, 01, 10, 03, 01, 0, 0, time.FixedZone("CST", 8*60*60))}, 2018},
-		{"month before", args{time.Date(0, 12, 10, 03, 01, 0, 0, time.FixedZone("CST", 8*60*60))}, 2017},
-		{"tomorrow", args{time.Now().AddDate(0, 0, 1)}, 2017},
+		{"same", args{time.Date(0, 01, 10, 03, 01, 0, 0, time.FixedZone("CST", 8*60*60))}, 2020},
+		{"month before", args{time.Date(0, 12, 10, 03, 01, 0, 0, time.FixedZone("CST", 8*60*60))}, 2019},
+		{"tomorrow", args{time.Now().AddDate(0, 0, 1)}, 2019},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
