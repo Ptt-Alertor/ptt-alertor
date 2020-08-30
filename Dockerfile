@@ -1,8 +1,5 @@
 # building binary
-FROM golang:1.11-alpine as builder
-
-RUN set -eux; \
-	apk add --no-cache --virtual git
+FROM golang:1.15-alpine as builder
 
 ENV GOPATH /go/
 ENV GO_WORKDIR $GOPATH/src/github.com/meifamily/ptt-alertor/
