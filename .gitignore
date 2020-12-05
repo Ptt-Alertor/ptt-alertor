@@ -48,3 +48,4 @@ ptt-alertor
 
 # app
 .env*
+!.env.example
