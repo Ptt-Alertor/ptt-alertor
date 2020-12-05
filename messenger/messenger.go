@@ -16,7 +16,7 @@ import (
 )
 
 const (
-	sendAPIURL    = "https://graph.facebook.com/v2.6/me/messages?access_token="
+	sendAPIURL    = "https://graph.facebook.com/v9.0/me/messages?access_token="
 	profileURL    = "https://graph.facebook.com/v2.6/me/messenger_profile?access_token="
 	maxCharacters = 640
 )
@@ -121,8 +121,10 @@ func (m *Messenger) handlePostback(id string, payload string) {
 func (m *Messenger) SendTextMessage(id string, message string) {
 	for _, msg := range myutil.SplitTextByLineBreak(message, maxCharacters) {
 		body := Request{
-			Recipient{id},
-			Message{Text: msg},
+			Recipient:   Recipient{id},
+			Message:     Message{Text: msg},
+			MessageType: "MESSAGE_TAG",
+			Tag:         "CONFIRMED_EVENT_UPDATE",
 		}
 		if err := m.callSendAPI(body); err != nil {
 			log.WithError(err).WithField("message", msg).Error("Messenger Send Text Message Failed")
@@ -158,6 +160,8 @@ func (m *Messenger) SendQuickReplies(id string, payload string) {
 	body := Request{
 		Recipient{id},
 		Message{Text: "確定" + payload, QuickReplies: &qrs},
+		"",
+		"",
 	}
 	if err := m.callSendAPI(body); err != nil {
 		log.WithError(err).Error("Messenger Send Quick Replies Failed")
