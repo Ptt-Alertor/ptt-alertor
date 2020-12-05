@@ -118,6 +118,8 @@ func (m *Messenger) handlePostback(id string, payload string) {
 	m.SendTextMessage(id, responseText)
 }
 
+// Using message tag to send notification
+// Reference: https://developers.facebook.com/docs/messenger-platform/send-messages/message-tags/
 func (m *Messenger) SendTextMessage(id string, message string) {
 	for _, msg := range myutil.SplitTextByLineBreak(message, maxCharacters) {
 		body := Request{
