@@ -17,7 +17,7 @@ import (
 
 const (
 	sendAPIURL    = "https://graph.facebook.com/v2.6/me/messages?access_token="
-	profileURL    = "https://graph.facebook.com/v2.6/me/messenger_profile?access_token="
+	profileURL    = "https://graph.facebook.com/v9.0/me/messenger_profile?access_token="
 	maxCharacters = 640
 )
 
