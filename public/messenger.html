@@ -21,37 +21,34 @@
                     <a href="https://m.me/pttalertor">https://m.me/pttalertor</a>
                 </div>
                 <div class="center-text">
-                    <div class="fb-messengermessageus" messenger_app_id="138626206701047" page_id="151419948734270" color="blue" size="xlarge"></div>
+                    <div class="fb-messengermessageus" messenger_app_id="138626206701047" page_id="151419948734270"
+                        color="blue" size="xlarge"></div>
                 </div>
 
                 <div>
-                    <img class="img-responsive center-block" src="https://s3-us-west-2.amazonaws.com/ptt-alertor-3-bucket/assets/messenger_code.png">
+                    <img class="img-responsive center-block"
+                        src="https://s3-us-west-2.amazonaws.com/ptt-alertor-2020-bucket/assets/messenger_code.png">
                 </div>
             </div>
             <div id="command" class="col-md-4 col-md-pull-8">
                 {{template "command"}}
             </div>
-       </div>
+        </div>
         {{template "footer"}}
     </div>
     {{template "script" .}}
     <script>
         window.fbAsyncInit = function () {
             FB.init({
-                appId: "138626206701047",
+                appId: '138626206701047',
+                autoLogAppEvents: true,
                 xfbml: true,
-                version: "v2.6"
+                version: 'v9.0'
             });
         };
-
-        (function (d, s, id) {
-            var js, fjs = d.getElementsByTagName(s)[0];
-            if (d.getElementById(id)) { return; }
-            js = d.createElement(s); js.id = id;
-            js.src = "//connect.facebook.net/zh_TW/sdk.js";
-            fjs.parentNode.insertBefore(js, fjs);
-        }(document, 'script', 'facebook-jssdk'));
     </script>
+    <script async defer crossorigin="anonymous" src="https://connect.facebook.net/zh_TW/sdk.js"></script>
+
 </body>
 
 </html>
