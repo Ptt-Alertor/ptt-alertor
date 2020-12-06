@@ -14,11 +14,11 @@
     <meta property="og:type" content="product" />
     <meta property="og:title" content="Ptt Alertor - Ptt 即時文章通知，追蹤看板推文數、作者、關鍵字" />
     <meta property="og:description" content="訂閱看板推文數作者關鍵字，即時通知 Ptt 最新文章" />
-    <meta property="og:image" content="https://s3-us-west-2.amazonaws.com/ptt-alertor-3-bucket/assets/alarmP.png" />
+    <meta property="og:image" content="https://s3-us-west-2.amazonaws.com/ptt-alertor-2020-bucket/assets/alarmP.png" />
 
-    <link rel="icon" type="image/png" href="https://s3-us-west-2.amazonaws.com/ptt-alertor-3-bucket/assets/alarmP32x32.png">
-    <link rel="apple-touch-icon" type="image/png" href="https://s3-us-west-2.amazonaws.com/ptt-alertor-3-bucket/assets/alarmP.png">
-    <meta name="msapplication-TileImage" content="https://s3-us-west-2.amazonaws.com/ptt-alertor-3-bucket/assets/alarmP.png">
+    <link rel="icon" type="image/png" href="https://s3-us-west-2.amazonaws.com/ptt-alertor-2020-bucket/assets/alarmP32x32.png">
+    <link rel="apple-touch-icon" type="image/png" href="https://s3-us-west-2.amazonaws.com/ptt-alertor-2020-bucket/assets/alarmP.png">
+    <meta name="msapplication-TileImage" content="https://s3-us-west-2.amazonaws.com/ptt-alertor-2020-bucket/assets/alarmP.png">
     <meta name="msapplication-TileColor" content="#FFFFFF"/>
     <link rel="alternate" href="https://pttalertor.dinolai.com/{{.URI}}" hreflang="zh-hant" />
 
