@@ -12,44 +12,57 @@ import (
 	"github.com/meifamily/ptt-alertor/models/pushsum"
 )
 
-const preBoard = "movies"
-const postBoard = "movie"
-
-type migrateBoard struct{}
-
-func NewMigrateBoard() *migrateBoard {
-	return &migrateBoard{}
+type migrateBoard struct {
+	boardMap map[string]string
 }
 
-func (migrateBoard) Run() {
+func NewMigrateBoard(boardMap map[string]string) *migrateBoard {
+	return &migrateBoard{boardMap: boardMap}
+}
+
+func (m migrateBoard) Run() {
+	for pre, post := range m.boardMap {
+		m.RunSingle(pre, post)
+	}
+}
+
+func (migrateBoard) RunSingle(preBoard string, postBoard string) {
 	// board list
-	addBoard(postBoard)
+	if postBoard != "" {
+		addBoard(postBoard)
+	}
 	bd := board.NewBoard()
 	bd.Name = preBoard
 	bd.Delete()
 	log.Info("Board List Migrated")
 
 	// keyword
-	subs := keyword.Subscribers(preBoard)
-	for _, sub := range subs {
-		keyword.AddSubscriber(postBoard, sub)
+	if postBoard != "" {
+		subs := keyword.Subscribers(preBoard)
+		for _, sub := range subs {
+			keyword.AddSubscriber(postBoard, sub)
+		}
 	}
 	keyword.Destroy(preBoard)
 	log.Info("Keyword Migrated")
 
 	// author
-	subs = author.Subscribers(preBoard)
-	for _, sub := range subs {
-		author.AddSubscriber(postBoard, sub)
+	if postBoard != "" {
+		subs := author.Subscribers(preBoard)
+		for _, sub := range subs {
+			author.AddSubscriber(postBoard, sub)
+		}
 	}
 	author.Destroy(preBoard)
 	log.Info("Author Migrated")
 
 	// pushsum
-	pushsum.Add(postBoard)
-	subs = pushsum.ListSubscribers(preBoard)
-	for _, sub := range subs {
-		pushsum.AddSubscriber(postBoard, sub)
+	if postBoard != "" {
+		pushsum.Add(postBoard)
+		subs := pushsum.ListSubscribers(preBoard)
+		for _, sub := range subs {
+			pushsum.AddSubscriber(postBoard, sub)
+		}
 	}
 	pushsum.Remove(preBoard)
 	pushsum.Destroy(preBoard)
@@ -61,8 +74,12 @@ func (migrateBoard) Run() {
 	for _, code := range codes {
 		a := new(article.Article).Find(code)
 		if strings.EqualFold(a.Board, preBoard) {
-			a.Board = postBoard
-			a.Save()
+			if postBoard == "" {
+				a.Destroy()
+			} else {
+				a.Board = postBoard
+				a.Save()
+			}
 			log.WithField("code", code).Info("Article Migrated")
 		}
 	}
@@ -73,16 +90,18 @@ func (migrateBoard) Run() {
 		for _, sub := range u.Subscribes {
 			if strings.EqualFold(sub.Board, preBoard) {
 				u.Subscribes.Delete(sub)
-				for _, postSub := range u.Subscribes {
-					if strings.EqualFold(postSub.Board, postBoard) {
-						if postSub.PushSum.Up == 0 && postSub.PushSum.Down == 0 {
-							postSub.PushSum.Up, postSub.PushSum.Down = sub.PushSum.Up, sub.PushSum.Down
-							u.Subscribes.Update(postSub)
+				if postBoard != "" {
+					for _, postSub := range u.Subscribes {
+						if strings.EqualFold(postSub.Board, postBoard) {
+							if postSub.PushSum.Up == 0 && postSub.PushSum.Down == 0 {
+								postSub.PushSum.Up, postSub.PushSum.Down = sub.PushSum.Up, sub.PushSum.Down
+								u.Subscribes.Update(postSub)
+							}
 						}
 					}
+					sub.Board = postBoard
+					u.Subscribes.Add(sub)
 				}
-				sub.Board = postBoard
-				u.Subscribes.Add(sub)
 				u.Update()
 				log.WithField("account", u.Account).Info("User Subscription Migrated")
 			}

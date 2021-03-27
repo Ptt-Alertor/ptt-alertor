@@ -194,6 +194,10 @@ func RenameDiffListKeys(preBoard, postBoard string) error {
 	defer conn.Close()
 	keys, err := redis.Strings(conn.Do("KEYS", keyTemplate))
 	for _, key := range keys {
+		if postBoard == "" {
+			_, err = conn.Do("DEL", key)
+			continue
+		}
 		newKey := strings.Replace(key, preBoard, postBoard, -1)
 		bl, err := redis.Bool(conn.Do("EXISTS", newKey))
 		if err == nil {
