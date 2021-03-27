@@ -84,7 +84,7 @@ func (cc commentChecker) Run() {
 
 func (cc commentChecker) checkComments(code string, ach chan article.Article) {
 	a := new(article.Article).Find(code)
-	new, err := crawler.BuildArticle(a.Board, a.Code)
+	new, err := crawler.FetchArticle(a.Board, a.Code)
 	if _, ok := err.(crawler.URLNotFoundError); ok {
 		cc.destroyComments(a)
 	}

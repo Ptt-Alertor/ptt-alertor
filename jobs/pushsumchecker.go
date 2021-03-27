@@ -118,7 +118,7 @@ func (psc pushSumChecker) crawlArticles(ba BoardArticles, baCh chan BoardArticle
 
 Page:
 	for page := currentPage; page > 0; page-- {
-		articles, _ := crawler.BuildArticles(ba.board, page)
+		articles, _ := crawler.FetchArticles(ba.board, page)
 		for i := len(articles) - 1; i > 0; i-- {
 			a := articles[i]
 			if a.ID == 0 {
