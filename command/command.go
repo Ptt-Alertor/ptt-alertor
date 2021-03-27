@@ -170,12 +170,12 @@ func HandleCommand(text string, userID string) string {
 	case "推文清單":
 		return handleCommentList(userID)
 	case "add", "del":
-		return handleCommandLine(userID, text)
+		return handleCommandLine(userID, command, text)
 	}
 	return "無此指令，請打「指令」查看指令清單"
 }
 
-func handleCommandLine(userID, text string) string {
+func handleCommandLine(userID, command, text string) string {
 	var keywordStr, authorStr, push, boo string
 	cl := flag.NewFlagSet("Ptt Alertor: <add|del> <-flag <argument>> <board> [board...]\nexample: add -k ptt -a chodino -p 10 ezsoft", flag.ContinueOnError)
 	bf := new(bytes.Buffer)
@@ -190,7 +190,6 @@ func handleCommandLine(userID, text string) string {
 	cl.StringVar(&boo, "b", "", "abbr. of boo")
 
 	args := strings.Fields(text)
-	command := args[0]
 	err := cl.Parse(args[1:])
 	boardStrs := cl.Args()
 	for i := 0; i < len(boardStrs); i++ {
