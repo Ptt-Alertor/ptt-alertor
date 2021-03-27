@@ -22,8 +22,10 @@ func NewMigrateBoard(boardMap map[string]string) *migrateBoard {
 
 func (m migrateBoard) Run() {
 	for pre, post := range m.boardMap {
+		log.WithField("board", pre).Info("Board Migrating")
 		m.RunSingle(pre, post)
 	}
+	log.Info("All Board Migrated")
 }
 
 func (migrateBoard) RunSingle(preBoard string, postBoard string) {
@@ -34,7 +36,7 @@ func (migrateBoard) RunSingle(preBoard string, postBoard string) {
 	bd := board.NewBoard()
 	bd.Name = preBoard
 	bd.Delete()
-	log.Info("Board List Migrated")
+	log.WithField("board", preBoard).Info("Board List Migrated")
 
 	// keyword
 	if postBoard != "" {
@@ -44,7 +46,7 @@ func (migrateBoard) RunSingle(preBoard string, postBoard string) {
 		}
 	}
 	keyword.Destroy(preBoard)
-	log.Info("Keyword Migrated")
+	log.WithField("board", preBoard).Info("Keyword Migrated")
 
 	// author
 	if postBoard != "" {
@@ -54,7 +56,7 @@ func (migrateBoard) RunSingle(preBoard string, postBoard string) {
 		}
 	}
 	author.Destroy(preBoard)
-	log.Info("Author Migrated")
+	log.WithField("board", preBoard).Info("Author Migrated")
 
 	// pushsum
 	if postBoard != "" {
@@ -67,7 +69,7 @@ func (migrateBoard) RunSingle(preBoard string, postBoard string) {
 	pushsum.Remove(preBoard)
 	pushsum.Destroy(preBoard)
 	pushsum.RenameDiffListKeys(preBoard, postBoard)
-	log.Info("Pushsum Migrated")
+	log.WithField("board", preBoard).Info("Pushsum Migrated")
 
 	// articles
 	codes := new(article.Articles).List()
@@ -80,7 +82,10 @@ func (migrateBoard) RunSingle(preBoard string, postBoard string) {
 				a.Board = postBoard
 				a.Save()
 			}
-			log.WithField("code", code).Info("Article Migrated")
+			log.WithFields(log.Fields{
+				"board": preBoard,
+				"code":  code,
+			}).Info("Article Migrated")
 		}
 	}
 	log.Info("Articles Migrated")
@@ -103,9 +108,11 @@ func (migrateBoard) RunSingle(preBoard string, postBoard string) {
 					u.Subscribes.Add(sub)
 				}
 				u.Update()
-				log.WithField("account", u.Account).Info("User Subscription Migrated")
+				log.WithFields(log.Fields{
+					"account": u.Account,
+					"board":   preBoard,
+				}).Info("User Subscription Migrated")
 			}
 		}
 	}
-	log.Info("Board Migrated")
 }
