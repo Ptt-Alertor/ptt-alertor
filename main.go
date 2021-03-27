@@ -157,6 +157,7 @@ func init() {
 	// for initial app
 	// jobs.NewPushSumKeyReplacer().Run()
 	jobs.NewMigrateBoard(map[string]string{
+		"":              "",
 		"b00303xxx":     "",
 		"fromis_":       "fromis_9",
 		"godragons":     "wcdragons",
