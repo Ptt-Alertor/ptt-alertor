@@ -30,9 +30,9 @@ func Test_getYear(t *testing.T) {
 		args args
 		want int
 	}{
-		{"same", args{time.Date(0, 01, 10, 03, 01, 0, 0, time.FixedZone("CST", 8*60*60))}, 2020},
-		{"month before", args{time.Date(0, 12, 10, 03, 01, 0, 0, time.FixedZone("CST", 8*60*60))}, 2019},
-		{"tomorrow", args{time.Now().AddDate(0, 0, 1)}, 2019},
+		{"same", args{time.Date(0, 01, 10, 03, 01, 0, 0, time.FixedZone("CST", 8*60*60))}, time.Now().Year()},
+		{"month before", args{time.Date(0, 12, 31, 23, 59, 59, 0, time.FixedZone("CST", 8*60*60))}, time.Now().Year() - 1},
+		{"tomorrow", args{time.Now().AddDate(0, 0, 1)}, time.Now().Year() - 1},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -197,14 +197,14 @@ func TestBuildArticle(t *testing.T) {
 			Code:             "M.1498563199.A.35C",
 			Title:            "[小葉] 公告測試",
 			Link:             "https://www.ptt.cc/bbs/TFSHS66th321/M.1498563199.A.35C.html",
-			LastPushDateTime: time.Date(year, 07, 9, 13, 57, 0, 0, time.FixedZone("CST", 8*60*60)),
+			LastPushDateTime: time.Date(year, 01, 02, 13, 57, 0, 0, time.FixedZone("CST", 8*60*60)),
 			Board:            "TFSHS66th321",
 			PushSum:          0,
 			Comments: article.Comments{
-				article.Comment{Tag: "→ ", UserID: "ChoDino", Content: ": 快點好嗎", DateTime: time.Date(year, 06, 30, 00, 55, 0, 0, time.FixedZone("CST", 8*60*60))},
-				article.Comment{Tag: "→ ", UserID: "ChoDino", Content: ": 好了~今天先做到這~預祝空軍今天賺飽飽~睡好覺@", DateTime: time.Date(year, 07, 06, 10, 22, 0, 0, time.FixedZone("CST", 8*60*60))},
-				article.Comment{Tag: "→ ", UserID: "ChoDino", Content: ": 好了~今天先做到這~預祝空軍今天賺飽飽~睡好覺@", DateTime: time.Date(year, 07, 06, 10, 26, 0, 0, time.FixedZone("CST", 8*60*60))},
-				article.Comment{Tag: "→ ", UserID: "ChoDino", Content: ": timezone testing", DateTime: time.Date(year, 07, 9, 13, 57, 0, 0, time.FixedZone("CST", 8*60*60))}},
+				article.Comment{Tag: "→ ", UserID: "ChoDino", Content: ": 快點好嗎", DateTime: time.Date(year, 01, 01, 00, 55, 0, 0, time.FixedZone("CST", 8*60*60))},
+				article.Comment{Tag: "→ ", UserID: "ChoDino", Content: ": 好了~今天先做到這~預祝空軍今天賺飽飽~睡好覺@", DateTime: time.Date(year, 01, 02, 10, 22, 0, 0, time.FixedZone("CST", 8*60*60))},
+				article.Comment{Tag: "→ ", UserID: "ChoDino", Content: ": 好了~今天先做到這~預祝空軍今天賺飽飽~睡好覺@", DateTime: time.Date(year, 01, 02, 10, 26, 0, 0, time.FixedZone("CST", 8*60*60))},
+				article.Comment{Tag: "→ ", UserID: "ChoDino", Content: ": timezone testing", DateTime: time.Date(year, 01, 02, 13, 57, 0, 0, time.FixedZone("CST", 8*60*60))}},
 		}, false},
 	}
 	for _, tt := range tests {
@@ -376,10 +376,10 @@ var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po
 --
 <span class="f2">※ 發信站: 批踢踢實業坊(ptt.cc), 來自: 1.170.119.214
 </span><span class="f2">※ 文章網址: <a href="https://www.ptt.cc/bbs/TFSHS66th321/M.1498563199.A.35C.html" target="_blank" rel="nofollow">https://www.ptt.cc/bbs/TFSHS66th321/M.1498563199.A.35C.html</a>
-</span><div class="push"><span class="f1 hl push-tag">→ </span><span class="f3 hl push-userid">ChoDino</span><span class="f3 push-content">: 快點好嗎</span><span class="push-ipdatetime"> 06/30 00:55
-</span></div><div class="push"><span class="f1 hl push-tag">→ </span><span class="f3 hl push-userid">ChoDino</span><span class="f3 push-content">: 好了~今天先做到這~預祝空軍今天賺飽飽~睡好覺@<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="30467052">[email&#160;protected]</a></span><span class="push-ipdatetime"> 07/06 10:22
-</span></div><div class="push"><span class="f1 hl push-tag">→ </span><span class="f3 hl push-userid">ChoDino</span><span class="f3 push-content">: 好了~今天先做到這~預祝空軍今天賺飽飽~睡好覺@<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="c2b482a0">[email&#160;protected]</a></span><span class="push-ipdatetime"> 07/06 10:26
-</span></div><div class="push"><span class="f1 hl push-tag">→ </span><span class="f3 hl push-userid">ChoDino</span><span class="f3 push-content">: timezone testing</span><span class="push-ipdatetime"> 07/09 13:57
+</span><div class="push"><span class="f1 hl push-tag">→ </span><span class="f3 hl push-userid">ChoDino</span><span class="f3 push-content">: 快點好嗎</span><span class="push-ipdatetime"> 01/01 00:55
+</span></div><div class="push"><span class="f1 hl push-tag">→ </span><span class="f3 hl push-userid">ChoDino</span><span class="f3 push-content">: 好了~今天先做到這~預祝空軍今天賺飽飽~睡好覺@<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="30467052">[email&#160;protected]</a></span><span class="push-ipdatetime"> 01/02 10:22
+</span></div><div class="push"><span class="f1 hl push-tag">→ </span><span class="f3 hl push-userid">ChoDino</span><span class="f3 push-content">: 好了~今天先做到這~預祝空軍今天賺飽飽~睡好覺@<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="c2b482a0">[email&#160;protected]</a></span><span class="push-ipdatetime"> 01/02 10:26
+</span></div><div class="push"><span class="f1 hl push-tag">→ </span><span class="f3 hl push-userid">ChoDino</span><span class="f3 push-content">: timezone testing</span><span class="push-ipdatetime"> 01/02 13:57
 </span></div></div>
 
     <div id="article-polling" data-pollurl="/poll/TFSHS66th321/M.1498563199.A.35C.html?cacheKey=2117-403609369&offset=631&offset-sig=88f7d90a2437b7ecd7731bad54988cc001b5758e" data-longpollurl="/v1/longpoll?id=253ee0098f267a4184c1b6ca84911f8e8762da0a" data-offset="631"></div>
