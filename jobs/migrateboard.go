@@ -12,14 +12,16 @@ import (
 	"github.com/meifamily/ptt-alertor/models/pushsum"
 )
 
-type migrateBoard struct{}
-
-func NewMigrateBoard() *migrateBoard {
-	return &migrateBoard{}
+type migrateBoard struct {
+	boardMap map[string]string
 }
 
-func (m migrateBoard) Run(boardMap map[string]string) {
-	for pre, post := range boardMap {
+func newMigrateBoard(boardMap map[string]string) *migrateBoard {
+	return &migrateBoard{boardMap: boardMap}
+}
+
+func (m migrateBoard) Run() {
+	for pre, post := range m.boardMap {
 		m.RunSingle(pre, post)
 	}
 }
