@@ -156,9 +156,7 @@ func startJobs() {
 func init() {
 	// for initial app
 	// jobs.NewPushSumKeyReplacer().Run()
-	jobs.NewMigrateBoard(map[string]string{
-		"arenamofvalor": "arenaofvalor",
-	}).Run()
+	// jobs.NewMigrateBoard(map[string]string{"": ""}).Run()
 	// jobs.NewTop().Run()
 	// jobs.NewCacheCleaner().Run()
 	// jobs.NewGenerator().Run()

@@ -51,8 +51,8 @@ var Commands = map[string]map[string]string{
 	},
 	"推噓文數相關": {
 		"新增(推/噓)文數 看板 總數": "通知推或噓文數",
-		"範例":    "新增推文數 joke,beauty 10",
-		"歸零即刪除": "新增噓文數 joke 0",
+		"範例":              "新增推文數 joke,beauty 10",
+		"歸零即刪除":           "新增噓文數 joke 0",
 	},
 	"推文相關": {
 		"新增推文 網址": "新增推文追蹤",
@@ -459,7 +459,7 @@ func checkArticleExist(boardName, articleCode string) bool {
 }
 
 func initialArticle(a article.Article) error {
-	a, err := crawler.BuildArticle(a.Board, a.Code)
+	a, err := crawler.FetchArticle(a.Board, a.Code)
 	if err != nil {
 		return err
 	}

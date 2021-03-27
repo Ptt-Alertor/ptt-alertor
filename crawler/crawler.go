@@ -47,8 +47,8 @@ func CurrentPage(board string) (int, error) {
 	return 0, errors.New("Parse Currenect Page Error")
 }
 
-// BuildArticles makes board's index articles to a article slice
-func BuildArticles(board string, page int) (articles article.Articles, err error) {
+// FetchArticles makes board's index articles to a article slice
+func FetchArticles(board string, page int) (articles article.Articles, err error) {
 	reqURL := makeBoardURL(board, page)
 	htmlNodes, err := fetchHTML(reqURL)
 	if err != nil {
@@ -116,8 +116,8 @@ func isLastArticleBlock(articleBlock *html.Node) bool {
 	return false
 }
 
-// BuildArticle build article object from html
-func BuildArticle(board, articleCode string) (article.Article, error) {
+// FetchArticle build article object from html
+func FetchArticle(board, articleCode string) (article.Article, error) {
 	reqURL := makeArticleURL(board, articleCode)
 	htmlNodes, err := fetchHTML(reqURL)
 	if err != nil {

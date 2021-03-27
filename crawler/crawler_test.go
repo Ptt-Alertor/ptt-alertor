@@ -17,7 +17,7 @@ func BenchmarkCurrentPage(b *testing.B) {
 
 func BenchmarkBuildArticles(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		BuildArticles("lol", 9697)
+		FetchArticles("lol", 9697)
 	}
 }
 
@@ -160,7 +160,7 @@ func TestBuildArticles(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotArticles, err := BuildArticles(tt.args.board, tt.args.page)
+			gotArticles, err := FetchArticles(tt.args.board, tt.args.page)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("BuildArticles() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -209,7 +209,7 @@ func TestBuildArticle(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := BuildArticle(tt.args.board, tt.args.articleCode)
+			got, err := FetchArticle(tt.args.board, tt.args.articleCode)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("BuildArticle() error = %v, wantErr %v", err, tt.wantErr)
 				return
