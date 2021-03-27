@@ -20,21 +20,23 @@ import (
 	"github.com/meifamily/ptt-alertor/models/user"
 )
 
-// change overdueHour must change cronjob replacepushsumkey in the mean time
+// NewPushSumKeyReplacer Job schedule must longer than overduehour
 const overdueHour = 48 * time.Hour
-const pauseCheckPushSum = 5 * time.Minute
 
 var psCker *pushSumChecker
 var pscOnce sync.Once
 
 type pushSumChecker struct {
 	Checker
-	ch chan pushSumChecker
+	ch       chan pushSumChecker
+	duration time.Duration
 }
 
 func NewPushSumChecker() *pushSumChecker {
 	pscOnce.Do(func() {
-		psCker = &pushSumChecker{}
+		psCker = &pushSumChecker{
+			duration: 3 * time.Second,
+		}
 		psCker.done = make(chan struct{})
 		psCker.ch = make(chan pushSumChecker)
 	})
@@ -75,9 +77,9 @@ func (psc pushSumChecker) Run() {
 				boards := pushsum.List()
 				for _, board := range boards {
 					ba := BoardArticles{board: board}
-					psc.crawlArticles(ba, baCh)
+					time.Sleep(psc.duration)
+					go psc.crawlArticles(ba, baCh)
 				}
-				time.Sleep(pauseCheckPushSum)
 			}
 		}
 	}()
