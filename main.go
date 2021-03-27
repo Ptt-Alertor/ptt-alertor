@@ -156,7 +156,32 @@ func startJobs() {
 func init() {
 	// for initial app
 	// jobs.NewPushSumKeyReplacer().Run()
-	// jobs.NewMigrateBoard().Run()
+	jobs.NewMigrateBoard(map[string]string{
+		"b00303xxx":     "",
+		"fromis_":       "fromis_9",
+		"godragons":     "wcdragons",
+		"macshoptemp":   "",
+		"produce48":     "izone",
+		"realm":         "",
+		"skt_t1":        "t1",
+		"soccer":        "football",
+		"vape":          "",
+		"#1qjltljc":     "",
+		"#1qjm8m_v":     "",
+		"football-rvl:": "",
+		"hi_3rd":        "mihoyo",
+		"keyakizaka46":  "sakurazaka46",
+		"lamigo":        "monkeys",
+		"ntuac97":       "",
+		"ntuactivity":   "",
+		"pd101japan":    "jo1_pdj",
+		"realmofvalor":  "arenamofvalor",
+		"silverlight":   "",
+		"swimwear":      "",
+		"?":             "",
+		"pubg":          "battleroyale",
+		"taiwanjobs":    "",
+	}).Run()
 	// jobs.NewTop().Run()
 	// jobs.NewCacheCleaner().Run()
 	// jobs.NewGenerator().Run()

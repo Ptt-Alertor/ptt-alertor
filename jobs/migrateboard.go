@@ -16,7 +16,7 @@ type migrateBoard struct {
 	boardMap map[string]string
 }
 
-func newMigrateBoard(boardMap map[string]string) *migrateBoard {
+func NewMigrateBoard(boardMap map[string]string) *migrateBoard {
 	return &migrateBoard{boardMap: boardMap}
 }
 
