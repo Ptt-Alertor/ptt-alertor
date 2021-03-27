@@ -1,5 +1,7 @@
 module github.com/meifamily/ptt-alertor
 
+go 1.15
+
 require (
 	github.com/PuerkitoBio/goquery v0.0.0-20170520194520-2dc93891ab3b // indirect
 	github.com/alicebob/miniredis v0.0.0-20171207150240-955f929b3a68
