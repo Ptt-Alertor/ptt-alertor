@@ -10,7 +10,7 @@ import (
 	"github.com/meifamily/ptt-alertor/telegram"
 )
 
-const workers = 200
+const workers = 300
 
 var ckCh = make(chan check)
 

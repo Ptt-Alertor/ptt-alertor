@@ -52,7 +52,7 @@ type Checker struct {
 func NewChecker() *Checker {
 	ckerOnce.Do(func() {
 		cker = &Checker{
-			duration: 250 * time.Millisecond,
+			duration: 150 * time.Millisecond,
 		}
 		cker.done = make(chan struct{})
 		cker.ch = make(chan Checker)
