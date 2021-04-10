@@ -45,10 +45,10 @@ func HandleRequest(_ http.ResponseWriter, r *http.Request, _ httprouter.Params) 
 			handleMessage(event)
 		case linebot.EventTypePostback:
 			handlePostback(event)
-		case linebot.EventTypeFollow:
-			handleFollow(event)
-		case linebot.EventTypeUnfollow:
-			handleUnfollow(event)
+		case linebot.EventTypeFollow, linebot.EventTypeJoin:
+			handleFollowAndJoin(event)
+		case linebot.EventTypeUnfollow, linebot.EventTypeLeave:
+			handleUnfollowAndLeave(event)
 		}
 	}
 }
@@ -56,17 +56,17 @@ func HandleRequest(_ http.ResponseWriter, r *http.Request, _ httprouter.Params) 
 func handleMessage(event *linebot.Event) {
 	var responseText string
 	var lineMsg []linebot.Message
-	userID := event.Source.UserID
+	accountID, _ := getAccountIDAndType(event)
 	switch message := event.Message.(type) {
 	case *linebot.TextMessage:
 		text := strings.TrimSpace(message.Text)
 		if strings.EqualFold(text, "notify") {
-			lineMsg = append(lineMsg, linebot.NewTextMessage(shorturl.Gen(getAuthorizeURL(userID))))
+			lineMsg = append(lineMsg, linebot.NewTextMessage(shorturl.Gen(getAuthorizeURL(accountID))))
 			replyMessage(event.ReplyToken, lineMsg...)
 			return
 		}
-		if !checkLineAccessTokenExist(userID) {
-			lineMsg = append(lineMsg, linebot.NewTextMessage(getLineNotifyConnectMessage("", userID)))
+		if !checkLineAccessTokenExist(accountID) {
+			lineMsg = append(lineMsg, linebot.NewTextMessage(getLineNotifyConnectMessage(accountID)))
 			replyMessage(event.ReplyToken, lineMsg...)
 			return
 		}
@@ -74,7 +74,7 @@ func handleMessage(event *linebot.Event) {
 			replyMessage(event.ReplyToken, genConfirmMessage(text))
 			return
 		}
-		responseText = command.HandleCommand(text, userID)
+		responseText = command.HandleCommand(text, accountID)
 	}
 	for _, msg := range myutil.SplitTextByLineBreak(responseText, maxCharacters) {
 		lineMsg = append(lineMsg, linebot.NewTextMessage(msg))
@@ -82,28 +82,24 @@ func handleMessage(event *linebot.Event) {
 	replyMessage(event.ReplyToken, lineMsg...)
 }
 
-func handleFollow(event *linebot.Event) {
-	userID := event.Source.UserID
-	profile, err := bot.GetProfile(userID).Do()
-	if err != nil {
-		log.WithError(err).Error("Line Get Profile Failed")
-	}
-	id := profile.UserID
-	err = command.HandleLineFollow(id)
-	if err != nil {
+func handleFollowAndJoin(event *linebot.Event) {
+	// TODO: make all user naming change to account
+	// account will include group, room and user and make accountType as enum
+	accountID, accountType := getAccountIDAndType(event)
+	if err = command.HandleLineFollow(accountID, accountType); err != nil {
 		log.WithError(err).Error("Line Follow Failed")
 	}
 
-	text := getLineNotifyConnectMessage(profile.DisplayName+" ", id)
+	text := getLineNotifyConnectMessage(accountID)
 	_, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(text)).Do()
 	if err != nil {
-		log.WithError(err).Error("Line Follow Replay Message Failed")
+		log.WithError(err).Error("Line Follow Reply Message Failed")
 	}
 }
 
-func getLineNotifyConnectMessage(displayName, userID string) string {
+func getLineNotifyConnectMessage(userID string) string {
 	url := shorturl.Gen(getAuthorizeURL(userID))
-	return fmt.Sprintf(`%s歡迎使用 Ptt Alertor。
+	return fmt.Sprintf(`歡迎使用 Ptt Alertor。
 請按以下步驟啟用 LINE Notify 以獲得最新文章通知。
 1. 開啟下方網址
 2. 選擇”群組“ 第一個「透過1對1聊天接收LINE Notify的通知
@@ -112,27 +108,17 @@ func getLineNotifyConnectMessage(displayName, userID string) string {
 
 你將可以在 Ptt Alertor 設定看板、作者、關鍵字，並在 LINE Notify 得到最新文章。
 觀看Demo:
-https://media.giphy.com/media/l0Iy28oboQbSw6Cn6/giphy.gif`, displayName, url)
+https://media.giphy.com/media/l0Iy28oboQbSw6Cn6/giphy.gif`, url)
 }
 
-func handleUnfollow(event *linebot.Event) {
-	userID := event.Source.UserID
+func handleUnfollowAndLeave(event *linebot.Event) {
+	accountID, _ := getAccountIDAndType(event)
 	log.WithFields(log.Fields{
-		"ID": userID,
+		"ID": accountID,
 	}).Info("Line Unfollow")
-	u := models.User.Find(userID)
+	u := models.User.Find(accountID)
 	u.Enable = false
 	u.Update()
-}
-
-// useless
-func handleLeave() {
-
-}
-
-// useless
-func handleJoin() {
-
 }
 
 func handlePostback(event *linebot.Event) {
@@ -141,13 +127,26 @@ func handlePostback(event *linebot.Event) {
 		replyMessage(event.ReplyToken, linebot.NewTextMessage("取消"))
 		return
 	}
-	responseText := command.HandleCommand(data, event.Source.UserID)
+	accountID, _ := getAccountIDAndType(event)
+	responseText := command.HandleCommand(data, accountID)
 	replyMessage(event.ReplyToken, linebot.NewTextMessage(responseText))
 }
 
 // useless
 func handleBeacon() {
 
+}
+
+func getAccountIDAndType(event *linebot.Event) (id, accountType string) {
+	switch event.Source.Type {
+	case linebot.EventSourceTypeUser:
+		return event.Source.UserID, "user"
+	case linebot.EventSourceTypeGroup:
+		return event.Source.GroupID, "group"
+	case linebot.EventSourceTypeRoom:
+		return event.Source.RoomID, "room"
+	}
+	return
 }
 
 func PushTextMessage(id string, message string) {

@@ -534,11 +534,12 @@ func update(action updateAction, account string, boardNames []string, inputs ...
 	return nil
 }
 
-func HandleLineFollow(id string) error {
+func HandleLineFollow(id, accountType string) error {
 	u := models.User.Find(id)
-	u.Profile.Line = id
+	u.Profile.Line, u.Profile.Type = id, accountType
 	log.WithFields(log.Fields{
 		"id":       id,
+		"type":     accountType,
 		"platform": "line",
 	}).Info("User Join")
 	return handleFollow(u)
