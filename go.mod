@@ -8,7 +8,7 @@ require (
 	github.com/andybalholm/cascadia v0.0.0-20161224141413-349dd0209470 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/garyburd/redigo v0.0.0-20170216214944-0d253a66e6e1
-	github.com/go-telegram-bot-api/telegram-bot-api v0.0.0-20170702204342-ebe7b8254e15
+	github.com/go-telegram-bot-api/telegram-bot-api v4.6.4+incompatible
 	github.com/google/gops v0.3.5
 	github.com/julienschmidt/httprouter v0.0.0-20170104185816-8a45e95fc75c
 	github.com/kardianos/osext v0.0.0-20170510131534-ae77be60afb1 // indirect
