@@ -1,6 +1,7 @@
 package line
 
 import (
+	"fmt"
 	"net/http"
 	"os"
 
@@ -54,21 +55,27 @@ func HandleRequest(_ http.ResponseWriter, r *http.Request, _ httprouter.Params) 
 
 func handleMessage(event *linebot.Event) {
 	var responseText string
+	var lineMsg []linebot.Message
 	userID := event.Source.UserID
 	switch message := event.Message.(type) {
 	case *linebot.TextMessage:
 		text := strings.TrimSpace(message.Text)
 		if strings.EqualFold(text, "notify") {
-			responseText = shorturl.Gen(getAuthorizeURL(userID))
-		} else {
-			if match, _ := regexp.MatchString("^(刪除|刪除作者)+\\s.*\\*+", text); match {
-				replyMessage(event.ReplyToken, genConfirmMessage(text))
-				return
-			}
-			responseText = command.HandleCommand(text, userID)
+			lineMsg = append(lineMsg, linebot.NewTextMessage(shorturl.Gen(getAuthorizeURL(userID))))
+			replyMessage(event.ReplyToken, lineMsg...)
+			return
 		}
+		if !checkLineAccessTokenExist(userID) {
+			lineMsg = append(lineMsg, linebot.NewTextMessage(getLineNotifyConnectMessage("", userID)))
+			replyMessage(event.ReplyToken, lineMsg...)
+			return
+		}
+		if match, _ := regexp.MatchString("^(刪除|刪除作者)+\\s.*\\*+", text); match {
+			replyMessage(event.ReplyToken, genConfirmMessage(text))
+			return
+		}
+		responseText = command.HandleCommand(text, userID)
 	}
-	var lineMsg []linebot.Message
 	for _, msg := range myutil.SplitTextByLineBreak(responseText, maxCharacters) {
 		lineMsg = append(lineMsg, linebot.NewTextMessage(msg))
 	}
@@ -79,19 +86,33 @@ func handleFollow(event *linebot.Event) {
 	userID := event.Source.UserID
 	profile, err := bot.GetProfile(userID).Do()
 	if err != nil {
-		log.WithError(err).Error("")
+		log.WithError(err).Error("Line Get Profile Failed")
 	}
 	id := profile.UserID
 	err = command.HandleLineFollow(id)
 	if err != nil {
-		log.WithError(err).Error("Line Follow Error")
+		log.WithError(err).Error("Line Follow Failed")
 	}
-	url := shorturl.Gen(getAuthorizeURL(id))
-	text := " 歡迎使用 Ptt Alertor。\n請按以下步驟啟用 LINE Notify 以獲得最新文章通知。\n1. 開啟下方網址\n2. 選擇”群組“ 第一個「透過1對1聊天接收LINE Notify的通知\n3. 點擊「同意並連動」\n"
-	_, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(profile.DisplayName+text+url+"\n\n你將可以在 Ptt Alertor 設定看板、作者、關鍵字，並在 LINE Notify 得到最新文章。\n\n觀看Demo:\nhttps://media.giphy.com/media/l0Iy28oboQbSw6Cn6/giphy.gif")).Do()
+
+	text := getLineNotifyConnectMessage(profile.DisplayName+" ", id)
+	_, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(text)).Do()
 	if err != nil {
 		log.WithError(err).Error("Line Follow Replay Message Failed")
 	}
+}
+
+func getLineNotifyConnectMessage(displayName, userID string) string {
+	url := shorturl.Gen(getAuthorizeURL(userID))
+	return fmt.Sprintf(`%s歡迎使用 Ptt Alertor。
+請按以下步驟啟用 LINE Notify 以獲得最新文章通知。
+1. 開啟下方網址
+2. 選擇”群組“ 第一個「透過1對1聊天接收LINE Notify的通知
+3. 點擊「同意並連動
+%s
+
+你將可以在 Ptt Alertor 設定看板、作者、關鍵字，並在 LINE Notify 得到最新文章。
+觀看Demo:
+https://media.giphy.com/media/l0Iy28oboQbSw6Cn6/giphy.gif`, displayName, url)
 }
 
 func handleUnfollow(event *linebot.Event) {

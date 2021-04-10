@@ -64,15 +64,15 @@ func CatchCallback(w http.ResponseWriter, r *http.Request, _ httprouter.Params) 
 			"description": r.FormValue("error_description"),
 		}).Error("Get LINE Notify Callback Failed")
 	}
-	code := r.FormValue("code")
-	lineID := r.FormValue("state")
-	u := models.User.Find(lineID)
+
+	code, lineID := r.FormValue("code"), r.FormValue("state")
 	accessToken, err := fetchAccessToken(code)
 	if err != nil {
 		log.WithError(err).Error("Fetch Access Token Failed")
 	}
-	u.Profile.LineAccessToken = accessToken
 
+	u := models.User.Find(lineID)
+	u.Profile.LineAccessToken = accessToken
 	if err := u.Update(); err != nil {
 		log.WithError(err).Error("User Update Failed")
 		Notify(accessToken, "\n連結 LINE Notify 失敗。\n請至 Ptt Alertor LINE 主頁回報區留言。")
@@ -85,6 +85,14 @@ func CatchCallback(w http.ResponseWriter, r *http.Request, _ httprouter.Params) 
 		log.WithError(err).Error("Show notify.html Failed")
 	}
 	t.Execute(w, nil)
+}
+
+func checkLineAccessTokenExist(lineID string) bool {
+	u := models.User.Find(lineID)
+	if u.Profile.LineAccessToken == "" {
+		return false
+	}
+	return true
 }
 
 func fetchAccessToken(code string) (string, error) {

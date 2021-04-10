@@ -38,7 +38,17 @@ func sendMessage(c check) {
 	cr := c.Self()
 	account := cr.Profile.Account
 	var platform string
-
+	if cr.Profile.Line != "" && cr.Profile.LineAccessToken == "" {
+		platform = "line"
+		log.WithFields(log.Fields{
+			"account":  account,
+			"platform": platform,
+			"board":    cr.board,
+			"type":     cr.subType,
+			"word":     cr.word,
+		}).Warn("Message Sent without LINE Notify Connection")
+		return
+	}
 	if cr.Profile.Email != "" {
 		platform = "mail"
 		sendMail(c)
