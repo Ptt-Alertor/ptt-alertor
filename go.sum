@@ -10,6 +10,9 @@ github.com/garyburd/redigo v0.0.0-20170216214944-0d253a66e6e1 h1:EMQBnddyoHv0zXA
 github.com/garyburd/redigo v0.0.0-20170216214944-0d253a66e6e1/go.mod h1:NR3MbYisc3/PwhQ00EMzDiPmrwpPxAn5GI05/YaO1SY=
 github.com/go-telegram-bot-api/telegram-bot-api v0.0.0-20170702204342-ebe7b8254e15 h1:IF/4fjzQCVcA0Alf7TZg39Cv9GJ4U3rBuGYsK+yx08g=
 github.com/go-telegram-bot-api/telegram-bot-api v0.0.0-20170702204342-ebe7b8254e15/go.mod h1:qf9acutJ8cwBUhm1bqgz6Bei9/C/c93FPDljKWwsOgM=
+github.com/go-telegram-bot-api/telegram-bot-api v1.0.0 h1:HXVtsZ+yINQeyyhPFAUU4yKmeN+iFhJ87jXZOC016gs=
+github.com/go-telegram-bot-api/telegram-bot-api v4.6.4+incompatible h1:2cauKuaELYAEARXRkq2LrJ0yDDv1rW7+wrTEdVL3uaU=
+github.com/go-telegram-bot-api/telegram-bot-api v4.6.4+incompatible/go.mod h1:qf9acutJ8cwBUhm1bqgz6Bei9/C/c93FPDljKWwsOgM=
 github.com/google/gops v0.3.5 h1:SIWvPLiYvy5vMwjxB3rVFTE4QBhUFj2KKWr3Xm7CKhw=
 github.com/google/gops v0.3.5/go.mod h1:pMQgrscwEK/aUSW1IFSaBPbJX82FPHWaSoJw1axQfD0=
 github.com/julienschmidt/httprouter v0.0.0-20170104185816-8a45e95fc75c h1:7iC/gGARLWFPuI1CVzd/JRJpVfAyKixTzzlDwqZxPko=
