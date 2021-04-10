@@ -21,6 +21,9 @@ github.com/kardianos/osext v0.0.0-20170510131534-ae77be60afb1 h1:PJPDf8OUfOK1bb/
 github.com/kardianos/osext v0.0.0-20170510131534-ae77be60afb1/go.mod h1:1NbS8ALrpOvjt0rHPNLyCIeMtbizbir8U//inJ+zuB8=
 github.com/line/line-bot-sdk-go v0.0.0-20170426044758-ec620b9af9b5 h1:ZCGE7tvAsTcc189QiOSZ6Xwi/wfqfvzvtK6ifaPYEck=
 github.com/line/line-bot-sdk-go v0.0.0-20170426044758-ec620b9af9b5/go.mod h1:0RjLjJEAU/3GIcHkC3av6O4jInAbt25nnZVmOFUgDBg=
+github.com/line/line-bot-sdk-go v1.3.0 h1:bYwGgbUrYbvTEJ8oOT18rmkclJOCB1RtLwYVZ97ello=
+github.com/line/line-bot-sdk-go v7.8.0+incompatible h1:Uf9/OxV0zCVfqyvwZPH8CrdiHXXmMRa/L91G3btQblQ=
+github.com/line/line-bot-sdk-go v7.8.0+incompatible/go.mod h1:0RjLjJEAU/3GIcHkC3av6O4jInAbt25nnZVmOFUgDBg=
 github.com/meifamily/logrus v0.0.0-20170625191354-a4db038e018c h1:66mvQy1TBphmX8rVD+44ZgoWGljiZZSdzsjsl0tTFDw=
 github.com/meifamily/logrus v0.0.0-20170625191354-a4db038e018c/go.mod h1:VTyZvZfy+XDbqw2RpkiVQbkz4+6K0RcoKNRBljeJaZE=
 github.com/mmcdole/gofeed v0.0.0-20170307182009-042c0a912158 h1:4f+crgz25c4qbXMTBWtS3HO4Us33mQcZvSkuCvcjGOs=
