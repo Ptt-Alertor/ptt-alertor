@@ -162,8 +162,8 @@ func PushTextMessage(id string, message string) {
 }
 
 func genConfirmMessage(command string) *linebot.TemplateMessage {
-	leftBtn := linebot.NewMessageAction("是", command)
-	rightBtn := linebot.NewMessageAction("否", "cancel")
+	leftBtn := linebot.NewPostbackAction("是", command, "", "")
+	rightBtn := linebot.NewPostbackAction("否", "cancel", "", "")
 
 	template := linebot.NewConfirmTemplate("確定"+command+"？", leftBtn, rightBtn)
 	message := linebot.NewTemplateMessage("批次刪除", template)
