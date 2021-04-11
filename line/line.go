@@ -55,7 +55,7 @@ func HandleRequest(_ http.ResponseWriter, r *http.Request, _ httprouter.Params) 
 
 func handleMessage(event *linebot.Event) {
 	var responseText string
-	var lineMsg []linebot.Message
+	var lineMsg []linebot.SendingMessage
 	userID := event.Source.UserID
 	switch message := event.Message.(type) {
 	case *linebot.TextMessage:
@@ -162,15 +162,15 @@ func PushTextMessage(id string, message string) {
 }
 
 func genConfirmMessage(command string) *linebot.TemplateMessage {
-	leftBtn := linebot.NewPostbackTemplateAction("是", command, "")
-	rightBtn := linebot.NewPostbackTemplateAction("否", "cancel", "")
+	leftBtn := linebot.NewMessageAction("是", command)
+	rightBtn := linebot.NewMessageAction("否", "cancel")
 
 	template := linebot.NewConfirmTemplate("確定"+command+"？", leftBtn, rightBtn)
 	message := linebot.NewTemplateMessage("批次刪除", template)
 	return message
 }
 
-func replyMessage(token string, message ...linebot.Message) {
+func replyMessage(token string, message ...linebot.SendingMessage) {
 	_, err := bot.ReplyMessage(token, message...).Do()
 	if err != nil {
 		log.WithError(err).Error("Line Reply Message Failed")
