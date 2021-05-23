@@ -63,7 +63,7 @@ func (m *Messenger) Received(w http.ResponseWriter, r *http.Request, _ httproute
 							m.SendConfirmation(id, text)
 							return
 						}
-						responseText := command.HandleCommand(text, id)
+						responseText := command.HandleCommand(text, id, true)
 						m.SendTextMessage(id, responseText)
 					}
 				} else if messaging.Postback != nil {
@@ -105,15 +105,15 @@ func (m *Messenger) handlePostback(id string, payload string) {
 		}
 		m.SendListMessage(id, commands)
 	case "SUBSCRIPTIONS_PAYLOAD":
-		responseText = command.HandleCommand("清單", id)
+		responseText = command.HandleCommand("清單", id, true)
 	case "TOP_PAYLOAD":
-		responseText = command.HandleCommand("排行", id)
+		responseText = command.HandleCommand("排行", id, true)
 	case "COMMENTS_PAYLOAD":
-		responseText = command.HandleCommand("推文清單", id)
+		responseText = command.HandleCommand("推文清單", id, true)
 	case "CANCEL":
 		responseText = "取消"
 	default:
-		responseText = command.HandleCommand(payload, id)
+		responseText = command.HandleCommand(payload, id, true)
 	}
 	m.SendTextMessage(id, responseText)
 }
