@@ -132,7 +132,7 @@ func DiffList(account, board, kind string, ids ...int) []int {
 	bl, err := redis.Bool(conn.Do("EXISTS", baseKey))
 	conn.Send("MULTI")
 	conn.Send("SADD", redis.Args{}.Add(nowKey).AddFlat(ids)...)
-	conn.Send("SDIFF", nowKey, baseKey)
+	conn.Send("SDIFF", nowKey, baseKey, benchKey)
 	conn.Send("DEL", nowKey)
 	r, err := redis.Values(conn.Do("EXEC"))
 	if err != nil {
@@ -141,10 +141,7 @@ func DiffList(account, board, kind string, ids ...int) []int {
 	}
 	ids, err = redis.Ints(r[1], err)
 	if len(ids) > 0 {
-		conn.Send("MULTI")
-		conn.Send("SADD", redis.Args{}.Add(baseKey).AddFlat(ids)...)
-		conn.Send("SADD", redis.Args{}.Add(benchKey).AddFlat(ids)...)
-		_, err = redis.Values(conn.Do("EXEC"))
+		_, err = conn.Do("SADD", redis.Args{}.Add(baseKey).AddFlat(ids)...)
 	}
 	if err != nil {
 		log.WithField("runtime", myutil.BasicRuntimeInfo()).WithError(err).Error()
@@ -169,17 +166,16 @@ func DelDiffList(account, board, kind string) error {
 	return err
 }
 
-func ReplaceBaseKeys() error {
-	benchKeyTemplate := prefix + "*:*:*:bench"
+func ReplaceBenchKeys() error {
+	baseKeyTemplate := prefix + "*:*:*:base"
 	conn := connections.Redis()
 	defer conn.Close()
-	keys, err := redis.Strings(conn.Do("KEYS", benchKeyTemplate))
-	for _, key := range keys {
-		basekey := strings.TrimSuffix(key, "bench")
-		basekey += "base"
-		conn.Send("WATCH", basekey)
+	baseKeys, err := redis.Strings(conn.Do("KEYS", baseKeyTemplate))
+	for _, baseKey := range baseKeys {
+		key := strings.TrimSuffix(baseKey, "base") + "bench"
+		conn.Send("WATCH", key)
 		conn.Send("MULTI")
-		conn.Send("RENAME", key, basekey)
+		conn.Send("RENAME", baseKey, key)
 		_, err = conn.Do("EXEC")
 		if err != nil {
 			log.WithField("runtime", myutil.BasicRuntimeInfo()).WithError(err).Error()
