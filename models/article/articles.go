@@ -20,7 +20,7 @@ func (as Articles) List() []string {
 	}
 	codes := make([]string, 0)
 	for _, key := range keys {
-		code := strings.TrimSuffix(strings.TrimPrefix(key, prefix), detailSuffix)
+		code := strings.TrimSuffix(strings.TrimPrefix(key, prefix), subsSuffix)
 		codes = append(codes, code)
 	}
 	return codes
