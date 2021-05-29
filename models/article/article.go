@@ -1,7 +1,6 @@
 package article
 
 import (
-	"encoding/json"
 	"regexp"
 	"strconv"
 	"strings"
@@ -18,7 +17,6 @@ import (
 )
 
 const prefix = "article:"
-const detailSuffix = ":detail"
 const subsSuffix = ":subs"
 
 type Article struct {
@@ -32,28 +30,19 @@ type Article struct {
 	LastPushDateTime time.Time `json:"lastPushDateTime,omitempty"`
 	Board            string    `json:"board,omitempty"`
 	PushSum          int       `json:"pushSum,omitempty"`
+	drive            Driver
 }
 
-type Comment struct {
-	Tag      string
-	UserID   string
-	Content  string
-	DateTime time.Time
+type Driver interface {
+	Find(code string) Article
+	Save(a Article) error
+	Delete(code string) error
 }
 
-func (c Comment) String() string {
-	// 推 ChoDino: 推文推文
-	return fmt.Sprintf("%s %s%s", c.Tag, c.UserID, c.Content)
-}
-
-type Comments []Comment
-
-func (cs Comments) String() string {
-	var content string
-	for _, p := range cs {
-		content += "\n" + p.String()
+func NewArticle(drive Driver) *Article {
+	return &Article{
+		drive: drive,
 	}
-	return content
 }
 
 func (a Article) ParseID(Link string) (id int) {
@@ -93,7 +82,7 @@ func (a Article) Exist() (bool, error) {
 	conn := connections.Redis()
 	defer conn.Close()
 
-	bl, err := redis.Bool(conn.Do("HEXISTS", prefix+a.Code+detailSuffix, "board"))
+	bl, err := redis.Bool(conn.Do("EXISTS", prefix+a.Code+subsSuffix, "board"))
 	if err != nil {
 		log.WithField("runtime", myutil.BasicRuntimeInfo()).WithError(err).Error()
 	}
@@ -101,43 +90,22 @@ func (a Article) Exist() (bool, error) {
 }
 
 func (a Article) Find(code string) Article {
-	conn := connections.Redis()
-	defer conn.Close()
-
-	aMap, err := redis.StringMap(conn.Do("HGETALL", prefix+code+detailSuffix))
-	if err != nil {
-		log.WithField("runtime", myutil.BasicRuntimeInfo()).WithError(err).Error()
-	}
-	a.Board = aMap["board"]
-	err = json.Unmarshal([]byte(aMap["content"]), &a)
-	if err != nil {
-		log.WithField("code", code).Error("Article Content Unmarshal Failed")
-		myutil.LogJSONDecode(err, aMap["content"])
-	}
-	return a
+	return a.drive.Find(code)
 }
 
 func (a Article) Save() error {
-	conn := connections.Redis()
-	defer conn.Close()
-
-	articleJSON, err := json.Marshal(a)
-	if err != nil {
-		myutil.LogJSONEncode(err, a)
-		return err
-	}
-	_, err = conn.Do("HMSET", prefix+a.Code+detailSuffix, "board", a.Board, "content", articleJSON)
-	if err != nil {
-		log.WithField("runtime", myutil.BasicRuntimeInfo()).WithError(err).Error()
-	}
-	return err
+	return a.drive.Save(a)
 }
 
 func (a Article) Destroy() error {
+	if err := a.drive.Delete(a.Code); err != nil {
+		return err
+	}
+
 	conn := connections.Redis()
 	defer conn.Close()
 
-	_, err := conn.Do("DEL", prefix+a.Code+detailSuffix, prefix+a.Code+subsSuffix)
+	_, err := conn.Do("DEL", prefix+a.Code+subsSuffix)
 	if err != nil {
 		log.WithField("runtime", myutil.BasicRuntimeInfo()).WithError(err).Error()
 	}

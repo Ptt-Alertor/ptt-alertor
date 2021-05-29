@@ -14,7 +14,7 @@ type Articles []Article
 func (as Articles) List() []string {
 	conn := connections.Redis()
 	defer conn.Close()
-	keys, err := redis.Strings(conn.Do("KEYS", prefix+"*"+detailSuffix))
+	keys, err := redis.Strings(conn.Do("KEYS", prefix+"*"+subsSuffix))
 	if err != nil {
 		log.WithField("runtime", myutil.BasicRuntimeInfo()).WithError(err).Error()
 	}

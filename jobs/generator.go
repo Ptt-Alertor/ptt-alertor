@@ -4,7 +4,6 @@ import (
 	log "github.com/meifamily/logrus"
 
 	"github.com/meifamily/ptt-alertor/models"
-	"github.com/meifamily/ptt-alertor/models/article"
 	"github.com/meifamily/ptt-alertor/models/author"
 	"github.com/meifamily/ptt-alertor/models/board"
 	"github.com/meifamily/ptt-alertor/models/keyword"
@@ -73,9 +72,8 @@ func addAuthorSub(account, board string) {
 }
 
 func addArticleSub(account, articleID string) {
-	a := article.Article{
-		Code: articleID,
-	}
+	a := models.Article
+	a.Code = articleID
 	a.AddSubscriber(account)
 	log.WithField("article", articleID).Info("Added Article Subscriber")
 }

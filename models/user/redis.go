@@ -12,8 +12,7 @@ import (
 	"github.com/meifamily/ptt-alertor/myutil"
 )
 
-type Redis struct {
-}
+type Redis struct{}
 
 var connectRedis = connections.Redis
 

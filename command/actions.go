@@ -4,7 +4,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/meifamily/ptt-alertor/models/article"
+	"github.com/meifamily/ptt-alertor/models"
 	"github.com/meifamily/ptt-alertor/models/author"
 	"github.com/meifamily/ptt-alertor/models/keyword"
 	"github.com/meifamily/ptt-alertor/models/pushsum"
@@ -133,18 +133,16 @@ func dealPushSum(account string, sub subscription.Subscription) (err error) {
 
 func addArticles(u *user.User, sub subscription.Subscription, inputs ...string) error {
 	sub.Articles = inputs
-	a := article.Article{
-		Code: inputs[0],
-	}
+	a := models.Article
+	a.Code = inputs[0]
 	a.AddSubscriber(u.Profile.Account)
 	return u.Subscribes.Add(sub)
 }
 
 func removeArticles(u *user.User, sub subscription.Subscription, inputs ...string) error {
 	sub.Articles = inputs
-	a := article.Article{
-		Code: inputs[0],
-	}
+	a := models.Article
+	a.Code = inputs[0]
 	a.RemoveSubscriber(u.Profile.Account)
 	return u.Subscribes.Remove(sub)
 }
