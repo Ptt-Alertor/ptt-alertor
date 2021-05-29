@@ -15,7 +15,7 @@ var connectRedis = connections.Redis
 
 const detailSuffix = ":detail"
 
-func (Redis) Find(code string) (a Article) {
+func (Redis) Find(code string, a *Article) {
 	conn := connectRedis()
 	defer conn.Close()
 
@@ -29,7 +29,6 @@ func (Redis) Find(code string) (a Article) {
 		log.WithField("code", code).Error("Article Content Unmarshal Failed")
 		myutil.LogJSONDecode(err, aMap["content"])
 	}
-	return a
 }
 
 func (Redis) Save(a Article) error {

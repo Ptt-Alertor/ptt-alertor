@@ -18,7 +18,7 @@ type DynamoDB struct{}
 
 const tableName string = "articles"
 
-func (DynamoDB) Find(code string) Article {
+func (DynamoDB) Find(code string, a *Article) {
 	dynamo := dynamodb.New(session.New())
 	result, err := dynamo.GetItem(&dynamodb.GetItemInput{
 		TableName: aws.String(tableName),
@@ -30,22 +30,20 @@ func (DynamoDB) Find(code string) Article {
 	})
 	if err != nil {
 		log.WithField("runtime", myutil.BasicRuntimeInfo()).WithError(err).Error("DynamoDB Find Article Failed")
-		return Article{}
+		return
 	}
 
 	if len(result.Item) == 0 {
 		log.WithField("code", code).Warn("Article Not Found")
-		return Article{}
+		return
 	}
 
-	a := Article{
-		Code:   aws.StringValue(result.Item["Code"].S),
-		Title:  aws.StringValue(result.Item["Title"].S),
-		Link:   aws.StringValue(result.Item["Link"].S),
-		Date:   aws.StringValue(result.Item["Date"].S),
-		Author: aws.StringValue(result.Item["Author"].S),
-		Board:  aws.StringValue(result.Item["Board"].S),
-	}
+	a.Code = aws.StringValue(result.Item["Code"].S)
+	a.Title = aws.StringValue(result.Item["Title"].S)
+	a.Link = aws.StringValue(result.Item["Link"].S)
+	a.Date = aws.StringValue(result.Item["Date"].S)
+	a.Author = aws.StringValue(result.Item["Author"].S)
+	a.Board = aws.StringValue(result.Item["Board"].S)
 	if err := dynamodbattribute.Unmarshal(result.Item["ID"], &a.ID); err != nil {
 		log.WithFields(log.Fields{
 			"code": code,
@@ -72,8 +70,6 @@ func (DynamoDB) Find(code string) Article {
 		}).Warn("Article Comments Unmarshal Failed")
 		myutil.LogJSONDecode(err, comments)
 	}
-
-	return a
 }
 
 func (DynamoDB) Save(a Article) error {

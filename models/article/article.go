@@ -34,7 +34,7 @@ type Article struct {
 }
 
 type Driver interface {
-	Find(code string) Article
+	Find(code string, article *Article)
 	Save(a Article) error
 	Delete(code string) error
 }
@@ -90,7 +90,8 @@ func (a Article) Exist() (bool, error) {
 }
 
 func (a Article) Find(code string) Article {
-	return a.drive.Find(code)
+	a.drive.Find(code, &a)
+	return a
 }
 
 func (a Article) Save() error {
