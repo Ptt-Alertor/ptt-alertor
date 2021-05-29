@@ -6,4 +6,4 @@ import (
 )
 
 var User = user.NewUser(new(user.Redis))
-var Article = article.NewArticle(new(article.Redis))
+var Article = article.NewArticle(new(article.DynamoDB))

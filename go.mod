@@ -6,6 +6,7 @@ require (
 	github.com/PuerkitoBio/goquery v0.0.0-20170520194520-2dc93891ab3b // indirect
 	github.com/alicebob/miniredis v0.0.0-20171207150240-955f929b3a68
 	github.com/andybalholm/cascadia v0.0.0-20161224141413-349dd0209470 // indirect
+	github.com/aws/aws-sdk-go v1.38.51
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/garyburd/redigo v0.0.0-20170216214944-0d253a66e6e1
 	github.com/go-telegram-bot-api/telegram-bot-api v4.6.4+incompatible
@@ -21,9 +22,7 @@ require (
 	github.com/robfig/cron v0.0.0-20160927164231-9585fd555638
 	github.com/stretchr/testify v1.2.2 // indirect
 	github.com/technoweenie/multipartstreamer v1.0.1 // indirect
-	golang.org/x/net v0.0.0-20170718212542-5d0d7096b5f2
-	golang.org/x/sys v0.0.0-20170308153327-99f16d856c98 // indirect
-	golang.org/x/text v0.0.0-20170615164708-9e2f80a6ba7e // indirect
+	golang.org/x/net v0.0.0-20201110031124-69a78807bb2b
 	gopkg.in/h2non/gock.v1 v1.0.7
 	gopkg.in/mailgun/mailgun-go.v1 v1.0.2
 )
