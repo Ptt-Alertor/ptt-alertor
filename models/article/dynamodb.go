@@ -33,6 +33,11 @@ func (DynamoDB) Find(code string) Article {
 		return Article{}
 	}
 
+	if len(result.Item) == 0 {
+		log.WithField("code", code).Warn("Article Not Found")
+		return Article{}
+	}
+
 	a := Article{
 		Code:   aws.StringValue(result.Item["Code"].S),
 		Title:  aws.StringValue(result.Item["Title"].S),
