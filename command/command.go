@@ -451,19 +451,23 @@ func checkArticleExist(boardName, articleCode string) bool {
 	}
 	if crawler.CheckArticleExist(boardName, articleCode) {
 		a.Board = boardName
-		initialArticle(*a)
+		initialArticle(a)
 		return true
 	}
 	return false
 }
 
-func initialArticle(a article.Article) error {
-	a, err := crawler.FetchArticle(a.Board, a.Code)
+func initialArticle(a *article.Article) error {
+	atcl, err := crawler.FetchArticle(a.Board, a.Code)
 	if err != nil {
 		return err
 	}
-	err = a.Save()
-	return err
+	a.Link = atcl.Link
+	a.Title = atcl.Title
+	a.ID = atcl.ID
+	a.LastPushDateTime = atcl.LastPushDateTime
+	a.Comments = atcl.Comments
+	return a.Save()
 }
 
 func checkBoardError(err error) (string, bool) {
