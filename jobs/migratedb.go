@@ -6,27 +6,54 @@ import (
 	log "github.com/meifamily/logrus"
 	"github.com/meifamily/ptt-alertor/models"
 	"github.com/meifamily/ptt-alertor/models/article"
+	"github.com/meifamily/ptt-alertor/models/board"
 )
 
 var redisArticle = article.NewArticle(new(article.Redis))
+var redisBoard = board.NewBoard(new(board.Redis), new(board.Redis))
 
-type migrateArticle struct {
+type migrateDB struct {
 }
 
-func NewMigrateArticle() *migrateArticle {
-	return &migrateArticle{}
+func NewMigrateDB() *migrateDB {
+	return &migrateDB{}
 }
 
-func (m migrateArticle) Run() {
+func (m migrateDB) Run() {
+	m.migrateBoards()
+}
+
+func (m migrateDB) migrateBoards() {
+	for _, boardName := range models.Board.List() {
+		log.WithField("board", boardName).Info("Board Migrating")
+		m.migrateBoard(boardName)
+		time.Sleep(time.Duration(50 * time.Millisecond))
+	}
+	log.Info("All Board Migrated")
+}
+
+func (migrateDB) migrateBoard(boardName string) {
+	redisBoard.Name = boardName
+
+	dynamoBoard := models.Board
+	dynamoBoard.Name = boardName
+	dynamoBoard.Articles = redisBoard.GetArticles()
+
+	if err := dynamoBoard.Save(); err != nil {
+		log.WithField("board", boardName).Error("Migrate Board Failed")
+	}
+}
+
+func (m migrateDB) migrateArticles() {
 	for _, code := range new(article.Articles).List() {
 		log.WithField("code", code).Info("Article Migrating")
-		m.RunSingle(code)
+		m.migrateArticle(code)
 		time.Sleep(time.Duration(250 * time.Millisecond))
 	}
 	log.Info("All Article Migrated")
 }
 
-func (migrateArticle) RunSingle(code string) {
+func (migrateDB) migrateArticle(code string) {
 	dynamoArticle := models.Article
 	a := redisArticle.Find(code)
 

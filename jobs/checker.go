@@ -26,7 +26,7 @@ var highBoardNames = strings.Split(os.Getenv("BOARD_HIGH"), ",")
 
 func init() {
 	for _, name := range highBoardNames {
-		bd := board.NewBoard()
+		bd := models.Board
 		bd.Name = name
 		highBoards = append(highBoards, bd)
 	}
@@ -117,7 +117,7 @@ func (c Checker) Run() {
 					offPeak = op
 				}
 			default:
-				checkBoards(board.NewBoard().All(), duration)
+				checkBoards(models.Board.All(), duration)
 			}
 		}
 	}()

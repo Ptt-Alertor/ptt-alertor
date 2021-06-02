@@ -1,4 +1,4 @@
-package file
+package board
 
 import (
 	"encoding/json"
@@ -11,12 +11,12 @@ import (
 	"github.com/meifamily/ptt-alertor/myutil"
 )
 
-type Board struct {
+type File struct {
 }
 
 var articlesDir string = myutil.StoragePath() + "/articles/"
 
-func (bd Board) List() []string {
+func (File) List() []string {
 	files, err := ioutil.ReadDir(articlesDir)
 	if err != nil {
 		log.WithField("runtime", myutil.BasicRuntimeInfo()).WithError(err).Error()
@@ -32,7 +32,7 @@ func (bd Board) List() []string {
 	return boardNames
 }
 
-func (bd Board) Exist(boardName string) bool {
+func (File) Exist(boardName string) bool {
 	file := articlesDir + boardName + ".json"
 	_, err := ioutil.ReadFile(file)
 	if err != nil {
@@ -41,7 +41,7 @@ func (bd Board) Exist(boardName string) bool {
 	return true
 }
 
-func (bd Board) GetArticles(boardName string) article.Articles {
+func (File) GetArticles(boardName string) article.Articles {
 	file := articlesDir + boardName + ".json"
 	articlesJSON, err := ioutil.ReadFile(file)
 	if err != nil {
@@ -58,7 +58,7 @@ func (bd Board) GetArticles(boardName string) article.Articles {
 	return articles
 }
 
-func (bd Board) Create(boardName string) error {
+func (File) Create(boardName string) error {
 	err := ioutil.WriteFile(articlesDir+boardName+".json", []byte("[]"), 664)
 	if err != nil {
 		log.WithField("runtime", myutil.BasicRuntimeInfo()).WithError(err).Error()
@@ -66,7 +66,7 @@ func (bd Board) Create(boardName string) error {
 	return err
 }
 
-func (bd Board) Save(boardName string, articles article.Articles) error {
+func (File) Save(boardName string, articles article.Articles) error {
 	articlesJSON, err := json.Marshal(articles)
 	if err != nil {
 		myutil.LogJSONEncode(err, articles)
@@ -78,7 +78,7 @@ func (bd Board) Save(boardName string, articles article.Articles) error {
 	return err
 }
 
-func (bd Board) Delete(boardName string) error {
+func (File) Delete(boardName string) error {
 	err := os.Remove(articlesDir + boardName + ".json")
 	if err != nil {
 		log.WithField("runtime", myutil.BasicRuntimeInfo()).WithError(err).Error()

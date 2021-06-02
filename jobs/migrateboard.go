@@ -7,7 +7,6 @@ import (
 	"github.com/meifamily/ptt-alertor/models"
 	"github.com/meifamily/ptt-alertor/models/article"
 	"github.com/meifamily/ptt-alertor/models/author"
-	"github.com/meifamily/ptt-alertor/models/board"
 	"github.com/meifamily/ptt-alertor/models/keyword"
 	"github.com/meifamily/ptt-alertor/models/pushsum"
 )
@@ -33,7 +32,7 @@ func (migrateBoard) RunSingle(preBoard string, postBoard string) {
 	if postBoard != "" {
 		addBoard(postBoard)
 	}
-	bd := board.NewBoard()
+	bd := models.Board
 	bd.Name = preBoard
 	bd.Delete()
 	log.WithField("board", preBoard).Info("Board List Migrated")

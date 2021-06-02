@@ -129,7 +129,7 @@ func main() {
 		}
 	}()
 
-	// graceful shotdown
+	// graceful shutdown
 	quit := make(chan os.Signal)
 	signal.Notify(quit, os.Interrupt)
 	<-quit
@@ -161,5 +161,5 @@ func init() {
 	// jobs.NewCacheCleaner().Run()
 	// jobs.NewGenerator().Run()
 	// jobs.NewFetcher().Run()
-	// jobs.NewMigrateArticle().Run()
+	jobs.NewMigrateDB().Run()
 }

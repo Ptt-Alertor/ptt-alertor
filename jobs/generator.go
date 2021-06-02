@@ -5,7 +5,6 @@ import (
 
 	"github.com/meifamily/ptt-alertor/models"
 	"github.com/meifamily/ptt-alertor/models/author"
-	"github.com/meifamily/ptt-alertor/models/board"
 	"github.com/meifamily/ptt-alertor/models/keyword"
 	"github.com/meifamily/ptt-alertor/models/pushsum"
 	"github.com/meifamily/ptt-alertor/models/subscription"
@@ -20,7 +19,8 @@ func NewGenerator() *Generator {
 
 func (gb Generator) Run() {
 	boardNameBool := make(map[string]bool)
-	for _, bd := range board.NewBoard().All() {
+
+	for _, bd := range models.Board.All() {
 		boardNameBool[bd.Name] = true
 	}
 
@@ -49,7 +49,7 @@ func (gb Generator) Run() {
 }
 
 func addBoard(boardName string) {
-	bd := board.NewBoard()
+	bd := models.Board
 	bd.Name = boardName
 	bd.Create()
 	log.WithField("board", bd.Name).Info("Added Board")

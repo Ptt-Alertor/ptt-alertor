@@ -13,10 +13,10 @@ import (
 	"github.com/meifamily/ptt-alertor/myutil"
 )
 
+const tableName string = "articles"
+
 // table: code, board, content
 type DynamoDB struct{}
-
-const tableName string = "articles"
 
 func (DynamoDB) Find(code string, a *Article) {
 	dynamo := dynamodb.New(session.New())
