@@ -161,5 +161,5 @@ func init() {
 	// jobs.NewCacheCleaner().Run()
 	// jobs.NewGenerator().Run()
 	// jobs.NewFetcher().Run()
-	jobs.NewMigrateDB().Run()
+	// jobs.NewMigrateDB().Run()
 }
