@@ -8,4 +8,4 @@ import (
 
 var User = user.NewUser(new(user.Redis))
 var Article = article.NewArticle(new(article.DynamoDB))
-var Board = board.NewBoard(new(board.Redis))
+var Board = board.NewBoard(new(board.DynamoDB), new(board.Redis))

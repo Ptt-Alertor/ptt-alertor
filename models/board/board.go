@@ -20,12 +20,16 @@ func (e BoardNotExistError) Error() string {
 }
 
 type Driver interface {
-	List() []string
-	Exist(boardName string) bool
 	GetArticles(boardName string) article.Articles
-	Create(boardName string) error
 	Save(boardName string, articles article.Articles) error
 	Delete(boardName string) error
+}
+
+type Cacher interface {
+	List() []string
+	Create(boardName string) error
+	Exist(boardName string) bool
+	Remove(boardName string) error
 }
 
 type Board struct {
@@ -34,26 +38,28 @@ type Board struct {
 	OnlineArticles article.Articles
 	NewArticles    article.Articles
 	driver         Driver
+	cacher         Cacher
 }
 
-func NewBoard(drive Driver) *Board {
+func NewBoard(drive Driver, cache Cacher) *Board {
 	return &Board{
 		driver: drive,
+		cacher: cache,
 	}
 }
 
 func (bd Board) List() []string {
-	return bd.driver.List()
+	return bd.cacher.List()
 }
 
 func (bd Board) Exist() bool {
-	return bd.driver.Exist(bd.Name)
+	return bd.cacher.Exist(bd.Name)
 }
 
 func (bd Board) All() (bds []*Board) {
 	boards := bd.List()
 	for _, board := range boards {
-		bd := NewBoard(bd.driver)
+		bd := NewBoard(bd.driver, bd.cacher)
 		bd.Name = board
 		bds = append(bds, bd)
 	}
@@ -65,7 +71,7 @@ func (bd Board) GetArticles() (articles article.Articles) {
 }
 
 func (bd Board) Create() error {
-	return bd.driver.Create(bd.Name)
+	return bd.cacher.Create(bd.Name)
 }
 
 func (bd Board) Save() error {
@@ -73,7 +79,14 @@ func (bd Board) Save() error {
 }
 
 func (bd Board) Delete() error {
-	return bd.driver.Delete(bd.Name)
+	if err := bd.driver.Delete(bd.Name); err != nil {
+		return err
+	}
+
+	if err := bd.cacher.Remove(bd.Name); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (bd *Board) WithArticles() {
@@ -150,7 +163,7 @@ func (bd Board) SuggestBoardName() string {
 }
 
 func CheckBoardExist(boardName string) (bool, string) {
-	bd := NewBoard(new(Redis))
+	bd := NewBoard(new(DynamoDB), new(Redis))
 	bd.Name = boardName
 	if bd.Exist() {
 		return true, ""

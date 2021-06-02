@@ -36,6 +36,26 @@ func (Redis) Exist(boardName string) bool {
 	return bl
 }
 
+func (Redis) Create(boardName string) error {
+	conn := connections.Redis()
+	defer conn.Close()
+	_, err := conn.Do("SADD", "boards", boardName)
+	if err != nil {
+		log.WithField("runtime", myutil.BasicRuntimeInfo()).WithError(err).Error()
+	}
+	return err
+}
+
+func (Redis) Remove(boardName string) error {
+	conn := connections.Redis()
+	defer conn.Close()
+	if _, err := conn.Do("SREM", "boards", boardName); err != nil {
+		log.WithField("runtime", myutil.BasicRuntimeInfo()).WithError(err).Error()
+		return err
+	}
+	return nil
+}
+
 func (Redis) GetArticles(boardName string) (articles article.Articles) {
 	conn := connections.Redis()
 	defer conn.Close()
@@ -53,16 +73,6 @@ func (Redis) GetArticles(boardName string) (articles article.Articles) {
 		}
 	}
 	return articles
-}
-
-func (Redis) Create(boardName string) error {
-	conn := connections.Redis()
-	defer conn.Close()
-	_, err := conn.Do("SADD", "boards", boardName)
-	if err != nil {
-		log.WithField("runtime", myutil.BasicRuntimeInfo()).WithError(err).Error()
-	}
-	return err
 }
 
 func (Redis) Save(boardName string, articles article.Articles) error {
@@ -87,10 +97,8 @@ func (Redis) Save(boardName string, articles article.Articles) error {
 func (Redis) Delete(boardName string) error {
 	conn := connections.Redis()
 	defer conn.Close()
-	_, err := conn.Do("DEL", prefix+boardName)
-	_, err = conn.Do("SREM", "boards", boardName)
-	if err != nil {
-		log.WithField("runtime", myutil.BasicRuntimeInfo()).WithError(err).Error()
+	if _, err := conn.Do("DEL", prefix+boardName); err != nil {
+		return err
 	}
-	return err
+	return nil
 }
