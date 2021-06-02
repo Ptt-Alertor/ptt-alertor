@@ -6,8 +6,8 @@ import (
 	"sort"
 
 	"github.com/julienschmidt/httprouter"
+	"github.com/meifamily/ptt-alertor/models"
 	"github.com/meifamily/ptt-alertor/models/keyword"
-	"github.com/meifamily/ptt-alertor/models/board"
 )
 
 func KeywordBoards(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
@@ -16,7 +16,7 @@ func KeywordBoards(w http.ResponseWriter, r *http.Request, params httprouter.Par
 		count int
 	}
 	keywordCounts := make([]keywordCount, 0)
-	boards := board.NewBoard().List()
+	boards := models.Board.List()
 	for _, name := range boards {
 		cnt := len(keyword.Subscribers(name))
 		kc := keywordCount{board: name, count: cnt}

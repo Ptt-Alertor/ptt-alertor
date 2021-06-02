@@ -7,6 +7,7 @@ import (
 
 	"time"
 
+	"github.com/meifamily/ptt-alertor/models"
 	"github.com/meifamily/ptt-alertor/models/board"
 )
 
@@ -19,7 +20,7 @@ func NewFetcher() *Fetcher {
 }
 
 func (f Fetcher) Run() {
-	boards := board.NewBoard().All()
+	boards := models.Board.All()
 
 	var wg sync.WaitGroup
 	for _, bd := range boards {

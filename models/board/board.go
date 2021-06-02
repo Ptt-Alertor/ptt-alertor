@@ -7,7 +7,6 @@ import (
 	log "github.com/meifamily/logrus"
 	"github.com/meifamily/ptt-alertor/crawler"
 	"github.com/meifamily/ptt-alertor/models/article"
-	"github.com/meifamily/ptt-alertor/models/board/redis"
 	"github.com/meifamily/ptt-alertor/myutil/maputil"
 	"github.com/meifamily/ptt-alertor/rss"
 )
@@ -19,8 +18,6 @@ type BoardNotExistError struct {
 func (e BoardNotExistError) Error() string {
 	return "board is not exist"
 }
-
-var driver = new(redis.Board)
 
 type Driver interface {
 	List() []string
@@ -39,9 +36,9 @@ type Board struct {
 	driver         Driver
 }
 
-func NewBoard() *Board {
+func NewBoard(drive Driver) *Board {
 	return &Board{
-		driver: driver,
+		driver: drive,
 	}
 }
 
@@ -56,7 +53,7 @@ func (bd Board) Exist() bool {
 func (bd Board) All() (bds []*Board) {
 	boards := bd.List()
 	for _, board := range boards {
-		bd := NewBoard()
+		bd := NewBoard(bd.driver)
 		bd.Name = board
 		bds = append(bds, bd)
 	}
@@ -153,7 +150,7 @@ func (bd Board) SuggestBoardName() string {
 }
 
 func CheckBoardExist(boardName string) (bool, string) {
-	bd := NewBoard()
+	bd := NewBoard(new(Redis))
 	bd.Name = boardName
 	if bd.Exist() {
 		return true, ""
