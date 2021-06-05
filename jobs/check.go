@@ -3,11 +3,11 @@ package jobs
 import (
 	log "github.com/meifamily/logrus"
 
-	"github.com/meifamily/ptt-alertor/line"
-	"github.com/meifamily/ptt-alertor/mail"
-	"github.com/meifamily/ptt-alertor/messenger"
+	"github.com/meifamily/ptt-alertor/channels/line"
+	"github.com/meifamily/ptt-alertor/channels/mail"
+	"github.com/meifamily/ptt-alertor/channels/messenger"
+	"github.com/meifamily/ptt-alertor/channels/telegram"
 	"github.com/meifamily/ptt-alertor/models/counter"
-	"github.com/meifamily/ptt-alertor/telegram"
 )
 
 const workers = 300
