@@ -149,7 +149,7 @@ func startJobs() {
 	go jobs.NewPttMonitor().Run()
 	c := cron.New()
 	c.AddJob("@hourly", jobs.NewTop())
-	c.AddJob("@weekly", jobs.NewPushSumKeyReplacer())
+	c.AddJob("@every 48h", jobs.NewPushSumKeyReplacer())
 	c.Start()
 }
 
