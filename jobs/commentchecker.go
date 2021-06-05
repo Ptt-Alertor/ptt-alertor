@@ -9,9 +9,9 @@ import (
 
 	"fmt"
 
-	"github.com/meifamily/ptt-alertor/crawler"
 	"github.com/meifamily/ptt-alertor/models"
 	"github.com/meifamily/ptt-alertor/models/article"
+	"github.com/meifamily/ptt-alertor/ptt/web"
 )
 
 var cmtcker *commentChecker
@@ -87,8 +87,8 @@ func (cc commentChecker) checkComments(code string, ach chan article.Article) {
 	if a.Board == "" || a.Code == "" {
 		return
 	}
-	new, err := crawler.FetchArticle(a.Board, a.Code)
-	if _, ok := err.(crawler.URLNotFoundError); ok {
+	new, err := web.FetchArticle(a.Board, a.Code)
+	if _, ok := err.(web.URLNotFoundError); ok {
 		cc.destroyComments(a)
 	}
 	if subs, _ := a.Subscribers(); len(subs) == 0 {

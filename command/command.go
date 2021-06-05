@@ -10,11 +10,11 @@ import (
 
 	"github.com/meifamily/ptt-alertor/models"
 	"github.com/meifamily/ptt-alertor/myutil"
+	"github.com/meifamily/ptt-alertor/ptt/web"
 
 	"fmt"
 
 	log "github.com/meifamily/logrus"
-	"github.com/meifamily/ptt-alertor/crawler"
 	"github.com/meifamily/ptt-alertor/models/article"
 	"github.com/meifamily/ptt-alertor/models/board"
 	"github.com/meifamily/ptt-alertor/models/subscription"
@@ -449,7 +449,7 @@ func checkArticleExist(boardName, articleCode string) bool {
 	if bl, _ := a.Exist(); bl {
 		return true
 	}
-	if crawler.CheckArticleExist(boardName, articleCode) {
+	if web.CheckArticleExist(boardName, articleCode) {
 		a.Board = boardName
 		initialArticle(a)
 		return true
@@ -458,7 +458,7 @@ func checkArticleExist(boardName, articleCode string) bool {
 }
 
 func initialArticle(a *article.Article) error {
-	atcl, err := crawler.FetchArticle(a.Board, a.Code)
+	atcl, err := web.FetchArticle(a.Board, a.Code)
 	if err != nil {
 		return err
 	}

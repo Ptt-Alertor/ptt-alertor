@@ -12,12 +12,12 @@ import (
 
 	log "github.com/meifamily/logrus"
 
-	"github.com/meifamily/ptt-alertor/crawler"
 	"github.com/meifamily/ptt-alertor/models"
 	"github.com/meifamily/ptt-alertor/models/article"
 	"github.com/meifamily/ptt-alertor/models/pushsum"
 	"github.com/meifamily/ptt-alertor/models/subscription"
 	"github.com/meifamily/ptt-alertor/models/user"
+	"github.com/meifamily/ptt-alertor/ptt/web"
 )
 
 // NewPushSumKeyReplacer Job schedule must longer than overduehour
@@ -107,7 +107,7 @@ func (psc pushSumChecker) Run() {
 }
 
 func (psc pushSumChecker) crawlArticles(ba BoardArticles, baCh chan BoardArticles) {
-	currentPage, err := crawler.CurrentPage(ba.board)
+	currentPage, err := web.CurrentPage(ba.board)
 	if err != nil {
 		log.WithFields(log.Fields{
 			"board": ba.board,
@@ -118,7 +118,7 @@ func (psc pushSumChecker) crawlArticles(ba BoardArticles, baCh chan BoardArticle
 
 Page:
 	for page := currentPage; page > 0; page-- {
-		articles, _ := crawler.FetchArticles(ba.board, page)
+		articles, _ := web.FetchArticles(ba.board, page)
 		for i := len(articles) - 1; i > 0; i-- {
 			a := articles[i]
 			if a.ID == 0 {
