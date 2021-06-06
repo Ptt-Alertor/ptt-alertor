@@ -76,7 +76,7 @@ var commandActionMap = map[string]updateAction{
 }
 
 // HandleCommand handles command from chatbot
-func HandleCommand(text string, userID string) string {
+func HandleCommand(text string, userID string, isUser bool) string {
 	command := strings.ToLower(strings.Fields(strings.TrimSpace(text))[0])
 	log.WithFields(log.Fields{
 		"account": userID,
@@ -171,6 +171,9 @@ func HandleCommand(text string, userID string) string {
 		return handleCommentList(userID)
 	case "add", "del":
 		return handleCommandLine(userID, command, text)
+	}
+	if !isUser {
+		return ""
 	}
 	return "無此指令，請打「指令」查看指令清單"
 }
@@ -537,11 +540,12 @@ func update(action updateAction, account string, boardNames []string, inputs ...
 	return nil
 }
 
-func HandleLineFollow(id string) error {
+func HandleLineFollow(id, accountType string) error {
 	u := models.User.Find(id)
-	u.Profile.Line = id
+	u.Profile.Line, u.Profile.Type = id, accountType
 	log.WithFields(log.Fields{
 		"id":       id,
+		"type":     accountType,
 		"platform": "line",
 	}).Info("User Join")
 	return handleFollow(u)

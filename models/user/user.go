@@ -18,6 +18,7 @@ type User struct {
 
 type Profile struct {
 	Account         string `json:"account"`
+	Type            string `json:"type,omitempty"`
 	Email           string `json:"email"`
 	Line            string `json:"line"`
 	LineAccessToken string `json:"lineAccessToken"`
