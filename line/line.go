@@ -55,8 +55,9 @@ func HandleRequest(_ http.ResponseWriter, r *http.Request, _ httprouter.Params) 
 
 func handleMessage(event *linebot.Event) {
 	var responseText string
-	var lineMsg []linebot.Message
-	accountID, _ := getAccountIDAndType(event)
+	var lineMsg []linebot.SendingMessage
+	accountID, sourceType := getAccountIDAndType(event)
+
 	switch message := event.Message.(type) {
 	case *linebot.TextMessage:
 		text := strings.TrimSpace(message.Text)
@@ -74,7 +75,11 @@ func handleMessage(event *linebot.Event) {
 			replyMessage(event.ReplyToken, genConfirmMessage(text))
 			return
 		}
-		responseText = command.HandleCommand(text, accountID)
+		responseText = command.HandleCommand(text, accountID, sourceType == SourceTypeUser)
+	}
+
+	if responseText == "" {
+		return
 	}
 	for _, msg := range myutil.SplitTextByLineBreak(responseText, maxCharacters) {
 		lineMsg = append(lineMsg, linebot.NewTextMessage(msg))
@@ -127,8 +132,11 @@ func handlePostback(event *linebot.Event) {
 		replyMessage(event.ReplyToken, linebot.NewTextMessage("取消"))
 		return
 	}
-	accountID, _ := getAccountIDAndType(event)
-	responseText := command.HandleCommand(data, accountID)
+	accountID, sourceType := getAccountIDAndType(event)
+	responseText := command.HandleCommand(data, accountID, sourceType == SourceTypeUser)
+	if responseText == "" {
+		return
+	}
 	replyMessage(event.ReplyToken, linebot.NewTextMessage(responseText))
 }
 
@@ -137,14 +145,20 @@ func handleBeacon() {
 
 }
 
+const (
+	SourceTypeUser  = "user"
+	SourceTypeGroup = "group"
+	SourceTypeRoom  = "room"
+)
+
 func getAccountIDAndType(event *linebot.Event) (id, accountType string) {
 	switch event.Source.Type {
 	case linebot.EventSourceTypeUser:
-		return event.Source.UserID, "user"
+		return event.Source.UserID, SourceTypeUser
 	case linebot.EventSourceTypeGroup:
-		return event.Source.GroupID, "group"
+		return event.Source.GroupID, SourceTypeGroup
 	case linebot.EventSourceTypeRoom:
-		return event.Source.RoomID, "room"
+		return event.Source.RoomID, SourceTypeRoom
 	}
 	return
 }
