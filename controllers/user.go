@@ -27,6 +27,7 @@ func UserAll(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	data := struct {
 		Total, Line, Messenger, Telegram, IdleUser, BlockUser         int
 		SubCount, BoardCount, KeywordCount, AuthorCount, PushSumCount int
+		User, Room, Group                                             int
 		Users                                                         []*user.User
 	}{}
 	data.Users = us
@@ -43,6 +44,14 @@ func UserAll(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 		}
 		if u.Profile.Telegram != "" {
 			data.Telegram++
+		}
+		switch u.Profile.Type {
+		case "user", "":
+			data.User++
+		case "room":
+			data.Room++
+		case "group":
+			data.Group++
 		}
 		data.SubCount = len(u.Subscribes)
 		if data.SubCount == 0 {
