@@ -24,7 +24,7 @@ func (m migrateDB) Run() {
 }
 
 func (m migrateDB) migrateBoards() {
-	for _, boardName := range models.Board.List() {
+	for _, boardName := range models.Board().List() {
 		log.WithField("board", boardName).Info("Board Migrating")
 		m.migrateBoard(boardName)
 		time.Sleep(time.Duration(50 * time.Millisecond))
@@ -35,7 +35,7 @@ func (m migrateDB) migrateBoards() {
 func (migrateDB) migrateBoard(boardName string) {
 	redisBoard.Name = boardName
 
-	dynamoBoard := models.Board
+	dynamoBoard := models.Board()
 	dynamoBoard.Name = boardName
 	dynamoBoard.Articles = redisBoard.GetArticles()
 

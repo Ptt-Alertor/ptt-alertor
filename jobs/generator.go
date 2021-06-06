@@ -20,7 +20,7 @@ func NewGenerator() *Generator {
 func (gb Generator) Run() {
 	boardNameBool := make(map[string]bool)
 
-	for _, bd := range models.Board.All() {
+	for _, bd := range models.Board().All() {
 		boardNameBool[bd.Name] = true
 	}
 
@@ -49,7 +49,7 @@ func (gb Generator) Run() {
 }
 
 func addBoard(boardName string) {
-	bd := models.Board
+	bd := models.Board()
 	bd.Name = boardName
 	bd.Create()
 	log.WithField("board", bd.Name).Info("Added Board")

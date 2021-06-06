@@ -32,7 +32,7 @@ func (migrateBoard) RunSingle(preBoard string, postBoard string) {
 	if postBoard != "" {
 		addBoard(postBoard)
 	}
-	bd := models.Board
+	bd := models.Board()
 	bd.Name = preBoard
 	bd.Delete()
 	log.WithField("board", preBoard).Info("Board List Migrated")

@@ -16,7 +16,7 @@ func AuthorBoards(w http.ResponseWriter, r *http.Request, params httprouter.Para
 		count int
 	}
 	authorCounts := make([]authorCount, 0)
-	boards := models.Board.List()
+	boards := models.Board().List()
 	for _, name := range boards {
 		cnt := len(author.Subscribers(name))
 		ac := authorCount{board: name, count: cnt}

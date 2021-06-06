@@ -12,7 +12,7 @@ import (
 )
 
 func BoardArticleIndex(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-	bd := models.Board
+	bd := models.Board()
 	bd.Name = strings.ToUpper(params.ByName("boardName"))
 	articles := bd.FetchArticles()
 	articlesJSON, err := json.Marshal(articles)
@@ -33,7 +33,7 @@ func BoardArticle(w http.ResponseWriter, r *http.Request, params httprouter.Para
 }
 
 func BoardIndex(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-	bds := models.Board.All()
+	bds := models.Board().All()
 	fmt.Fprintf(w, "追蹤看板總數：%d", len(bds))
 	for _, bd := range bds {
 		fmt.Fprintf(w, "\n%s", bd.Name)
