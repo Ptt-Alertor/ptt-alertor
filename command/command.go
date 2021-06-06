@@ -566,9 +566,30 @@ func HandleTelegramFollow(id string, chatID int64) error {
 	return handleFollow(u)
 }
 
+func slackID(teamID, channelID string) string {
+	if channelID == "" {
+		return teamID
+	}
+	return teamID + "|" + channelID
+}
+
+func HandleSlackFollow(teamID, channelID, accessToken, botAccessToken string) error {
+	id := slackID(teamID, channelID)
+	u := models.User.Find(id)
+	u.Profile.Slack.Team = teamID
+	u.Profile.Slack.Channel = channelID
+	u.Profile.Slack.AccessToken = accessToken
+	u.Profile.Slack.BotAccessToken = botAccessToken
+	log.WithFields(log.Fields{
+		"id":       id,
+		"platform": "slack",
+	}).Info("User Join")
+	return handleFollow(u)
+}
+
 func handleFollow(u user.User) error {
+	u.Enable = true
 	if u.Profile.Account != "" {
-		u.Enable = true
 		u.Update()
 	} else {
 		if u.Profile.Messenger != "" {
@@ -580,9 +601,10 @@ func handleFollow(u user.User) error {
 		if u.Profile.Telegram != "" {
 			u.Profile.Account = u.Profile.Telegram
 		}
-		u.Enable = true
-		err := u.Save()
-		if err != nil {
+		if u.Profile.Slack.AccessToken != "" {
+			u.Profile.Account = slackID(u.Profile.Slack.Team, u.Profile.Slack.Channel)
+		}
+		if err := u.Save(); err != nil {
 			return err
 		}
 	}

@@ -16,6 +16,7 @@ import (
 	"github.com/meifamily/ptt-alertor/jobs"
 	"github.com/meifamily/ptt-alertor/line"
 	"github.com/meifamily/ptt-alertor/messenger"
+	"github.com/meifamily/ptt-alertor/slack"
 	"github.com/meifamily/ptt-alertor/telegram"
 )
 
@@ -111,6 +112,10 @@ func main() {
 
 	// telegram
 	router.POST("/telegram/"+telegramToken, telegram.HandleRequest)
+
+	// slack
+	router.GET("/slack/auth/redirect", slack.HandleAuth)
+	router.POST("/slack/command", slack.HandleCommand)
 
 	// gops agent
 	if err := agent.Listen(agent.Options{Addr: ":6060", ShutdownCleanup: true}); err != nil {

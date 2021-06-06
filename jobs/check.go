@@ -7,6 +7,7 @@ import (
 	"github.com/meifamily/ptt-alertor/mail"
 	"github.com/meifamily/ptt-alertor/messenger"
 	"github.com/meifamily/ptt-alertor/models/counter"
+	"github.com/meifamily/ptt-alertor/slack"
 	"github.com/meifamily/ptt-alertor/telegram"
 )
 
@@ -55,6 +56,10 @@ func sendMessage(c check) {
 		platform = "telegram"
 		sendTelegram(c)
 	}
+	if cr.Profile.Slack.AccessToken != "" {
+		platform = "slack"
+		sendSlack(c)
+	}
 	counter.IncrAlert()
 	log.WithFields(log.Fields{
 		"account":  account,
@@ -94,4 +99,10 @@ func sendMessenger(c check) {
 func sendTelegram(c check) {
 	cr := c.Self()
 	telegram.SendTextMessage(cr.Profile.TelegramChat, c.String())
+}
+
+func sendSlack(c check) {
+	cr := c.Self()
+	s := slack.New(cr.Profile.Slack.AccessToken, cr.Profile.Slack.Channel)
+	s.SendTextMessage(c.String())
 }

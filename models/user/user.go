@@ -24,6 +24,12 @@ type Profile struct {
 	Messenger       string `json:"messenger"`
 	Telegram        string `json:"telegram"`
 	TelegramChat    int64  `json:"telegramChat"`
+	Slack           struct {
+		AccessToken    string `json:"accessToken"`
+		Team           string `json:"team"`
+		Channel        string `json:"channel"`
+		BotAccessToken string `json:"botAccessToken"`
+	} `json:"slack"`
 }
 
 type Driver interface {
@@ -61,8 +67,8 @@ func (u User) Save() error {
 		return ErrAccountEmpty
 	}
 
-	if u.Profile.Email == "" && u.Profile.Line == "" && u.Profile.Messenger == "" && u.Profile.Telegram == "" {
-		return errors.New("one of Email, Line, Messenger and Telegram have to be filled")
+	if u.Profile.Email == "" && u.Profile.Line == "" && u.Profile.Messenger == "" && u.Profile.Telegram == "" && u.Profile.Slack.AccessToken == "" {
+		return errors.New("one of Email, Line, Messenger, Telegram, Slack have to be filled")
 	}
 	u.CreateTime = time.Now()
 	u.UpdateTime = time.Now()
