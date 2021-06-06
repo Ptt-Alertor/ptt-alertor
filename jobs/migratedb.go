@@ -54,7 +54,7 @@ func (m migrateDB) migrateArticles() {
 }
 
 func (migrateDB) migrateArticle(code string) {
-	dynamoArticle := models.Article
+	dynamoArticle := models.Article()
 	a := redisArticle.Find(code)
 
 	dynamoArticle.ID = a.ID

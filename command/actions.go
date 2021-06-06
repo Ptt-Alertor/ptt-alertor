@@ -133,7 +133,7 @@ func dealPushSum(account string, sub subscription.Subscription) (err error) {
 
 func addArticles(u *user.User, sub subscription.Subscription, inputs ...string) error {
 	sub.Articles = inputs
-	a := models.Article
+	a := models.Article()
 	a.Code = inputs[0]
 	a.AddSubscriber(u.Profile.Account)
 	return u.Subscribes.Add(sub)
@@ -141,7 +141,7 @@ func addArticles(u *user.User, sub subscription.Subscription, inputs ...string) 
 
 func removeArticles(u *user.User, sub subscription.Subscription, inputs ...string) error {
 	sub.Articles = inputs
-	a := models.Article
+	a := models.Article()
 	a.Code = inputs[0]
 	a.RemoveSubscriber(u.Profile.Account)
 	return u.Subscribes.Remove(sub)

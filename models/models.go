@@ -7,7 +7,9 @@ import (
 )
 
 var User = user.NewUser(new(user.Redis))
-var Article = article.NewArticle(new(article.DynamoDB))
+var Article = func() *article.Article {
+	return article.NewArticle(new(article.DynamoDB))
+}
 var Board = func() *board.Board {
 	return board.NewBoard(new(board.DynamoDB), new(board.Redis))
 }

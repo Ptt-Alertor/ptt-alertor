@@ -73,7 +73,7 @@ func (migrateBoard) RunSingle(preBoard string, postBoard string) {
 	// articles
 	codes := new(article.Articles).List()
 	for _, code := range codes {
-		a := models.Article.Find(code)
+		a := models.Article().Find(code)
 		if strings.EqualFold(a.Board, preBoard) {
 			if postBoard == "" {
 				a.Destroy()

@@ -72,7 +72,7 @@ func addAuthorSub(account, board string) {
 }
 
 func addArticleSub(account, articleID string) {
-	a := models.Article
+	a := models.Article()
 	a.Code = articleID
 	a.AddSubscriber(account)
 	log.WithField("article", articleID).Info("Added Article Subscriber")

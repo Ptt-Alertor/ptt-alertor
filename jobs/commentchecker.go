@@ -83,7 +83,7 @@ func (cc commentChecker) Run() {
 }
 
 func (cc commentChecker) checkComments(code string, ach chan article.Article) {
-	a := models.Article.Find(code)
+	a := models.Article().Find(code)
 	if a.Board == "" || a.Code == "" {
 		return
 	}

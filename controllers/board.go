@@ -24,7 +24,7 @@ func BoardArticleIndex(w http.ResponseWriter, r *http.Request, params httprouter
 
 func BoardArticle(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	code := params.ByName("code")
-	a := models.Article.Find(code)
+	a := models.Article().Find(code)
 	aJSON, err := json.Marshal(a)
 	if err != nil {
 		myutil.LogJSONEncode(err, a)

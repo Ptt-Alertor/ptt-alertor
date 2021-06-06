@@ -278,7 +278,7 @@ func cleanCommentList(account string) string {
 	var i int
 	for _, sub := range models.User.Find(account).Subscribes {
 		for _, code := range sub.Articles {
-			article := models.Article
+			article := models.Article()
 			article.Code = code
 			bl, err := article.Exist()
 			if err != nil {
@@ -444,7 +444,7 @@ func countUserArticles(account string) (cnt int) {
 }
 
 func checkArticleExist(boardName, articleCode string) bool {
-	a := models.Article
+	a := models.Article()
 	a.Code = articleCode
 	if bl, _ := a.Exist(); bl {
 		return true
