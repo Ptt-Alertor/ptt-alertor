@@ -137,6 +137,6 @@ func (cc commentChecker) send(account string) {
 	cc.board = cc.Article.Board
 	cc.subType = "push"
 	cc.word = cc.Article.Code
-	cc.Profile = models.User.Find(account).Profile
+	cc.Profile = models.User().Find(account).Profile
 	cc.ch <- cc
 }

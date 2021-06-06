@@ -121,7 +121,7 @@ func handleUnfollowAndLeave(event *linebot.Event) {
 	log.WithFields(log.Fields{
 		"ID": accountID,
 	}).Info("Line Unfollow")
-	u := models.User.Find(accountID)
+	u := models.User().Find(accountID)
 	u.Enable = false
 	u.Update()
 }

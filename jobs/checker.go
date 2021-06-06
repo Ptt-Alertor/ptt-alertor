@@ -192,7 +192,7 @@ func checkNewArticle(bd *board.Board, boardCh chan *board.Board) {
 }
 
 func checkKeywordSubscriber(bd *board.Board, cker Checker) {
-	u := models.User
+	u := models.User()
 	accounts := keyword.Subscribers(bd.Name)
 	for _, account := range accounts {
 		user := u.Find(account)
@@ -232,7 +232,7 @@ func checkKeyword(keyword string, bd *board.Board, cker Checker) {
 }
 
 func checkAuthorSubscriber(bd *board.Board, cker Checker) {
-	u := models.User
+	u := models.User()
 	accounts := author.Subscribers(bd.Name)
 	for _, account := range accounts {
 		user := u.Find(account)

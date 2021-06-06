@@ -24,7 +24,7 @@ func (gb Generator) Run() {
 		boardNameBool[bd.Name] = true
 	}
 
-	for _, u := range models.User.All() {
+	for _, u := range models.User().All() {
 		for _, sub := range u.Subscribes {
 			if !boardNameBool[sub.Board] {
 				addBoard(sub.Board)

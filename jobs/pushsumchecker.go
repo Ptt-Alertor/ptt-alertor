@@ -158,7 +158,7 @@ Page:
 func (psc pushSumChecker) checkSubscribers(ba BoardArticles) {
 	subs := pushsum.ListSubscribers(ba.board)
 	for _, account := range subs {
-		u := models.User.Find(account)
+		u := models.User().Find(account)
 		psc.Profile = u.Profile
 		go psc.checkPushSum(u, ba, checkUp)
 		go psc.checkPushSum(u, ba, checkDown)

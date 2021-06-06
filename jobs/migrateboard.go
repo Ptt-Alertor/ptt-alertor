@@ -90,7 +90,7 @@ func (migrateBoard) RunSingle(preBoard string, postBoard string) {
 	log.Info("Articles Migrated")
 
 	// user
-	for _, u := range models.User.All() {
+	for _, u := range models.User().All() {
 		for _, sub := range u.Subscribes {
 			if strings.EqualFold(sub.Board, preBoard) {
 				u.Subscribes.Delete(sub)

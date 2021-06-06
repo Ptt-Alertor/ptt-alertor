@@ -32,7 +32,7 @@ func (bc Broadcaster) Send(plfms []string) error {
 		platformBl[plfm] = true
 	}
 
-	for _, u := range models.User.All() {
+	for _, u := range models.User().All() {
 		bc.subType = "broadcast"
 		if platformBl["line"] {
 			go bc.sendLine(u)

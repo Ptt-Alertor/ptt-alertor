@@ -6,7 +6,9 @@ import (
 	"github.com/meifamily/ptt-alertor/models/user"
 )
 
-var User = user.NewUser(new(user.Redis))
+var User = func() *user.User {
+	return user.NewUser(new(user.Redis))
+}
 var Article = func() *article.Article {
 	return article.NewArticle(new(article.DynamoDB))
 }

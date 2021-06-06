@@ -71,7 +71,7 @@ func CatchCallback(w http.ResponseWriter, r *http.Request, _ httprouter.Params) 
 		log.WithError(err).Error("Fetch Access Token Failed")
 	}
 
-	u := models.User.Find(lineID)
+	u := models.User().Find(lineID)
 	u.Profile.LineAccessToken = accessToken
 	if err := u.Update(); err != nil {
 		log.WithError(err).Error("User Update Failed")
@@ -88,7 +88,7 @@ func CatchCallback(w http.ResponseWriter, r *http.Request, _ httprouter.Params) 
 }
 
 func checkLineAccessTokenExist(lineID string) bool {
-	u := models.User.Find(lineID)
+	u := models.User().Find(lineID)
 	if u.Profile.LineAccessToken == "" {
 		return false
 	}
