@@ -76,12 +76,14 @@ var commandActionMap = map[string]updateAction{
 }
 
 // HandleCommand handles command from chatbot
-func HandleCommand(text string, userID string) string {
+func HandleCommand(text string, userID string, isUser bool) string {
 	command := strings.ToLower(strings.Fields(strings.TrimSpace(text))[0])
-	log.WithFields(log.Fields{
-		"account": userID,
-		"command": command,
-	}).Info("Command Request")
+	if isUser {
+		log.WithFields(log.Fields{
+			"account": userID,
+			"command": command,
+		}).Info("Command Request")
+	}
 	switch command {
 	case "debug":
 		return handleDebug(userID)
@@ -171,6 +173,9 @@ func HandleCommand(text string, userID string) string {
 		return handleCommentList(userID)
 	case "add", "del":
 		return handleCommandLine(userID, command, text)
+	}
+	if !isUser {
+		return ""
 	}
 	return "無此指令，請打「指令」查看指令清單"
 }
@@ -263,11 +268,11 @@ func handleCommandLine(userID, command, text string) string {
 }
 
 func handleDebug(account string) string {
-	return models.User.Find(account).Profile.Account
+	return models.User().Find(account).Profile.Account
 }
 
 func handleList(account string) string {
-	subs := models.User.Find(account).Subscribes
+	subs := models.User().Find(account).Subscribes
 	if len(subs) == 0 {
 		return "尚未建立清單。請打「指令」查看新增方法。"
 	}
@@ -276,9 +281,9 @@ func handleList(account string) string {
 
 func cleanCommentList(account string) string {
 	var i int
-	for _, sub := range models.User.Find(account).Subscribes {
+	for _, sub := range models.User().Find(account).Subscribes {
 		for _, code := range sub.Articles {
-			article := models.Article
+			article := models.Article()
 			article.Code = code
 			bl, err := article.Exist()
 			if err != nil {
@@ -294,7 +299,7 @@ func cleanCommentList(account string) string {
 }
 
 func handleCommentList(account string) string {
-	subs := models.User.Find(account).Subscribes
+	subs := models.User().Find(account).Subscribes
 	if len(subs) == 0 {
 		return "尚未建立清單。請打「指令」查看新增方法。"
 	}
@@ -437,14 +442,14 @@ func handleComment(command, userID, boardName, articleCode string) (string, erro
 }
 
 func countUserArticles(account string) (cnt int) {
-	for _, sub := range models.User.Find(account).Subscribes {
+	for _, sub := range models.User().Find(account).Subscribes {
 		cnt += len(sub.Articles)
 	}
 	return cnt
 }
 
 func checkArticleExist(boardName, articleCode string) bool {
-	a := models.Article
+	a := models.Article()
 	a.Code = articleCode
 	if bl, _ := a.Exist(); bl {
 		return true
@@ -513,7 +518,7 @@ func splitParamString(paramString string) (params []string) {
 }
 
 func update(action updateAction, account string, boardNames []string, inputs ...string) error {
-	u := models.User.Find(account)
+	u := models.User().Find(account)
 	if boardNames[0] == "**" {
 		boardNames = nil
 		for _, uSub := range u.Subscribes {
@@ -537,18 +542,19 @@ func update(action updateAction, account string, boardNames []string, inputs ...
 	return nil
 }
 
-func HandleLineFollow(id string) error {
-	u := models.User.Find(id)
-	u.Profile.Line = id
+func HandleLineFollow(id, accountType string) error {
+	u := models.User().Find(id)
+	u.Profile.Line, u.Profile.Type = id, accountType
 	log.WithFields(log.Fields{
 		"id":       id,
+		"type":     accountType,
 		"platform": "line",
 	}).Info("User Join")
 	return handleFollow(u)
 }
 
 func HandleMessengerFollow(id string) error {
-	u := models.User.Find(id)
+	u := models.User().Find(id)
 	u.Profile.Messenger = id
 	log.WithFields(log.Fields{
 		"id":       id,
@@ -558,7 +564,7 @@ func HandleMessengerFollow(id string) error {
 }
 
 func HandleTelegramFollow(id string, chatID int64) error {
-	u := models.User.Find(id)
+	u := models.User().Find(id)
 	u.Profile.Telegram = id
 	u.Profile.TelegramChat = chatID
 	log.WithFields(log.Fields{

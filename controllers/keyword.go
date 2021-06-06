@@ -16,7 +16,7 @@ func KeywordBoards(w http.ResponseWriter, r *http.Request, params httprouter.Par
 		count int
 	}
 	keywordCounts := make([]keywordCount, 0)
-	boards := models.Board.List()
+	boards := models.Board().List()
 	for _, name := range boards {
 		cnt := len(keyword.Subscribers(name))
 		kc := keywordCount{board: name, count: cnt}

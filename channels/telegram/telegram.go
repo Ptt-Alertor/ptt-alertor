@@ -75,7 +75,7 @@ func handleCallbackQuery(update tgbotapi.Update) {
 	case "CANCEL":
 		responseText = "取消"
 	default:
-		responseText = command.HandleCommand(update.CallbackQuery.Data, userID)
+		responseText = command.HandleCommand(update.CallbackQuery.Data, userID, true)
 	}
 	SendTextMessage(update.CallbackQuery.Message.Chat.ID, responseText)
 }
@@ -95,16 +95,16 @@ func handleCommand(update tgbotapi.Update) {
 	switch update.Message.Command() {
 	case "add", "del":
 		text := update.Message.Command() + " " + update.Message.CommandArguments()
-		responseText = command.HandleCommand(text, userID)
+		responseText = command.HandleCommand(text, userID, true)
 	case "start":
 		command.HandleTelegramFollow(userID, chatID)
 		responseText = "歡迎使用 Ptt Alertor\n輸入「指令」查看相關功能。\n\n觀看Demo:\nhttps://media.giphy.com/media/3ohzdF6vidM6I49lQs/giphy.gif"
 	case "help":
-		responseText = command.HandleCommand("help", userID)
+		responseText = command.HandleCommand("help", userID, true)
 	case "list":
-		responseText = command.HandleCommand("list", userID)
+		responseText = command.HandleCommand("list", userID, true)
 	case "ranking":
-		responseText = command.HandleCommand("ranking", userID)
+		responseText = command.HandleCommand("ranking", userID, true)
 	case "showkeyboard":
 		showReplyKeyboard(chatID)
 		return
@@ -126,7 +126,7 @@ func handleText(update tgbotapi.Update) {
 		sendConfirmation(chatID, text)
 		return
 	}
-	responseText = command.HandleCommand(text, userID)
+	responseText = command.HandleCommand(text, userID, true)
 	SendTextMessage(chatID, responseText)
 }
 

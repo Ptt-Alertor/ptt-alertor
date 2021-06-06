@@ -20,7 +20,7 @@ func NewFetcher() *Fetcher {
 }
 
 func (f Fetcher) Run() {
-	boards := models.Board.All()
+	boards := models.Board().All()
 
 	var wg sync.WaitGroup
 	for _, bd := range boards {

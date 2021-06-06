@@ -20,11 +20,11 @@ func NewGenerator() *Generator {
 func (gb Generator) Run() {
 	boardNameBool := make(map[string]bool)
 
-	for _, bd := range models.Board.All() {
+	for _, bd := range models.Board().All() {
 		boardNameBool[bd.Name] = true
 	}
 
-	for _, u := range models.User.All() {
+	for _, u := range models.User().All() {
 		for _, sub := range u.Subscribes {
 			if !boardNameBool[sub.Board] {
 				addBoard(sub.Board)
@@ -49,7 +49,7 @@ func (gb Generator) Run() {
 }
 
 func addBoard(boardName string) {
-	bd := models.Board
+	bd := models.Board()
 	bd.Name = boardName
 	bd.Create()
 	log.WithField("board", bd.Name).Info("Added Board")
@@ -72,7 +72,7 @@ func addAuthorSub(account, board string) {
 }
 
 func addArticleSub(account, articleID string) {
-	a := models.Article
+	a := models.Article()
 	a.Code = articleID
 	a.AddSubscriber(account)
 	log.WithField("article", articleID).Info("Added Article Subscriber")

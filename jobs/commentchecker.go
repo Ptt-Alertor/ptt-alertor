@@ -28,7 +28,7 @@ type commentChecker struct {
 func NewCommentChecker() *commentChecker {
 	cmtOnce.Do(func() {
 		cmtcker = &commentChecker{}
-		cmtcker.duration = 1 * time.Second
+		cmtcker.duration = 500 * time.Millisecond
 		cmtcker.done = make(chan struct{})
 		cmtcker.ch = make(chan commentChecker)
 	})
@@ -83,7 +83,7 @@ func (cc commentChecker) Run() {
 }
 
 func (cc commentChecker) checkComments(code string, ach chan article.Article) {
-	a := models.Article.Find(code)
+	a := models.Article().Find(code)
 	if a.Board == "" || a.Code == "" {
 		return
 	}
@@ -137,6 +137,6 @@ func (cc commentChecker) send(account string) {
 	cc.board = cc.Article.Board
 	cc.subType = "push"
 	cc.word = cc.Article.Code
-	cc.Profile = models.User.Find(account).Profile
+	cc.Profile = models.User().Find(account).Profile
 	cc.ch <- cc
 }

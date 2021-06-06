@@ -10,14 +10,12 @@ before_install:
   - sudo apt-get update
   - sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce
   - docker --version
-  - chmod +x ./test.sh
   - pip install --user --upgrade awscli
   - export PATH=$PATH:$HOME/.local/bin
 install:
   - go get
 before_script:
-script:
-  - "./test.sh"
+  - go test -race -tags test -coverprofile=coverage.txt -covermode=atomic ./...
 after_success:
   - bash <(curl -s https://codecov.io/bash)
 before_deploy:

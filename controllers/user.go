@@ -13,7 +13,7 @@ import (
 )
 
 func UserFind(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-	u := models.User.Find(params.ByName("account"))
+	u := models.User().Find(params.ByName("account"))
 	uJSON, err := json.Marshal(u)
 	if err != nil {
 		myutil.LogJSONEncode(err, u)
@@ -22,11 +22,12 @@ func UserFind(w http.ResponseWriter, r *http.Request, params httprouter.Params) 
 }
 
 func UserAll(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-	us := models.User.All()
+	us := models.User().All()
 
 	data := struct {
 		Total, Line, Messenger, Telegram, IdleUser, BlockUser         int
 		SubCount, BoardCount, KeywordCount, AuthorCount, PushSumCount int
+		User, Room, Group                                             int
 		Users                                                         []*user.User
 	}{}
 	data.Users = us
@@ -43,6 +44,14 @@ func UserAll(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 		}
 		if u.Profile.Telegram != "" {
 			data.Telegram++
+		}
+		switch u.Profile.Type {
+		case "user", "":
+			data.User++
+		case "room":
+			data.Room++
+		case "group":
+			data.Group++
 		}
 		data.SubCount = len(u.Subscribes)
 		if data.SubCount == 0 {
@@ -65,7 +74,7 @@ func UserAll(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 }
 
 func UserCreate(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-	u := models.User
+	u := models.User()
 	if err := json.NewDecoder(r.Body).Decode(&u); err != nil {
 		myutil.LogJSONDecode(err, r.Body)
 		http.Error(w, "not a json valid format", 400)
@@ -77,7 +86,7 @@ func UserCreate(w http.ResponseWriter, r *http.Request, params httprouter.Params
 
 func UserModify(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	account := params.ByName("account")
-	u := models.User
+	u := models.User()
 	if err := json.NewDecoder(r.Body).Decode(&u); err != nil {
 		myutil.LogJSONDecode(err, r.Body)
 		http.Error(w, "not a json valid format", 400)

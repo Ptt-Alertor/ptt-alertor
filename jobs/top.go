@@ -23,7 +23,7 @@ func (t Top) Run() {
 	keywordMap := make(map[top.BoardWord]int)
 	authorMap := make(map[top.BoardWord]int)
 	pushSumMap := make(map[top.BoardWord]int)
-	for _, u := range models.User.All() {
+	for _, u := range models.User().All() {
 		for _, sub := range u.Subscribes {
 			for _, keyword := range sub.Keywords {
 				keyword = strings.ToLower(keyword)

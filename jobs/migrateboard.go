@@ -32,7 +32,7 @@ func (migrateBoard) RunSingle(preBoard string, postBoard string) {
 	if postBoard != "" {
 		addBoard(postBoard)
 	}
-	bd := models.Board
+	bd := models.Board()
 	bd.Name = preBoard
 	bd.Delete()
 	log.WithField("board", preBoard).Info("Board List Migrated")
@@ -73,7 +73,7 @@ func (migrateBoard) RunSingle(preBoard string, postBoard string) {
 	// articles
 	codes := new(article.Articles).List()
 	for _, code := range codes {
-		a := models.Article.Find(code)
+		a := models.Article().Find(code)
 		if strings.EqualFold(a.Board, preBoard) {
 			if postBoard == "" {
 				a.Destroy()
@@ -90,7 +90,7 @@ func (migrateBoard) RunSingle(preBoard string, postBoard string) {
 	log.Info("Articles Migrated")
 
 	// user
-	for _, u := range models.User.All() {
+	for _, u := range models.User().All() {
 		for _, sub := range u.Subscribes {
 			if strings.EqualFold(sub.Board, preBoard) {
 				u.Subscribes.Delete(sub)

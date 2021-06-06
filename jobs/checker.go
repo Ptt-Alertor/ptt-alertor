@@ -26,7 +26,7 @@ var highBoardNames = strings.Split(os.Getenv("BOARD_HIGH"), ",")
 
 func init() {
 	for _, name := range highBoardNames {
-		bd := models.Board
+		bd := models.Board()
 		bd.Name = name
 		highBoards = append(highBoards, bd)
 	}
@@ -117,7 +117,7 @@ func (c Checker) Run() {
 					offPeak = op
 				}
 			default:
-				checkBoards(models.Board.All(), duration)
+				checkBoards(models.Board().All(), duration)
 			}
 		}
 	}()
@@ -192,7 +192,7 @@ func checkNewArticle(bd *board.Board, boardCh chan *board.Board) {
 }
 
 func checkKeywordSubscriber(bd *board.Board, cker Checker) {
-	u := models.User
+	u := models.User()
 	accounts := keyword.Subscribers(bd.Name)
 	for _, account := range accounts {
 		user := u.Find(account)
@@ -232,7 +232,7 @@ func checkKeyword(keyword string, bd *board.Board, cker Checker) {
 }
 
 func checkAuthorSubscriber(bd *board.Board, cker Checker) {
-	u := models.User
+	u := models.User()
 	accounts := author.Subscribers(bd.Name)
 	for _, account := range accounts {
 		user := u.Find(account)
