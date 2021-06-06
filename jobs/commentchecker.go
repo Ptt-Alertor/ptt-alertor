@@ -28,7 +28,7 @@ type commentChecker struct {
 func NewCommentChecker() *commentChecker {
 	cmtOnce.Do(func() {
 		cmtcker = &commentChecker{}
-		cmtcker.duration = 1 * time.Second
+		cmtcker.duration = 500 * time.Millisecond
 		cmtcker.done = make(chan struct{})
 		cmtcker.ch = make(chan commentChecker)
 	})
