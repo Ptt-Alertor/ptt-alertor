@@ -5,10 +5,10 @@ import (
 	"strings"
 
 	log "github.com/meifamily/logrus"
-	"github.com/meifamily/ptt-alertor/crawler"
 	"github.com/meifamily/ptt-alertor/models/article"
 	"github.com/meifamily/ptt-alertor/myutil/maputil"
-	"github.com/meifamily/ptt-alertor/rss"
+	"github.com/meifamily/ptt-alertor/ptt/rss"
+	"github.com/meifamily/ptt-alertor/ptt/web"
 )
 
 type BoardNotExistError struct {
@@ -125,7 +125,7 @@ func (bd Board) FetchArticles() (articles article.Articles) {
 			return
 		}
 		log.WithField("board", bd.Name).WithError(err).Error("RSS Parse Failed, Switch to HTML Crawler")
-		articles, err = crawler.FetchArticles(bd.Name, -1)
+		articles, err = web.FetchArticles(bd.Name, -1)
 		if err != nil {
 			log.WithField("board", bd.Name).WithError(err).Error("HTML Parse Failed")
 		}
@@ -168,7 +168,7 @@ func CheckBoardExist(boardName string) (bool, string) {
 	if bd.Exist() {
 		return true, ""
 	}
-	if crawler.CheckBoardExist(boardName) {
+	if web.CheckBoardExist(boardName) {
 		bd.Create()
 		return true, ""
 	}

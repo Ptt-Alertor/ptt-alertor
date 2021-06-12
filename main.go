@@ -12,11 +12,11 @@ import (
 	log "github.com/meifamily/logrus"
 	"github.com/robfig/cron"
 
+	"github.com/meifamily/ptt-alertor/channels/line"
+	"github.com/meifamily/ptt-alertor/channels/messenger"
+	"github.com/meifamily/ptt-alertor/channels/telegram"
 	ctrlr "github.com/meifamily/ptt-alertor/controllers"
 	"github.com/meifamily/ptt-alertor/jobs"
-	"github.com/meifamily/ptt-alertor/line"
-	"github.com/meifamily/ptt-alertor/messenger"
-	"github.com/meifamily/ptt-alertor/telegram"
 )
 
 var (

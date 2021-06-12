@@ -27,7 +27,7 @@ before_deploy:
 deploy:
   - provider: script
     script:
-      - bash ./deploy/ecs-deploy -r us-west-2 -c Production-Cluster -n Ptt-Alertor -i $AWS_Docker_Repo -m 0 -M 100 -t 600 -D 1
+      - bash ./ecs-deploy -r us-west-2 -c Production-Cluster -n Ptt-Alertor -i $AWS_Docker_Repo -m 0 -M 100 -t 600 -D 1
     on:
       branch: master
 notifications:
