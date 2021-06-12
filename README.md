@@ -1,11 +1,11 @@
 # Ptt-Alertor
 
-<img align="right" src="https://raw.githubusercontent.com/meifamily/ptt-alertor/master/logo.jpg">
+<img align="right" src="https://raw.githubusercontent.com/Ptt-Alertor/ptt-alertor/master/logo.jpg">
 
-[![Build Status](https://travis-ci.org/meifamily/ptt-alertor.svg?branch=master)](https://travis-ci.org/meifamily/ptt-alertor)
-[![codecov](https://codecov.io/gh/meifamily/ptt-alertor/branch/master/graph/badge.svg)](https://codecov.io/gh/meifamily/ptt-alertor)
-[![Go Report Card](https://goreportcard.com/badge/github.com/meifamily/ptt-alertor)](https://goreportcard.com/report/github.com/meifamily/ptt-alertor)
-[![Code Climate](https://api.codeclimate.com/v1/badges/f7047295fce56a0465dc/maintainability)](https://codeclimate.com/github/meifamily/ptt-alertor/maintainability)
+[![Build Status](https://travis-ci.org/Ptt-Alertor/ptt-alertor.svg?branch=master)](https://travis-ci.org/Ptt-Alertor/ptt-alertor)
+[![codecov](https://codecov.io/gh/Ptt-Alertor/ptt-alertor/branch/master/graph/badge.svg)](https://codecov.io/gh/Ptt-Alertor/ptt-alertor)
+[![Go Report Card](https://goreportcard.com/badge/github.com/Ptt-Alertor/ptt-alertor)](https://goreportcard.com/report/github.com/Ptt-Alertor/ptt-alertor)
+[![Code Climate](https://api.codeclimate.com/v1/badges/f7047295fce56a0465dc/maintainability)](https://codeclimate.com/github/Ptt-Alertor/ptt-alertor/maintainability)
 [![StackShare](https://img.shields.io/badge/tech-stack-0690fa.svg?style=flat)](https://stackshare.io/ptt-alertor/ptt-alertor)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 

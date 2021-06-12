@@ -8,7 +8,7 @@
         <a class="fa-icon" target="_blank" href="https://www.ptt.cc/bbs/EZsoft/M.1497363598.A.74E.html">
             <i class="fa fa-product-hunt fa-2x" aria-hidden="true"></i>
         </a>
-        <a class="fa-icon" target="_blank" href="https://github.com/meifamily/ptt-alertor">
+        <a class="fa-icon" target="_blank" href="https://github.com/Ptt-Alertor/ptt-alertor">
             <i class="fa fa-github fa-2x" aria-hidden="true"></i>
         </a>
         <a class="fa-icon" target="_top" href="mailto:dinos80152@gmail.com">

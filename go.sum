@@ -1,3 +1,5 @@
+github.com/Ptt-Alertor/logrus v0.0.0-20170625191354-a4db038e018c h1:vemRG9xYQ8sYnvNGJenGTpC1QpWDTpPZZCm083wp29A=
+github.com/Ptt-Alertor/logrus v0.0.0-20170625191354-a4db038e018c/go.mod h1:wu8QQgjX9BKl3UOOhA6GZIltHRa4QKFwwRlTECXLRJU=
 github.com/PuerkitoBio/goquery v0.0.0-20170520194520-2dc93891ab3b h1:w0t66r4kU9bdfQ08r2vPVt9q0SJw1t+GiwpwhHmAeRw=
 github.com/PuerkitoBio/goquery v0.0.0-20170520194520-2dc93891ab3b/go.mod h1:T9ezsOHcCrDCgA8aF1Cqr3sSYbO/xgdy8/R/XiIMAhA=
 github.com/alicebob/miniredis v0.0.0-20171207150240-955f929b3a68 h1:XC+jxi/HCGZL7X5lspuKTUpkZOZFf+bk9ZLD+Efo6xE=

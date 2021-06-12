@@ -9,13 +9,13 @@ import (
 
 	"regexp"
 
+	log "github.com/Ptt-Alertor/logrus"
+	"github.com/Ptt-Alertor/ptt-alertor/command"
+	"github.com/Ptt-Alertor/ptt-alertor/models"
+	"github.com/Ptt-Alertor/ptt-alertor/myutil"
+	"github.com/Ptt-Alertor/ptt-alertor/shorturl"
 	"github.com/julienschmidt/httprouter"
 	"github.com/line/line-bot-sdk-go/linebot"
-	log "github.com/meifamily/logrus"
-	"github.com/meifamily/ptt-alertor/command"
-	"github.com/meifamily/ptt-alertor/models"
-	"github.com/meifamily/ptt-alertor/myutil"
-	"github.com/meifamily/ptt-alertor/shorturl"
 )
 
 const maxCharacters = 2000

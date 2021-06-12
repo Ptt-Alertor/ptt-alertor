@@ -6,9 +6,9 @@ import (
 	"encoding/json"
 	"io/ioutil"
 
-	log "github.com/meifamily/logrus"
+	log "github.com/Ptt-Alertor/logrus"
 
-	"github.com/meifamily/ptt-alertor/myutil"
+	"github.com/Ptt-Alertor/ptt-alertor/myutil"
 )
 
 type File struct {

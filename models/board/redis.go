@@ -3,12 +3,12 @@ package board
 import (
 	"encoding/json"
 
+	log "github.com/Ptt-Alertor/logrus"
 	"github.com/garyburd/redigo/redis"
-	log "github.com/meifamily/logrus"
 
-	"github.com/meifamily/ptt-alertor/connections"
-	"github.com/meifamily/ptt-alertor/models/article"
-	"github.com/meifamily/ptt-alertor/myutil"
+	"github.com/Ptt-Alertor/ptt-alertor/connections"
+	"github.com/Ptt-Alertor/ptt-alertor/models/article"
+	"github.com/Ptt-Alertor/ptt-alertor/myutil"
 )
 
 const prefix string = "board:"

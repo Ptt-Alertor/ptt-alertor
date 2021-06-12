@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/meifamily/ptt-alertor/models/article"
+	"github.com/Ptt-Alertor/ptt-alertor/models/article"
 	gock "gopkg.in/h2non/gock.v1"
 )
 

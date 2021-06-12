@@ -8,18 +8,18 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/meifamily/ptt-alertor/models"
-	"github.com/meifamily/ptt-alertor/myutil"
-	"github.com/meifamily/ptt-alertor/ptt/web"
+	"github.com/Ptt-Alertor/ptt-alertor/models"
+	"github.com/Ptt-Alertor/ptt-alertor/myutil"
+	"github.com/Ptt-Alertor/ptt-alertor/ptt/web"
 
 	"fmt"
 
-	log "github.com/meifamily/logrus"
-	"github.com/meifamily/ptt-alertor/models/article"
-	"github.com/meifamily/ptt-alertor/models/board"
-	"github.com/meifamily/ptt-alertor/models/subscription"
-	"github.com/meifamily/ptt-alertor/models/top"
-	"github.com/meifamily/ptt-alertor/models/user"
+	log "github.com/Ptt-Alertor/logrus"
+	"github.com/Ptt-Alertor/ptt-alertor/models/article"
+	"github.com/Ptt-Alertor/ptt-alertor/models/board"
+	"github.com/Ptt-Alertor/ptt-alertor/models/subscription"
+	"github.com/Ptt-Alertor/ptt-alertor/models/top"
+	"github.com/Ptt-Alertor/ptt-alertor/models/user"
 )
 
 const subArticlesLimit int = 50

@@ -6,9 +6,9 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/Ptt-Alertor/ptt-alertor/models"
+	"github.com/Ptt-Alertor/ptt-alertor/myutil"
 	"github.com/julienschmidt/httprouter"
-	"github.com/meifamily/ptt-alertor/models"
-	"github.com/meifamily/ptt-alertor/myutil"
 )
 
 func BoardArticleIndex(w http.ResponseWriter, r *http.Request, params httprouter.Params) {

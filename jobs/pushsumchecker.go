@@ -10,14 +10,14 @@ import (
 
 	"strconv"
 
-	log "github.com/meifamily/logrus"
+	log "github.com/Ptt-Alertor/logrus"
 
-	"github.com/meifamily/ptt-alertor/models"
-	"github.com/meifamily/ptt-alertor/models/article"
-	"github.com/meifamily/ptt-alertor/models/pushsum"
-	"github.com/meifamily/ptt-alertor/models/subscription"
-	"github.com/meifamily/ptt-alertor/models/user"
-	"github.com/meifamily/ptt-alertor/ptt/web"
+	"github.com/Ptt-Alertor/ptt-alertor/models"
+	"github.com/Ptt-Alertor/ptt-alertor/models/article"
+	"github.com/Ptt-Alertor/ptt-alertor/models/pushsum"
+	"github.com/Ptt-Alertor/ptt-alertor/models/subscription"
+	"github.com/Ptt-Alertor/ptt-alertor/models/user"
+	"github.com/Ptt-Alertor/ptt-alertor/ptt/web"
 )
 
 // NewPushSumKeyReplacer Job schedule must longer than overduehour

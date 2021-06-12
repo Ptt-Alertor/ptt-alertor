@@ -6,9 +6,9 @@ import (
 	"net/url"
 	"time"
 
-	log "github.com/meifamily/logrus"
+	log "github.com/Ptt-Alertor/logrus"
 
-	"github.com/meifamily/ptt-alertor/models/article"
+	"github.com/Ptt-Alertor/ptt-alertor/models/article"
 
 	"regexp"
 
@@ -16,7 +16,7 @@ import (
 
 	"strconv"
 
-	"github.com/meifamily/ptt-alertor/models/pushsum"
+	"github.com/Ptt-Alertor/ptt-alertor/models/pushsum"
 	"golang.org/x/net/html"
 )
 

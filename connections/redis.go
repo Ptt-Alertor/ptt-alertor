@@ -4,8 +4,8 @@ import (
 	"os"
 	"time"
 
+	log "github.com/Ptt-Alertor/logrus"
 	"github.com/garyburd/redigo/redis"
-	log "github.com/meifamily/logrus"
 )
 
 var pool = newPool()

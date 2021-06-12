@@ -3,13 +3,13 @@ package board
 import (
 	"encoding/json"
 
+	log "github.com/Ptt-Alertor/logrus"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
-	log "github.com/meifamily/logrus"
 
-	"github.com/meifamily/ptt-alertor/models/article"
-	"github.com/meifamily/ptt-alertor/myutil"
+	"github.com/Ptt-Alertor/ptt-alertor/models/article"
+	"github.com/Ptt-Alertor/ptt-alertor/myutil"
 )
 
 const tableName string = "boards"

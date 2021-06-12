@@ -8,12 +8,12 @@ import (
 
 	"strings"
 
+	"github.com/Ptt-Alertor/ptt-alertor/connections"
+	"github.com/Ptt-Alertor/ptt-alertor/models/counter"
+	"github.com/Ptt-Alertor/ptt-alertor/models/top"
+	"github.com/Ptt-Alertor/ptt-alertor/shorturl"
 	"github.com/garyburd/redigo/redis"
 	"github.com/julienschmidt/httprouter"
-	"github.com/meifamily/ptt-alertor/connections"
-	"github.com/meifamily/ptt-alertor/models/counter"
-	"github.com/meifamily/ptt-alertor/models/top"
-	"github.com/meifamily/ptt-alertor/shorturl"
 	"golang.org/x/net/websocket"
 )
 

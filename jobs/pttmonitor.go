@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"time"
 
-	log "github.com/meifamily/logrus"
+	log "github.com/Ptt-Alertor/logrus"
 )
 
 type pttMonitor struct {

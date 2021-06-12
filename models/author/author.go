@@ -1,11 +1,11 @@
 package author
 
 import (
-	log "github.com/meifamily/logrus"
+	log "github.com/Ptt-Alertor/logrus"
 
+	"github.com/Ptt-Alertor/ptt-alertor/connections"
+	"github.com/Ptt-Alertor/ptt-alertor/myutil"
 	"github.com/garyburd/redigo/redis"
-	"github.com/meifamily/ptt-alertor/connections"
-	"github.com/meifamily/ptt-alertor/myutil"
 )
 
 const prefix string = "author:"

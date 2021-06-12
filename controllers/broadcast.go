@@ -6,9 +6,9 @@ import (
 
 	"encoding/json"
 
+	log "github.com/Ptt-Alertor/logrus"
+	"github.com/Ptt-Alertor/ptt-alertor/jobs"
 	"github.com/julienschmidt/httprouter"
-	log "github.com/meifamily/logrus"
-	"github.com/meifamily/ptt-alertor/jobs"
 )
 
 func Broadcast(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
