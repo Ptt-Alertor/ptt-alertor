@@ -136,13 +136,32 @@ func FetchArticle(board, articleCode string) (article.Article, error) {
 	}
 	atcl.ID = atcl.ParseID(reqURL)
 	pushBlocks := findNodes(htmlNodes, findPushBlocks)
-	pushes := make([]article.Comment, len(pushBlocks))
-	for index, pushBlock := range pushBlocks {
+	pushes := []article.Comment{}
+
+PushBlocks:
+	for _, pushBlock := range pushBlocks {
+		push := article.Comment{}
+		for _, pushIPDateTime := range findNodes(pushBlock, findPushIPDateTime) {
+			ipdatetime := strings.TrimSpace(pushIPDateTime.FirstChild.Data)
+			if ipdatetime == "" {
+				continue PushBlocks
+			}
+			dateTime, err := parseDateTime(ipdatetime)
+			if err != nil {
+				log.WithFields(log.Fields{
+					"ipdatetime": ipdatetime,
+					"board":      board,
+					"code":       articleCode,
+				}).WithError(err).Warn("Parse DateTime Error")
+				continue PushBlocks
+			}
+			push.DateTime = dateTime
+		}
 		for _, pushTag := range findNodes(pushBlock, findPushTag) {
-			pushes[index].Tag = pushTag.FirstChild.Data
+			push.Tag = pushTag.FirstChild.Data
 		}
 		for _, pushUserID := range findNodes(pushBlock, findPushUserID) {
-			pushes[index].UserID = pushUserID.FirstChild.Data
+			push.UserID = pushUserID.FirstChild.Data
 		}
 		for _, pushContent := range findNodes(pushBlock, findPushContent) {
 			content := pushContent.FirstChild.Data
@@ -157,26 +176,12 @@ func FetchArticle(board, articleCode string) (article.Article, error) {
 					content += n.NextSibling.Data
 				}
 			}
-			pushes[index].Content = content
+			push.Content = content
 		}
-		for _, pushIPDateTime := range findNodes(pushBlock, findPushIPDateTime) {
-			ipdatetime := strings.TrimSpace(pushIPDateTime.FirstChild.Data)
-			if ipdatetime == "" {
-				break
-			}
-			dateTime, err := parseDateTime(ipdatetime)
-			if err != nil {
-				log.WithFields(log.Fields{
-					"ipdatetime": ipdatetime,
-					"board":      board,
-					"code":       articleCode,
-				}).WithError(err).Error("Parse DateTime Error")
-			}
-			pushes[index].DateTime = dateTime
-			if index == len(pushBlocks)-1 {
-				atcl.LastPushDateTime = pushes[index].DateTime
-			}
-		}
+		pushes = append(pushes, push)
+	}
+	if len(pushes) > 0 {
+		atcl.LastPushDateTime = pushes[len(pushes)-1].DateTime
 	}
 	atcl.Comments = pushes
 	return atcl, nil
