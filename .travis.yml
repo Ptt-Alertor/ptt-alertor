@@ -20,9 +20,9 @@ after_success:
   - bash <(curl -s https://codecov.io/bash)
 before_deploy:
   - echo $DOCKERHUB_PASSWORD | docker login -u $DOCKERHUB_USERNAME --password-stdin
-  - docker build -t Ptt-Alertor/ptt-alertor .
+  - docker build -t ptt-alertor/ptt-alertor .
   - eval $(aws ecr get-login --region us-west-2 --no-include-email)
-  - docker tag Ptt-Alertor/ptt-alertor:latest $AWS_Docker_Repo:latest
+  - docker tag ptt-alertor/ptt-alertor:latest $AWS_Docker_Repo:latest
   - docker push $AWS_Docker_Repo:latest
 deploy:
   - provider: script
