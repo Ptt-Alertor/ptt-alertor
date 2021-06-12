@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/Ptt-Alertor/ptt-alertor/models/article"
 	"github.com/julienschmidt/httprouter"
-	"github.com/meifamily/ptt-alertor/models/article"
 )
 
 // ArticleIndex show all subscribed article codes

@@ -3,8 +3,8 @@ package jobs
 import (
 	"errors"
 
-	"github.com/meifamily/ptt-alertor/models"
-	"github.com/meifamily/ptt-alertor/models/user"
+	"github.com/Ptt-Alertor/ptt-alertor/models"
+	"github.com/Ptt-Alertor/ptt-alertor/models/user"
 )
 
 var platforms = map[string]bool{

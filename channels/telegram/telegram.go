@@ -7,14 +7,14 @@ import (
 	"os"
 	"regexp"
 
-	log "github.com/meifamily/logrus"
+	log "github.com/Ptt-Alertor/logrus"
 
 	"strconv"
 
+	"github.com/Ptt-Alertor/ptt-alertor/command"
+	"github.com/Ptt-Alertor/ptt-alertor/myutil"
 	"github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/julienschmidt/httprouter"
-	"github.com/meifamily/ptt-alertor/command"
-	"github.com/meifamily/ptt-alertor/myutil"
 )
 
 var (

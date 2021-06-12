@@ -7,16 +7,16 @@ import (
 	"os/signal"
 	"time"
 
+	log "github.com/Ptt-Alertor/logrus"
 	"github.com/google/gops/agent"
 	"github.com/julienschmidt/httprouter"
-	log "github.com/meifamily/logrus"
 	"github.com/robfig/cron"
 
-	"github.com/meifamily/ptt-alertor/channels/line"
-	"github.com/meifamily/ptt-alertor/channels/messenger"
-	"github.com/meifamily/ptt-alertor/channels/telegram"
-	ctrlr "github.com/meifamily/ptt-alertor/controllers"
-	"github.com/meifamily/ptt-alertor/jobs"
+	"github.com/Ptt-Alertor/ptt-alertor/channels/line"
+	"github.com/Ptt-Alertor/ptt-alertor/channels/messenger"
+	"github.com/Ptt-Alertor/ptt-alertor/channels/telegram"
+	ctrlr "github.com/Ptt-Alertor/ptt-alertor/controllers"
+	"github.com/Ptt-Alertor/ptt-alertor/jobs"
 )
 
 var (

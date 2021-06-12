@@ -1,8 +1,8 @@
 package jobs
 
 import (
-	log "github.com/meifamily/logrus"
-	"github.com/meifamily/ptt-alertor/models/pushsum"
+	log "github.com/Ptt-Alertor/logrus"
+	"github.com/Ptt-Alertor/ptt-alertor/models/pushsum"
 )
 
 type PushSumKeyReplacer struct{}

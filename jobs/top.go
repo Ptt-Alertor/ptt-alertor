@@ -4,12 +4,12 @@ import (
 	"sort"
 	"strconv"
 
-	log "github.com/meifamily/logrus"
+	log "github.com/Ptt-Alertor/logrus"
 
 	"strings"
 
-	"github.com/meifamily/ptt-alertor/models"
-	"github.com/meifamily/ptt-alertor/models/top"
+	"github.com/Ptt-Alertor/ptt-alertor/models"
+	"github.com/Ptt-Alertor/ptt-alertor/models/top"
 )
 
 type Top struct{}

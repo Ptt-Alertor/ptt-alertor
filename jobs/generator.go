@@ -1,13 +1,13 @@
 package jobs
 
 import (
-	log "github.com/meifamily/logrus"
+	log "github.com/Ptt-Alertor/logrus"
 
-	"github.com/meifamily/ptt-alertor/models"
-	"github.com/meifamily/ptt-alertor/models/author"
-	"github.com/meifamily/ptt-alertor/models/keyword"
-	"github.com/meifamily/ptt-alertor/models/pushsum"
-	"github.com/meifamily/ptt-alertor/models/subscription"
+	"github.com/Ptt-Alertor/ptt-alertor/models"
+	"github.com/Ptt-Alertor/ptt-alertor/models/author"
+	"github.com/Ptt-Alertor/ptt-alertor/models/keyword"
+	"github.com/Ptt-Alertor/ptt-alertor/models/pushsum"
+	"github.com/Ptt-Alertor/ptt-alertor/models/subscription"
 )
 
 type Generator struct {

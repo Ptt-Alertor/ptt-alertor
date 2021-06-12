@@ -1,9 +1,9 @@
 package models
 
 import (
-	"github.com/meifamily/ptt-alertor/models/article"
-	"github.com/meifamily/ptt-alertor/models/board"
-	"github.com/meifamily/ptt-alertor/models/user"
+	"github.com/Ptt-Alertor/ptt-alertor/models/article"
+	"github.com/Ptt-Alertor/ptt-alertor/models/board"
+	"github.com/Ptt-Alertor/ptt-alertor/models/user"
 )
 
 var User = func() *user.User {

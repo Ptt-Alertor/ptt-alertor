@@ -6,13 +6,13 @@ import (
 	"os"
 	"time"
 
+	log "github.com/Ptt-Alertor/logrus"
 	"github.com/garyburd/redigo/redis"
-	log "github.com/meifamily/logrus"
 
 	"strconv"
 
-	"github.com/meifamily/ptt-alertor/connections"
-	"github.com/meifamily/ptt-alertor/myutil"
+	"github.com/Ptt-Alertor/ptt-alertor/connections"
+	"github.com/Ptt-Alertor/ptt-alertor/myutil"
 )
 
 const redisPrefix = "sum:"

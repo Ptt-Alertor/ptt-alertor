@@ -6,10 +6,10 @@ import (
 	"html/template"
 	"net/http"
 
+	"github.com/Ptt-Alertor/ptt-alertor/models"
+	"github.com/Ptt-Alertor/ptt-alertor/models/user"
+	"github.com/Ptt-Alertor/ptt-alertor/myutil"
 	"github.com/julienschmidt/httprouter"
-	"github.com/meifamily/ptt-alertor/models"
-	"github.com/meifamily/ptt-alertor/models/user"
-	"github.com/meifamily/ptt-alertor/myutil"
 )
 
 func UserFind(w http.ResponseWriter, r *http.Request, params httprouter.Params) {

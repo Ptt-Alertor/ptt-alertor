@@ -3,10 +3,10 @@ package jobs
 import (
 	"time"
 
-	log "github.com/meifamily/logrus"
-	"github.com/meifamily/ptt-alertor/models"
-	"github.com/meifamily/ptt-alertor/models/article"
-	"github.com/meifamily/ptt-alertor/models/board"
+	log "github.com/Ptt-Alertor/logrus"
+	"github.com/Ptt-Alertor/ptt-alertor/models"
+	"github.com/Ptt-Alertor/ptt-alertor/models/article"
+	"github.com/Ptt-Alertor/ptt-alertor/models/board"
 )
 
 var redisArticle = article.NewArticle(new(article.Redis))

@@ -3,12 +3,12 @@ package jobs
 import (
 	"strings"
 
-	log "github.com/meifamily/logrus"
-	"github.com/meifamily/ptt-alertor/models"
-	"github.com/meifamily/ptt-alertor/models/article"
-	"github.com/meifamily/ptt-alertor/models/author"
-	"github.com/meifamily/ptt-alertor/models/keyword"
-	"github.com/meifamily/ptt-alertor/models/pushsum"
+	log "github.com/Ptt-Alertor/logrus"
+	"github.com/Ptt-Alertor/ptt-alertor/models"
+	"github.com/Ptt-Alertor/ptt-alertor/models/article"
+	"github.com/Ptt-Alertor/ptt-alertor/models/author"
+	"github.com/Ptt-Alertor/ptt-alertor/models/keyword"
+	"github.com/Ptt-Alertor/ptt-alertor/models/pushsum"
 )
 
 type migrateBoard struct {

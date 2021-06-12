@@ -9,7 +9,7 @@ import (
 
 	"strconv"
 
-	log "github.com/meifamily/logrus"
+	log "github.com/Ptt-Alertor/logrus"
 )
 
 func LogJSONEncode(err error, obj interface{}) {

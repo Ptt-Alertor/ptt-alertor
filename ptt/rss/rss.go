@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/meifamily/ptt-alertor/models/article"
+	"github.com/Ptt-Alertor/ptt-alertor/models/article"
 	"github.com/mmcdole/gofeed"
 )
 

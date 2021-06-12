@@ -3,12 +3,12 @@ package jobs
 import (
 	"sync"
 
-	log "github.com/meifamily/logrus"
+	log "github.com/Ptt-Alertor/logrus"
 
 	"time"
 
-	"github.com/meifamily/ptt-alertor/models"
-	"github.com/meifamily/ptt-alertor/models/board"
+	"github.com/Ptt-Alertor/ptt-alertor/models"
+	"github.com/Ptt-Alertor/ptt-alertor/models/board"
 )
 
 type Fetcher struct {

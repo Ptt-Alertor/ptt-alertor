@@ -1,4 +1,4 @@
-module github.com/meifamily/ptt-alertor
+module github.com/Ptt-Alertor/ptt-alertor
 
 go 1.15
 
@@ -14,7 +14,7 @@ require (
 	github.com/julienschmidt/httprouter v0.0.0-20170104185816-8a45e95fc75c
 	github.com/kardianos/osext v0.0.0-20170510131534-ae77be60afb1 // indirect
 	github.com/line/line-bot-sdk-go v7.8.0+incompatible
-	github.com/meifamily/logrus v0.0.0-20170625191354-a4db038e018c
+	github.com/Ptt-Alertor/logrus v0.0.0-20170625191354-a4db038e018c
 	github.com/mmcdole/gofeed v0.0.0-20170307182009-042c0a912158
 	github.com/mmcdole/goxpp v0.0.0-20160419160217-e38884aa48c1 // indirect
 	github.com/nbio/st v0.0.0-20140626010706-e9e8d9816f32 // indirect

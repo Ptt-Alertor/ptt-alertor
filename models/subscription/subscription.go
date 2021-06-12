@@ -5,7 +5,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/meifamily/ptt-alertor/myutil"
+	"github.com/Ptt-Alertor/ptt-alertor/myutil"
 )
 
 var EmptyPushSum = PushSum{}

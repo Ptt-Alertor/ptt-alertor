@@ -4,9 +4,9 @@ import (
 	"os"
 	"strconv"
 
-	log "github.com/meifamily/logrus"
+	log "github.com/Ptt-Alertor/logrus"
 
-	"github.com/meifamily/ptt-alertor/models/article"
+	"github.com/Ptt-Alertor/ptt-alertor/models/article"
 	"gopkg.in/mailgun/mailgun-go.v1"
 )
 

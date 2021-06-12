@@ -4,11 +4,11 @@ import (
 	"math"
 	"strings"
 
-	log "github.com/meifamily/logrus"
-	"github.com/meifamily/ptt-alertor/models/article"
-	"github.com/meifamily/ptt-alertor/myutil/maputil"
-	"github.com/meifamily/ptt-alertor/ptt/rss"
-	"github.com/meifamily/ptt-alertor/ptt/web"
+	log "github.com/Ptt-Alertor/logrus"
+	"github.com/Ptt-Alertor/ptt-alertor/models/article"
+	"github.com/Ptt-Alertor/ptt-alertor/myutil/maputil"
+	"github.com/Ptt-Alertor/ptt-alertor/ptt/rss"
+	"github.com/Ptt-Alertor/ptt-alertor/ptt/web"
 )
 
 type BoardNotExistError struct {

@@ -13,10 +13,10 @@ import (
 	"sort"
 	"strconv"
 
+	log "github.com/Ptt-Alertor/logrus"
 	"github.com/julienschmidt/httprouter"
-	log "github.com/meifamily/logrus"
 
-	"github.com/meifamily/ptt-alertor/models"
+	"github.com/Ptt-Alertor/ptt-alertor/models"
 )
 
 const notifyBotHost string = "https://notify-bot.line.me"
