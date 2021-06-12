@@ -2,7 +2,7 @@
 FROM golang:1.15-alpine as builder
 
 ENV GOPATH /go/
-ENV GO_WORKDIR $GOPATH/src/github.com/meifamily/ptt-alertor/
+ENV GO_WORKDIR $GOPATH/src/github.com/Ptt-Alertor/ptt-alertor/
 ENV GO111MODULE=on
 ENV CGO_ENABLED=0
 
