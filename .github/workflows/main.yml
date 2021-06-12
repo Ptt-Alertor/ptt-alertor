@@ -76,17 +76,17 @@ jobs:
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: ptt-alertor-repo
+          IMAGE_TAG: ${{ github.sha }}
         run: |
-          docker build -t ptt-alertor/ptt-alertor .
-          docker tag ptt-alertor/ptt-alertor:latest $ECR_REGISTRY/$ECR_REPOSITORY:latest
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
-          echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:latest"
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
 
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
-          task-definition: Production-Ptt-Alertor
+          task-definition: .aws/task-definition.json
           container-name: Ptt-Alertor
           image: ${{ steps.build-image.outputs.image }}
 
