@@ -156,19 +156,7 @@ func startJobs() {
 func init() {
 	// for initial app
 	// jobs.NewPushSumKeyReplacer().Run()
-	jobs.NewMigrateBoard(map[string]string{
-		"pttsport":     "",
-		"aboutmagic":   "Magic_Center",
-		"b94305xxx":    "",
-		"homeplate":    "",
-		"sportsrecall": "",
-		"sportstar":    "",
-		"agronomy-96":  "",
-		"football-rvl": "",
-		"footballnews": "",
-		"hollowframe":  "",
-		"id_finance":   "",
-	}).Run()
+	// jobs.NewMigrateBoard(map[string]string{}).Run()
 	// jobs.NewTop().Run()
 	// jobs.NewCacheCleaner().Run()
 	// jobs.NewGenerator().Run()
