@@ -162,5 +162,5 @@ func init() {
 	// jobs.NewGenerator().Run()
 	// jobs.NewFetcher().Run()
 	// jobs.NewMigrateDB().Run()
-	jobs.NewCategoryCleaner().Run()
+	// jobs.NewCategoryCleaner().Run()
 }
