@@ -11,6 +11,19 @@ import (
 
 var ErrTooManyRequests = errors.New("Too Many Requests")
 
+// CheckBoardExist use for checking board exist or not
+func CheckBoardExist(board string) bool {
+	feed, err := parseURL("https://www.ptt.cc/atom/" + board + ".xml")
+	if err != nil {
+		return false
+	}
+	// category didn't have any items but has rss link as well
+	if len(feed.Items) == 0 {
+		return false
+	}
+	return true
+}
+
 func BuildArticles(board string) (articles article.Articles, err error) {
 	feed, err := parseURL("https://www.ptt.cc/atom/" + board + ".xml")
 	if err != nil {
