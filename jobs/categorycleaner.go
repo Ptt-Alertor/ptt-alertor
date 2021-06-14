@@ -1,7 +1,6 @@
 package jobs
 
 import (
-	"strings"
 	"time"
 
 	log "github.com/Ptt-Alertor/logrus"
@@ -9,6 +8,7 @@ import (
 	"github.com/Ptt-Alertor/ptt-alertor/models/author"
 	"github.com/Ptt-Alertor/ptt-alertor/models/keyword"
 	"github.com/Ptt-Alertor/ptt-alertor/models/pushsum"
+	"github.com/Ptt-Alertor/ptt-alertor/models/subscription"
 	"github.com/Ptt-Alertor/ptt-alertor/myutil"
 	"github.com/Ptt-Alertor/ptt-alertor/ptt/rss"
 )
@@ -43,13 +43,12 @@ func (cc categoryCleaner) CleanAccountSetting(boardName string) {
 
 	for _, sub := range subs {
 		u := models.User().Find(sub)
-		for index, subBoard := range u.Subscribes {
-			if strings.EqualFold(subBoard.Board, boardName) {
-				u.Subscribes = append(u.Subscribes[:index], u.Subscribes[index+1:]...)
-			}
-		}
-		if err := u.Save(); err != nil {
-			log.WithField("category", boardName).WithError(err).Error("Remove Category in User Failed")
+		u.Subscribes.Delete(subscription.Subscription{Board: boardName})
+		if err := u.Update(); err != nil {
+			log.WithFields(log.Fields{
+				"category": boardName,
+				"account":  u.Account,
+			}).WithError(err).Error("Remove Category in User Failed")
 		}
 	}
 }
