@@ -35,6 +35,9 @@ func CurrentPage(board string) (int, error) {
 		for _, a := range anchors {
 			if strings.Contains(a.FirstChild.Data, "上頁") {
 				link := getAnchorLink(a)
+				if link == "" {
+					return 1, nil
+				}
 				re := regexp.MustCompile("\\d+")
 				page, err := strconv.Atoi(re.FindString(link))
 				if err != nil {
@@ -44,7 +47,7 @@ func CurrentPage(board string) (int, error) {
 			}
 		}
 	}
-	return 0, errors.New("Parse Currenect Page Error")
+	return 0, errors.New("Parse Current Page Error")
 }
 
 // FetchArticles makes board's index articles to a article slice
