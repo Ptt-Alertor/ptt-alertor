@@ -168,7 +168,7 @@ func CheckBoardExist(boardName string) (bool, string) {
 	if bd.Exist() {
 		return true, ""
 	}
-	if web.CheckBoardExist(boardName) {
+	if rss.CheckBoardExist(boardName) {
 		bd.Create()
 		return true, ""
 	}
