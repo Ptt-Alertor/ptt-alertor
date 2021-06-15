@@ -56,7 +56,7 @@ func HandleRequest(_ http.ResponseWriter, r *http.Request, _ httprouter.Params) 
 func handleMessage(event *linebot.Event) {
 	var responseText string
 	var lineMsg []linebot.SendingMessage
-	accountID, sourceType := getAccountIDAndType(event)
+	accountID, accountType := getAccountIDAndType(event)
 
 	switch message := event.Message.(type) {
 	case *linebot.TextMessage:
@@ -67,7 +67,7 @@ func handleMessage(event *linebot.Event) {
 			return
 		}
 		if !checkLineAccessTokenExist(accountID) {
-			lineMsg = append(lineMsg, linebot.NewTextMessage(getLineNotifyConnectMessage(accountID)))
+			lineMsg = append(lineMsg, linebot.NewTextMessage(getLineNotifyConnectMessage(accountID, accountType)))
 			replyMessage(event.ReplyToken, lineMsg...)
 			return
 		}
@@ -75,7 +75,7 @@ func handleMessage(event *linebot.Event) {
 			replyMessage(event.ReplyToken, genConfirmMessage(text))
 			return
 		}
-		responseText = command.HandleCommand(text, accountID, sourceType == SourceTypeUser)
+		responseText = command.HandleCommand(text, accountID, accountType == accountTypeUser)
 	}
 
 	if responseText == "" {
@@ -107,7 +107,7 @@ func getLineNotifyConnectMessage(accountID, accountType string) string {
 
 	groupName := "透過1對1聊天接收LINE Notify的通知"
 	demoLink := "https://media.giphy.com/media/l0Iy28oboQbSw6Cn6/giphy.gif"
-	if accountType == SourceTypeGroup {
+	if accountType == accountTypeGroup {
 		groupName = "此群組名稱"
 		demoLink = "https://www.facebook.com/PttAlertor/posts/158145568061708"
 	}
@@ -140,8 +140,8 @@ func handlePostback(event *linebot.Event) {
 		replyMessage(event.ReplyToken, linebot.NewTextMessage("取消"))
 		return
 	}
-	accountID, sourceType := getAccountIDAndType(event)
-	responseText := command.HandleCommand(data, accountID, sourceType == SourceTypeUser)
+	accountID, accountType := getAccountIDAndType(event)
+	responseText := command.HandleCommand(data, accountID, accountType == accountTypeUser)
 	if responseText == "" {
 		return
 	}
@@ -154,19 +154,19 @@ func handleBeacon() {
 }
 
 const (
-	SourceTypeUser  = "user"
-	SourceTypeGroup = "group"
-	SourceTypeRoom  = "room"
+	accountTypeUser  = "user"
+	accountTypeGroup = "group"
+	accountTypeRoom  = "room"
 )
 
 func getAccountIDAndType(event *linebot.Event) (id, accountType string) {
 	switch event.Source.Type {
 	case linebot.EventSourceTypeUser:
-		return event.Source.UserID, SourceTypeUser
+		return event.Source.UserID, accountTypeUser
 	case linebot.EventSourceTypeGroup:
-		return event.Source.GroupID, SourceTypeGroup
+		return event.Source.GroupID, accountTypeGroup
 	case linebot.EventSourceTypeRoom:
-		return event.Source.RoomID, SourceTypeRoom
+		return event.Source.RoomID, accountTypeRoom
 	}
 	return
 }
