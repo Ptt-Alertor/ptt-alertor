@@ -95,25 +95,33 @@ func handleFollowAndJoin(event *linebot.Event) {
 		log.WithError(err).Error("Line Follow Failed")
 	}
 
-	text := getLineNotifyConnectMessage(accountID)
+	text := getLineNotifyConnectMessage(accountID, accountType)
 	_, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(text)).Do()
 	if err != nil {
 		log.WithError(err).Error("Line Follow Reply Message Failed")
 	}
 }
 
-func getLineNotifyConnectMessage(userID string) string {
-	url := shorturl.Gen(getAuthorizeURL(userID))
+func getLineNotifyConnectMessage(accountID, accountType string) string {
+	url := shorturl.Gen(getAuthorizeURL(accountID))
+
+	groupName := "透過1對1聊天接收LINE Notify的通知"
+	demoLink := "https://media.giphy.com/media/l0Iy28oboQbSw6Cn6/giphy.gif"
+	if accountType == SourceTypeGroup {
+		groupName = "此群組名稱"
+		demoLink = "https://www.facebook.com/PttAlertor/posts/158145568061708"
+	}
+
 	return fmt.Sprintf(`歡迎使用 Ptt Alertor。
 請按以下步驟啟用 LINE Notify 以獲得最新文章通知。
 1. 開啟下方網址
-2. 選擇”群組“ 第一個「透過1對1聊天接收LINE Notify的通知
-3. 點擊「同意並連動
+2. 選擇「%s」
+3. 點擊「同意並連動」
 %s
 
 你將可以在 Ptt Alertor 設定看板、作者、關鍵字，並在 LINE Notify 得到最新文章。
 觀看Demo:
-https://media.giphy.com/media/l0Iy28oboQbSw6Cn6/giphy.gif`, url)
+%s`, groupName, url, demoLink)
 }
 
 func handleUnfollowAndLeave(event *linebot.Event) {
