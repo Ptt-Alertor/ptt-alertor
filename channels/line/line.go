@@ -109,7 +109,7 @@ func getLineNotifyConnectMessage(accountID, accountType string) string {
 	demoLink := "https://media.giphy.com/media/l0Iy28oboQbSw6Cn6/giphy.gif"
 	if accountType == accountTypeGroup {
 		groupName = "此群組名稱"
-		demoLink = "https://www.facebook.com/PttAlertor/posts/158145568061708"
+		demoLink = "https://www.facebook.com/PttAlertor/posts/975327009676889"
 	}
 
 	return fmt.Sprintf(`歡迎使用 Ptt Alertor。
