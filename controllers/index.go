@@ -35,6 +35,7 @@ var tpls = []string{
 var (
 	templates = template.Must(template.ParseFiles(tpls...))
 	wsHost    = os.Getenv("APP_WS_HOST")
+	s3Domain  = os.Getenv("S3_DOMAIN")
 )
 
 // Index Handles router "/" request
@@ -45,10 +46,11 @@ func Index(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 // LineIndex Handles router "/line" request
 func LineIndex(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	err := templates.ExecuteTemplate(w, "line.html", struct {
-		URI    string
-		WSHost string
-		Count  []string
-	}{"line", wsHost, count()})
+		URI      string
+		WSHost   string
+		Count    []string
+		S3Domain string
+	}{"line", wsHost, count(), s3Domain})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
@@ -57,10 +59,11 @@ func LineIndex(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 // MessengerIndex Handles router "/messenger" request
 func MessengerIndex(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	err := templates.ExecuteTemplate(w, "messenger.html", struct {
-		URI    string
-		WSHost string
-		Count  []string
-	}{"messenger", wsHost, count()})
+		URI      string
+		WSHost   string
+		Count    []string
+		S3Domain string
+	}{"messenger", wsHost, count(), s3Domain})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
@@ -69,10 +72,11 @@ func MessengerIndex(w http.ResponseWriter, r *http.Request, _ httprouter.Params)
 // TelegramIndex Handles router "/telegram" request
 func TelegramIndex(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	err := templates.ExecuteTemplate(w, "telegram.html", struct {
-		URI    string
-		WSHost string
-		Count  []string
-	}{"telegram", wsHost, count()})
+		URI      string
+		WSHost   string
+		Count    []string
+		S3Domain string
+	}{"telegram", wsHost, count(), s3Domain})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
@@ -104,11 +108,13 @@ func Top(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		Keywords top.WordOrders
 		Authors  top.WordOrders
 		PushSum  top.WordOrders
+		S3Domain string
 	}{
 		"top",
 		keywords,
 		authors,
 		pushsum,
+		s3Domain,
 	}
 	err := templates.ExecuteTemplate(w, "top.html", data)
 	if err != nil {
@@ -118,7 +124,13 @@ func Top(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 
 // Docs shows advanced intructions
 func Docs(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	err := templates.ExecuteTemplate(w, "docs.html", struct{ URI string }{"docs"})
+	err := templates.ExecuteTemplate(w, "docs.html", struct {
+		URI      string
+		S3Domain string
+	}{
+		"docs",
+		s3Domain,
+	})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
