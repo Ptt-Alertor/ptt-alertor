@@ -9,6 +9,7 @@ import (
 	log "github.com/Ptt-Alertor/logrus"
 
 	"github.com/Ptt-Alertor/ptt-alertor/models/article"
+	pttHttp "github.com/Ptt-Alertor/ptt-alertor/ptt/http"
 
 	"regexp"
 
@@ -267,7 +268,11 @@ var client = &http.Client{
 }
 
 func fetchHTML(reqURL string) (doc *html.Node, err error) {
-	resp, err := client.Get(reqURL)
+	req, err := pttHttp.HttpRequest(reqURL)
+	if err != nil {
+		return nil, err
+	}
+	resp, err := client.Do(req)
 	if err != nil && resp == nil {
 		log.WithField("url", reqURL).WithError(err).Error("Fetch URL Failed")
 		return nil, err
