@@ -99,5 +99,5 @@ jobs:
         with:
           task-definition: ${{ steps.task-def.outputs.task-definition }}
           service: Ptt-Alertor
-          cluster: Production-Cluster
+          cluster: Cluster
           wait-for-service-stability: true
