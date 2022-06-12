@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/Ptt-Alertor/ptt-alertor/models/article"
+	pttHttp "github.com/Ptt-Alertor/ptt-alertor/ptt/http"
 	"github.com/mmcdole/gofeed"
 )
 
@@ -51,7 +52,11 @@ var client = http.Client{
 }
 
 func parseURL(feedURL string) (feed *gofeed.Feed, err error) {
-	resp, err := client.Get(feedURL)
+	req, err := pttHttp.HttpRequest(feedURL)
+	if err != nil {
+		return nil, err
+	}
+	resp, err := client.Do(req)
 	if err != nil {
 		return nil, err
 	}
