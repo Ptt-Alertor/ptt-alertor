@@ -10,8 +10,8 @@ var User = func() *user.User {
 	return user.NewUser(new(user.Redis))
 }
 var Article = func() *article.Article {
-	return article.NewArticle(new(article.DynamoDB))
+	return article.NewArticle(new(article.Redis))
 }
 var Board = func() *board.Board {
-	return board.NewBoard(new(board.DynamoDB), new(board.Redis))
+	return board.NewBoard(new(board.Redis), new(board.Redis))
 }

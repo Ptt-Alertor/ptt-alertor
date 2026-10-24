@@ -163,7 +163,7 @@ func (bd Board) SuggestBoardName() string {
 }
 
 func CheckBoardExist(boardName string) (bool, string) {
-	bd := NewBoard(new(DynamoDB), new(Redis))
+	bd := NewBoard(new(Redis), new(Redis))
 	bd.Name = boardName
 	if bd.Exist() {
 		return true, ""
