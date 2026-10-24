@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"syscall"
 	"time"
 
 	log "github.com/Ptt-Alertor/logrus"
@@ -113,14 +114,14 @@ func main() {
 	router.POST("/telegram/"+telegramToken, telegram.HandleRequest)
 
 	// gops agent
-	if err := agent.Listen(agent.Options{Addr: ":6060", ShutdownCleanup: true}); err != nil {
+	if err := agent.Listen(agent.Options{Addr: "127.0.0.1:6060", ShutdownCleanup: true}); err != nil {
 		log.Fatal(err)
 	}
 
 	// Web Server
-	log.Info("Web Server Start on Port 9090")
+	log.Info("Web Server Start on 127.0.0.1:9090")
 	srv := http.Server{
-		Addr:    ":9090",
+		Addr:    "127.0.0.1:9090",
 		Handler: router,
 	}
 	go func() {
@@ -130,8 +131,8 @@ func main() {
 	}()
 
 	// graceful shutdown
-	quit := make(chan os.Signal)
-	signal.Notify(quit, os.Interrupt)
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, os.Interrupt, syscall.SIGTERM)
 	<-quit
 	log.Info("Shutdown Web Server...")
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)

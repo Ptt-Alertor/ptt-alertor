@@ -51,7 +51,7 @@ func (Redis) Delete(articleCode string) error {
 	conn := connectRedis()
 	defer conn.Close()
 
-	_, err := conn.Do("DEL", prefix+articleCode+subsSuffix)
+	_, err := conn.Do("DEL", prefix+articleCode+detailSuffix)
 	if err != nil {
 		log.WithField("runtime", myutil.BasicRuntimeInfo()).WithError(err).Error()
 	}

@@ -21,5 +21,3 @@ COPY public/ public/
 COPY --from=builder /out/ptt-alertor .
 
 ENTRYPOINT /ptt-alertor
-
-EXPOSE 9090 6060
