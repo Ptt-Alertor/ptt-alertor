@@ -1,10 +1,12 @@
 # This is a basic workflow to help you get started with Actions
 
-name: PR Check
+name: Test
 
 # Controls when the action will run.
 on:
   # Triggers the workflow on push or pull request events but only for the master branch
+  push:
+    branches: [master]
   pull_request:
     branches: [master]
 
@@ -18,19 +20,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Setup Golang
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v5
         with:
-          go-version: ~1.15.0
+          go-version-file: go.mod
 
       - name: Go Test
-        env:
-          GO111MODULE: on
-        run: |
-          go get
-          go test -race -tags test -coverprofile=coverage.txt -covermode=atomic ./...
+        run: go test -race -tags test -coverprofile=coverage.txt -covermode=atomic ./...
 
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v1
+      - name: Go Vulnerability Check
+        run: go run golang.org/x/vuln/cmd/govulncheck@latest ./...
